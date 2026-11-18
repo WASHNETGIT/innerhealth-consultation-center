@@ -10,6 +10,7 @@ import hashlib
 import hmac
 import base64
 import urllib.request
+import urllib.parse
 from datetime import datetime, timedelta, date, time
 from typing import Optional, List, Dict, Any
 from zoneinfo import ZoneInfo
@@ -387,7 +388,7 @@ def _seed_defaults():
         if db.query(BookingService).count() == 0:
             db.add_all([
                 BookingService(name="Full-body scan consultation", description="Full-body scan and consultation with an individual results review.", duration_minutes=45, price=450, deposit=150),
-                BookingService(name="Full-body scan follow-up", description="Follow-up scan consultation and progress review.", duration_minutes=45, price=450, deposit=150),
+                BookingService(name="Follow up scan", description="Follow-up scan consultation and progress review.", duration_minutes=45, price=450, deposit=150),
             ])
         db.query(BookingService).filter(BookingService.name.like("%Wellness report%")).delete(synchronize_session=False)
         if db.query(AvailabilityRule).count() == 0:
@@ -934,6 +935,324 @@ def assistant_chat(payload: AssistantRequest, db: Session = Depends(get_db)):
 def assistant_book(payload: dict, db: Session = Depends(get_db)):
     """Create a booking from the assistant's slot picker, reusing the public booking rules."""
     return create_public_booking(payload, db)
+
+
+# ---------------------------------------------------------------------------
+# Admin agent — grounded answers, overdue actions, message drafting
+# ---------------------------------------------------------------------------
+
+ADMIN_MODEL = os.getenv("ADMIN_OLLAMA_MODEL", "ihc-admin-1b")
+
+
+def _money(v) -> str:
+    return f"R{int(round(float(v or 0))):,}".replace(",", " ")
+
+
+def _booking_paid(b: PublicBooking) -> float:
+    """What has actually been collected on a booking so far."""
+    return round((b.deposit_paid or 0) + ((b.total_fee - b.service.deposit) if b.balance_paid else 0), 2)
+
+
+def _admin_snapshot(db: Session) -> Dict[str, Any]:
+    """Compact JSON facts the admin model is allowed to reason over."""
+    today = app_today()
+    now = app_now()
+    month_start = today.replace(day=1)
+    week_start = today - timedelta(days=today.weekday())
+
+    bookings = db.query(PublicBooking).all()
+    sales = db.query(WalkInSale).all()
+    clients = db.query(Client).all()
+
+    def in_range(rows, start, end):
+        return [b for b in rows if b.booking_date and start <= b.booking_date <= end]
+
+    today_rows = in_range(bookings, today, today)
+    week_rows = in_range(bookings, week_start, today)
+    month_rows = in_range(bookings, month_start, today)
+
+    revenue_today = sum(_booking_paid(b) for b in today_rows) + sum(
+        s.amount_zar for s in sales if s.sold_at and s.sold_at.date() == today)
+    revenue_week = sum(_booking_paid(b) for b in week_rows) + sum(
+        s.amount_zar for s in sales if s.sold_at and s.sold_at.date() >= week_start)
+    revenue_month = sum(_booking_paid(b) for b in month_rows) + sum(
+        s.amount_zar for s in sales if s.sold_at and s.sold_at.date() >= month_start)
+
+    upcoming = [b for b in bookings
+                if b.booking_date >= today
+                and datetime.combine(b.booking_date, b.start_time) >= now
+                and b.status not in ("cancelled", "completed", "no_show")]
+    upcoming.sort(key=lambda b: (b.booking_date, b.start_time))
+
+    pending_deposit = [b for b in bookings if b.status == "pending_deposit"]
+    owing = [b for b in bookings
+             if (not b.balance_paid) and b.deposit_paid and b.deposit_paid > 0
+             and b.status not in ("cancelled", "no_show")]
+
+    # Clients who booked before but not in the last 60 days.
+    last_seen: Dict[int, date] = {}
+    spend: Dict[int, float] = {}
+    visits: Dict[int, int] = {}
+    for b in bookings:
+        if b.status == "cancelled":
+            continue
+        if b.client_id not in last_seen or b.booking_date > last_seen[b.client_id]:
+            last_seen[b.client_id] = b.booking_date
+        spend[b.client_id] = spend.get(b.client_id, 0) + _booking_paid(b)
+        if b.status == "completed":
+            visits[b.client_id] = visits.get(b.client_id, 0) + 1
+
+    lapsed = []
+    for c in clients:
+        last = last_seen.get(c.id)
+        if last and (today - last).days >= 60:
+            lapsed.append({"id": c.id, "name": c.name,
+                           "phone": c.phone_whatsapp or c.phone,
+                           "days_since": (today - last).days,
+                           "last_visit": last.isoformat(),
+                           "spend": round(spend.get(c.id, 0), 2),
+                           "visits": visits.get(c.id, 0)})
+    lapsed.sort(key=lambda x: x["days_since"], reverse=True)
+
+    top_clients = sorted(
+        ({"id": c.id, "name": c.name, "phone": c.phone_whatsapp or c.phone,
+          "spend": round(spend.get(c.id, 0), 2), "visits": visits.get(c.id, 0)}
+         for c in clients if spend.get(c.id)),
+        key=lambda x: x["spend"], reverse=True)[:5]
+
+    next_week = today + timedelta(days=7)
+    return {
+        "today": today.isoformat(),
+        "weekday": today.strftime("%A"),
+        "money": {
+            "revenue_today": round(revenue_today, 2),
+            "revenue_this_week": round(revenue_week, 2),
+            "revenue_this_month": round(revenue_month, 2),
+            "deposits_pending_count": len(pending_deposit),
+            "deposits_pending_value": round(sum(b.service.deposit for b in pending_deposit), 2),
+            "balances_outstanding_count": len(owing),
+            "balances_outstanding_value": round(sum(b.balance_due for b in owing), 2),
+        },
+        "bookings": {
+            "total": len(bookings),
+            "today": len(today_rows),
+            "upcoming_next_7_days": len([b for b in upcoming if b.booking_date <= next_week]),
+            "pending_deposit": len(pending_deposit),
+            "awaiting_deposit_list": [
+                {"ref": b.booking_ref, "client": b.client.name, "date": b.booking_date.isoformat(),
+                 "start": b.start_time.strftime("%H:%M"), "deposit_due": b.service.deposit}
+                for b in pending_deposit[:10]],
+            "next_up": [
+                {"ref": b.booking_ref, "client": b.client.name, "date": b.booking_date.isoformat(),
+                 "start": b.start_time.strftime("%H:%M"), "status": b.status,
+                 "balance_due": b.balance_due if not b.balance_paid else 0,
+                 "phone": b.client.phone_whatsapp or b.client.phone}
+                for b in upcoming[:10]],
+        },
+        "clients": {
+            "total": len(clients),
+            "lapsed_60_days": len(lapsed),
+            "lapsed_list": lapsed[:10],
+            "top_by_spend": top_clients,
+        },
+        "clinic": {
+            "office": os.getenv("CLINIC_ADDRESS", "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002"),
+            "whatsapp": os.getenv("WHATSAPP_NUMBER", "2785771853"),
+            "email": os.getenv("CLINIC_EMAIL", "innerhealthconsult@gmail.com"),
+            "hours": _assistant_facts(db)["hours"],
+            "services": _assistant_facts(db)["services"],
+        },
+    }
+
+
+def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
+    """Deterministic first pass. The model only rephrases this; numbers stay exact."""
+    money = snapshot["money"]
+    bk = snapshot["bookings"]
+    cl = snapshot["clients"]
+    q = question.lower()
+
+    if kind == "money" or any(w in q for w in ("revenue", "money", "takings", "earn", "income", "sales", "rand")):
+        return (f"Today {_money(money['revenue_today'])}, this week {_money(money['revenue_this_week'])}, "
+                f"this month {_money(money['revenue_this_month'])}. "
+                f"Deposits still pending: {money['deposits_pending_count']} worth "
+                f"{_money(money['deposits_pending_value'])}. "
+                f"Balances outstanding: {money['balances_outstanding_count']} worth "
+                f"{_money(money['balances_outstanding_value'])}.")
+
+    if kind == "clients" or any(w in q for w in ("client", "lapsed", "come back", "win back", "dormant", "vip")):
+        top = ", ".join(f"{c['name']} ({_money(c['spend'])})" for c in cl["top_by_spend"][:3]) or "none yet"
+        return (f"{cl['total']} clients in total. {cl['lapsed_60_days']} have not been in for 60 days or more. "
+                f"Top spenders: {top}.")
+
+    if kind == "deposits" or any(w in q for w in ("deposit", "unpaid", "owing", "outstanding", "chase")):
+        rows = bk["awaiting_deposit_list"]
+        if not rows:
+            return "No bookings are waiting on a deposit right now."
+        listing = "; ".join(f"{r['ref']} {r['client']} {r['date']} {r['start']}" for r in rows[:5])
+        return (f"{money['deposits_pending_count']} bookings still owe the deposit, "
+                f"{_money(money['deposits_pending_value'])} in total: {listing}.")
+
+    if any(w in q for w in ("today", "diary", "schedule", "upcoming", "next", "appointment", "tomorrow")):
+        rows = bk["next_up"]
+        head = f"{bk['today']} bookings today, {bk['upcoming_next_7_days']} in the next 7 days."
+        if not rows:
+            return head + " Nothing on the diary is upcoming."
+        listing = "; ".join(f"{r['start']} {r['client']} ({r['status']})" for r in rows[:5])
+        return head + " Next up: " + listing + "."
+
+    return (f"Patients: {cl['total']}. Bookings: {bk['total']} ({bk['today']} today). "
+            f"Revenue today {_money(money['revenue_today'])}, this month {_money(money['revenue_this_month'])}. "
+            f"{money['deposits_pending_count']} deposits and {money['balances_outstanding_count']} balances still open.")
+
+
+@app.post("/api/admin/ask", dependencies=[Depends(require_admin)])
+def admin_ask(payload: dict, db: Session = Depends(get_db)):
+    """Ask the admin agent about anything in the hub. Always answers, even with no model."""
+    question = str(payload.get("question", "")).strip()[:600]
+    kind = str(payload.get("kind", "auto"))[:20]
+    if not question and kind == "auto":
+        raise HTTPException(422, "Ask a question first")
+
+    snapshot = _admin_snapshot(db)
+    answer = _admin_answer(snapshot, question, kind)
+    mode = "rules"
+
+    try:
+        system = (
+            "You are the internal admin assistant for Inner Health Consultation Center, Pretoria. "
+            "You answer the owner only. You are given FACTS and a DRAFT answer computed from the live database. "
+            "Keep every number and name exactly as in the draft. Rewrite the draft into at most three short, "
+            "clear sentences. Never invent a client, amount, phone number or date. If the draft does not answer "
+            "the question, say what data is missing instead of guessing. No markdown."
+        )
+        user = ("FACTS:\n" + json.dumps(snapshot, ensure_ascii=False)[:6000]
+                + "\n\nDRAFT ANSWER:\n" + answer
+                + "\n\nQUESTION: " + (question or "Give the daily summary"))
+        body = json.dumps({
+            "model": ADMIN_MODEL,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "stream": False,
+            "keep_alive": "10m",
+            "options": {"temperature": 0.1, "num_predict": 180},
+        }).encode()
+        for base, _model in _ollama_backends():
+            try:
+                req = urllib.request.Request(base + "/api/chat", data=body,
+                                            headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=25) as response:
+                    data = json.loads(response.read())
+                polished = _clean_reply(data.get("message", {}).get("content", ""))
+                if len(polished) > 20:
+                    answer = polished
+                    mode = "model"
+                break
+            except Exception:
+                continue
+    except Exception:
+        pass
+
+    return {"answer": answer, "mode": mode, "facts": snapshot}
+
+
+def _whatsapp_link(phone: Optional[str], message: str) -> str:
+    digits = re.sub(r"[^0-9]", "", phone or "")
+    if digits.startswith("0") and len(digits) >= 10:
+        digits = "27" + digits[1:]
+    return f"https://wa.me/{digits}?text={urllib.parse.quote(message)}"
+
+
+@app.get("/api/admin/follow-ups", dependencies=[Depends(require_admin)])
+def admin_follow_ups(db: Session = Depends(get_db)):
+    """Everyone who needs a nudge today, with a ready WhatsApp message each."""
+    today = app_today()
+    now = app_now()
+    clinic = "Inner Health Consultation Center"
+    origin = os.getenv("PUBLIC_BASE_URL", "http://localhost:8000").rstrip("/")
+    buckets = {"deposit": [], "balance": [], "reminder": [], "winback": []}
+    snapshot = _admin_snapshot(db)
+
+    for b in db.query(PublicBooking).filter(PublicBooking.status == "pending_deposit").all():
+        msg = (f"Hi {b.client.name.split()[0]}, this is {clinic}. Your full-body scan on "
+               f"{b.booking_date:%A %d %B} at {b.start_time:%H:%M} is not confirmed yet. "
+               f"The R{int(b.service.deposit)} deposit secures the time. Reference {b.booking_ref}. "
+               f"Bank: FNB, Ntombikayise N Mkhaliphi, 62804835835, branch 250655.")
+        buckets["deposit"].append({"ref": b.booking_ref, "name": b.client.name,
+                                   "phone": b.client.phone_whatsapp or b.client.phone,
+                                   "when": f"{b.booking_date:%d %b} {b.start_time:%H:%M}",
+                                   "amount": b.service.deposit, "message": msg,
+                                   "wa": _whatsapp_link(b.client.phone_whatsapp or b.client.phone, msg)})
+
+    for b in db.query(PublicBooking).filter(PublicBooking.balance_paid == False).all():  # noqa: E712
+        if b.status in ("cancelled", "no_show") or not b.deposit_paid:
+            continue
+        msg = (f"Hi {b.client.name.split()[0]}, a reminder of your scan on "
+               f"{b.booking_date:%A %d %B} at {b.start_time:%H:%M}. The balance of "
+               f"R{int(b.balance_due)} is due at reception. Reference {b.booking_ref}. {clinic}.")
+        buckets["balance"].append({"ref": b.booking_ref, "name": b.client.name,
+                                   "phone": b.client.phone_whatsapp or b.client.phone,
+                                   "when": f"{b.booking_date:%d %b} {b.start_time:%H:%M}",
+                                   "amount": b.balance_due, "message": msg,
+                                   "wa": _whatsapp_link(b.client.phone_whatsapp or b.client.phone, msg)})
+
+    for b in db.query(PublicBooking).all():
+        when = datetime.combine(b.booking_date, b.start_time)
+        if b.status not in ("confirmed", "arriving_soon"):
+            continue
+        hours = (when - now).total_seconds() / 3600
+        if not (0 < hours <= 30):
+            continue
+        msg = (f"Hi {b.client.name.split()[0]}, looking forward to seeing you "
+               f"{b.booking_date:%A} at {b.start_time:%H:%M} for your full-body scan at "
+               f"202 Robert Sobukwe Street, Esselen Towers, Sunnyside. Reference {b.booking_ref}. {clinic}.")
+        buckets["reminder"].append({"ref": b.booking_ref, "name": b.client.name,
+                                    "phone": b.client.phone_whatsapp or b.client.phone,
+                                    "when": f"{b.booking_date:%d %b} {b.start_time:%H:%M}",
+                                    "amount": b.balance_due if not b.balance_paid else 0,
+                                    "message": msg,
+                                    "wa": _whatsapp_link(b.client.phone_whatsapp or b.client.phone, msg)})
+
+    for row in snapshot["clients"]["lapsed_list"]:
+        msg = (f"Hi {row['name'].split()[0]}, it is a while since your last scan with {clinic}. "
+               f"If you would like to come in again, reply here and we will find you a time. "
+               f"A scan is R450 with a R150 deposit.")
+        buckets["winback"].append({"ref": None, "name": row["name"], "phone": row["phone"],
+                                   "when": f"{row['days_since']} days ago",
+                                   "amount": 0, "message": msg,
+                                   "wa": _whatsapp_link(row["phone"], msg)})
+
+    return {"generated": today.isoformat(), "counts": {k: len(v) for k, v in buckets.items()}, "buckets": buckets}
+
+
+@app.get("/api/admin/report", dependencies=[Depends(require_admin)])
+def admin_report(db: Session = Depends(get_db)):
+    """Month-to-date performance plus the 6-month trend, for printing or pasting."""
+    today = app_today()
+    snapshot = _admin_snapshot(db)
+    bookings = db.query(PublicBooking).all()
+    sales = db.query(WalkInSale).all()
+
+    trend = []
+    for back in range(5, -1, -1):
+        month = (today.replace(day=1) - timedelta(days=back * 30)).replace(day=1)
+        end = (month.replace(day=28) + timedelta(days=4)).replace(day=1)
+        rows = [b for b in bookings if b.booking_date and month <= b.booking_date < end]
+        rev = sum(_booking_paid(b) for b in rows) + sum(
+            s.amount_zar for s in sales if s.sold_at and month <= s.sold_at.date() < end)
+        trend.append({"month": month.strftime("%b %Y"), "bookings": len(rows), "revenue": round(rev, 2)})
+
+    by_status: Dict[str, int] = {}
+    for b in bookings:
+        by_status[b.status] = by_status.get(b.status, 0) + 1
+
+    return {
+        "generated_at": app_now().isoformat(timespec="minutes"),
+        "summary": snapshot["money"],
+        "bookings": snapshot["bookings"],
+        "clients": {k: snapshot["clients"][k] for k in ("total", "lapsed_60_days", "top_by_spend")},
+        "by_status": by_status,
+        "trend": trend,
+    }
 
 # ---------------------------------------------------------------------------
 # Public Booking APIs
