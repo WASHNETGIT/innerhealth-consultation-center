@@ -4,6 +4,10 @@ Inner Health Consultation Center — Scan Center & Booking Management
 
 import os
 import re
+import shutil
+import subprocess
+import tempfile
+import uuid
 import json
 import secrets
 import hashlib
@@ -15,7 +19,7 @@ from datetime import datetime, timedelta, date, time
 from typing import Optional, List, Dict, Any
 from zoneinfo import ZoneInfo
 
-from fastapi import FastAPI, HTTPException, Request, Form, Depends, Header, Body
+from fastapi import FastAPI, HTTPException, Request, Form, Depends, Header, Body, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -198,6 +202,32 @@ class CommandLog(Base):
     result = Column(Text, nullable=True)
     data = Column(Text, nullable=True)
     success = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=app_now)
+
+
+class AgentConversation(Base):
+    """Long-lived memory for the admin agent: one row per chat thread."""
+    __tablename__ = "agent_conversations"
+
+    id = Column(Integer, primary_key=True)
+    session_id = Column(String(64), unique=True, nullable=False, index=True)
+    title = Column(String(200), nullable=True)
+    summary = Column(Text, nullable=True)          # rolling summary of older turns
+    facts = Column(Text, nullable=True)            # JSON list of durable things learned
+    turn_count = Column(Integer, nullable=False, default=0)
+    last_active = Column(DateTime, default=app_now)
+    created_at = Column(DateTime, default=app_now)
+
+
+class AgentMessage(Base):
+    """Every turn in every admin-agent conversation, newest last."""
+    __tablename__ = "agent_messages"
+
+    id = Column(Integer, primary_key=True)
+    session_id = Column(String(64), nullable=False, index=True)
+    role = Column(String(16), nullable=False)      # user | assistant
+    content = Column(Text, nullable=False)
+    mode = Column(String(16), nullable=True)       # rules | model | voice
     created_at = Column(DateTime, default=app_now)
 
 
@@ -1512,7 +1542,16 @@ def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
     cl = snapshot["clients"]
     q = question.lower()
 
-    if kind == "money" or any(w in q for w in ("revenue", "money", "takings", "earn", "income", "sales", "rand")):
+    # Product questions are answered from the catalog, never with clinic stats
+    hits = _product_search(question, limit=3)
+    product_words = ("product", "recommend", "supplement", "capsule", "tea", "tablet", "drink",
+                     "plaster", "cream", "soap", "price of", "how much is", "cost of", "in store",
+                     "stock", "range", "which one", "that one", "first one", "second one", "third one")
+    if hits and (kind == "products" or any(w in q for w in product_words)):
+        listing = "; ".join(f"{h['name']} ({h['spec']}) R{h['price']}" for h in hits)
+        return f"From the store range: {listing}."
+
+    if kind == "money" or any(w in q for w in ("revenue", "money", "takings", "earn", "income", "sales", "rand", "how much did we", "turnover")):
         return (f"Today {_money(money['revenue_today'])}, this week {_money(money['revenue_this_week'])}, "
                 f"this month {_money(money['revenue_this_month'])}. "
                 f"Deposits still pending: {money['deposits_pending_count']} worth "
@@ -1533,7 +1572,7 @@ def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
         return (f"{money['deposits_pending_count']} bookings still owe the deposit, "
                 f"{_money(money['deposits_pending_value'])} in total: {listing}.")
 
-    if any(w in q for w in ("today", "diary", "schedule", "upcoming", "next", "appointment", "tomorrow")):
+    if kind == "diary" or any(w in q for w in ("diary", "schedule", "upcoming", "appointment", "tomorrow", "next up")):
         rows = bk["next_up"]
         head = f"{bk['today']} bookings today, {bk['upcoming_next_7_days']} in the next 7 days."
         if not rows:
@@ -1546,20 +1585,281 @@ def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
             f"{money['deposits_pending_count']} deposits and {money['balances_outstanding_count']} balances still open.")
 
 
+# ---------------------------------------------------------------------------
+# Agent memory: the admin agent remembers past conversations
+# ---------------------------------------------------------------------------
+
+MEMORY_WINDOW = int(os.getenv("AGENT_MEMORY_TURNS", "12"))
+
+
+def _agent_session(db: Session, session_id: str) -> AgentConversation:
+    session_id = (session_id or "default")[:64]
+    conv = db.query(AgentConversation).filter_by(session_id=session_id).first()
+    if not conv:
+        conv = AgentConversation(session_id=session_id, turn_count=0, facts="[]")
+        db.add(conv)
+        db.commit()
+    return conv
+
+
+def _agent_history(db: Session, session_id: str, limit: int = MEMORY_WINDOW) -> List[Dict[str, str]]:
+    rows = (db.query(AgentMessage)
+            .filter_by(session_id=session_id)
+            .order_by(AgentMessage.id.desc())
+            .limit(limit).all())
+    return [{"role": r.role, "content": r.content} for r in reversed(rows)]
+
+
+def _agent_remember(db: Session, session_id: str, role: str, content: str, mode: str = "model") -> None:
+    content = (content or "").strip()
+    if not content:
+        return
+    db.add(AgentMessage(session_id=session_id[:64], role=role, content=content[:8000], mode=mode))
+    conv = _agent_session(db, session_id)
+    conv.turn_count = (conv.turn_count or 0) + 1
+    conv.last_active = app_now()
+    if role == "user" and not conv.title:
+        conv.title = content[:120]
+    # Roll older turns into the summary so long histories stay cheap
+    total = db.query(AgentMessage).filter_by(session_id=session_id[:64]).count()
+    if total > 40:
+        old = (db.query(AgentMessage).filter_by(session_id=session_id[:64])
+               .order_by(AgentMessage.id.asc()).limit(total - 30).all())
+        if old:
+            lines = [f"{m.role}: {m.content[:160]}" for m in old]
+            prior = (conv.summary or "").strip()
+            conv.summary = ((prior + "\n") if prior else "") + "\n".join(lines)
+            conv.summary = conv.summary[-4000:]
+            for m in old:
+                db.delete(m)
+    db.commit()
+
+
+def _agent_memory_block(db: Session, session_id: str) -> str:
+    """The context the model gets about earlier conversations."""
+    conv = db.query(AgentConversation).filter_by(session_id=(session_id or "default")[:64]).first()
+    parts = []
+    if conv and conv.summary:
+        parts.append("EARLIER IN THIS CONVERSATION:\n" + conv.summary[-2500:])
+    recent = _agent_history(db, session_id, limit=MEMORY_WINDOW)
+    if recent:
+        lines = [f"{m['role']}: {m['content'][:400]}" for m in recent]
+        parts.append("RECENT TURNS:\n" + "\n".join(lines))
+    return "\n\n".join(parts)
+
+
+@app.get("/api/admin/memory", dependencies=[Depends(require_admin)])
+def admin_memory(session_id: str = "default", limit: int = 40):
+    """What the agent remembers in this conversation thread."""
+    conv = db_session = None
+    db = SessionLocal()
+    try:
+        conv = db.query(AgentConversation).filter_by(session_id=session_id[:64]).first()
+        rows = (db.query(AgentMessage).filter_by(session_id=session_id[:64])
+                .order_by(AgentMessage.id.desc()).limit(max(1, min(limit, 200))).all())
+        return {
+            "session_id": session_id,
+            "title": conv.title if conv else None,
+            "summary": conv.summary if conv else None,
+            "turns": conv.turn_count if conv else 0,
+            "last_active": conv.last_active.isoformat(timespec="seconds") if conv and conv.last_active else None,
+            "messages": [{"role": r.role, "content": r.content, "mode": r.mode,
+                          "at": r.created_at.isoformat(timespec="seconds") if r.created_at else None}
+                         for r in reversed(rows)],
+        }
+    finally:
+        db.close()
+
+
+@app.get("/api/admin/memory/threads", dependencies=[Depends(require_admin)])
+def admin_memory_threads(limit: int = 20):
+    db = SessionLocal()
+    try:
+        rows = (db.query(AgentConversation).order_by(AgentConversation.last_active.desc())
+                .limit(max(1, min(limit, 100))).all())
+        return {"threads": [{"session_id": c.session_id, "title": c.title, "turns": c.turn_count,
+                             "last_active": c.last_active.isoformat(timespec="seconds") if c.last_active else None}
+                            for c in rows]}
+    finally:
+        db.close()
+
+
+@app.delete("/api/admin/memory", dependencies=[Depends(require_admin)])
+def admin_memory_clear(session_id: str = "default"):
+    db = SessionLocal()
+    try:
+        db.query(AgentMessage).filter_by(session_id=session_id[:64]).delete()
+        db.query(AgentConversation).filter_by(session_id=session_id[:64]).delete()
+        db.commit()
+        emit("agent.memory_cleared", session_id=session_id)
+        return {"ok": True, "session_id": session_id}
+    finally:
+        db.close()
+
+
+@app.post("/api/admin/transcribe", dependencies=[Depends(require_admin)])
+async def admin_transcribe(audio: UploadFile = File(...)):
+    """Transcribe a WhatsApp-style voice note so the admin can talk to the agent.
+
+    Tries the local speech-to-text backends in order (whisper.cpp server, then
+    faster-whisper / openai-whisper CLI, then Ollama if a vision/audio model is
+    installed). Returns {"text": ...} so the UI can feed it straight to /api/admin/ask.
+    """
+    raw = await audio.read()
+    if not raw:
+        raise HTTPException(422, "Empty audio file")
+    if len(raw) > 25 * 1024 * 1024:
+        raise HTTPException(413, "Voice note too large (max 25 MB)")
+
+    suffix = os.path.splitext(audio.filename or "")[1] or ".webm"
+    tmp_dir = tempfile.mkdtemp(prefix="ihc-voice-")
+    src = os.path.join(tmp_dir, "note" + suffix)
+    with open(src, "wb") as fh:
+        fh.write(raw)
+
+    def _clean(t: str) -> str:
+        t = (t or "").strip()
+        for junk in ("[BLANK_AUDIO]", "(silence)", "[silence]", "[Music]", "(music)"):
+            t = t.replace(junk, "")
+        return re.sub(r"\s+", " ", t).strip()
+
+    text = ""
+    engine = ""
+
+    try:
+        # 1) whisper.cpp / whisper-server on the usual ports
+        for port in (8081, 8080, 8001):
+            try:
+                boundary = "----ihcvoice" + uuid.uuid4().hex
+                with open(src, "rb") as fh:
+                    payload = fh.read()
+                body = (
+                    f"--{boundary}\r\n"
+                    f'Content-Disposition: form-data; name="file"; filename="note{suffix}"\r\n'
+                    f"Content-Type: application/octet-stream\r\n\r\n"
+                ).encode() + payload + f"\r\n--{boundary}--\r\n".encode()
+                req = urllib.request.Request(
+                    f"http://127.0.0.1:{port}/inference",
+                    data=body,
+                    headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+                )
+                with urllib.request.urlopen(req, timeout=120) as resp:
+                    data = json.loads(resp.read())
+                candidate = _clean(data.get("text", ""))
+                if candidate:
+                    text, engine = candidate, f"whisper-server:{port}"
+                    break
+            except Exception:
+                continue
+
+        # 2) faster-whisper or openai-whisper installed locally
+        if not text:
+            for cmd in (
+                ["whisper", src, "--model", "base", "--output_format", "txt", "--output_dir", tmp_dir],
+            ):
+                try:
+                    proc = subprocess.run(cmd, capture_output=True, timeout=180)
+                    if proc.returncode == 0:
+                        out = os.path.join(tmp_dir, "note.txt")
+                        if os.path.exists(out):
+                            candidate = _clean(open(out, encoding="utf-8", errors="ignore").read())
+                            if candidate:
+                                text, engine = candidate, "whisper-cli"
+                                break
+                except Exception:
+                    continue
+
+        # 3) faster_whisper python package
+        if not text:
+            try:
+                from faster_whisper import WhisperModel  # type: ignore
+                model = WhisperModel(os.getenv("WHISPER_MODEL", "base"), device="cpu", compute_type="int8")
+                segments, _info = model.transcribe(src, beam_size=1, vad_filter=True)
+                candidate = _clean(" ".join(seg.text for seg in segments))
+                if candidate:
+                    text, engine = candidate, "faster-whisper"
+            except Exception:
+                pass
+
+        # 4) Ollama audio model, if one has been pulled
+        if not text:
+            audio_model = os.getenv("OLLAMA_AUDIO_MODEL", "")
+            if audio_model:
+                import base64
+                b64 = base64.b64encode(raw).decode()
+                body = json.dumps({
+                    "model": audio_model,
+                    "messages": [{"role": "user", "content": "Transcribe this audio exactly. Output only the words spoken.", "images": [b64]}],
+                    "stream": False, "keep_alive": "5m",
+                }).encode()
+                for base, _m in _ollama_backends():
+                    try:
+                        req = urllib.request.Request(base + "/api/chat", data=body, headers={"Content-Type": "application/json"})
+                        with urllib.request.urlopen(req, timeout=120) as resp:
+                            data = json.loads(resp.read())
+                        candidate = _clean(_clean_reply(data.get("message", {}).get("content", "")))
+                        if candidate:
+                            text, engine = candidate, f"ollama:{audio_model}"
+                            break
+                    except Exception:
+                        continue
+    finally:
+        try:
+            os.remove(src)
+            os.rmdir(tmp_dir)
+        except Exception:
+            pass
+
+    if not text:
+        return {
+            "text": "",
+            "engine": "none",
+            "detail": "No speech-to-text engine is installed on this computer. Type the question instead, or install whisper (pip install faster-whisper) or run whisper-server.",
+        }
+    return {"text": text, "engine": engine, "chars": len(text)}
+
+
+@app.get("/api/admin/transcribe/health")
+def transcribe_health():
+    """Report which speech-to-text engines are available right now."""
+    found = {"whisper_server": None, "whisper_cli": False, "faster_whisper": False, "ollama_audio": os.getenv("OLLAMA_AUDIO_MODEL", "") or None}
+    for port in (8081, 8080, 8001):
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=2) as resp:
+                if resp.status < 500:
+                    found["whisper_server"] = port
+                    break
+        except Exception:
+            continue
+    found["whisper_cli"] = bool(shutil.which("whisper"))
+    try:
+        import faster_whisper  # type: ignore  # noqa: F401
+        found["faster_whisper"] = True
+    except Exception:
+        pass
+    ready = bool(found["whisper_server"] or found["whisper_cli"] or found["faster_whisper"] or found["ollama_audio"])
+    return {"ready": ready, "engines": found}
+
+
 @app.post("/api/admin/ask", dependencies=[Depends(require_admin)])
 def admin_ask(payload: dict, db: Session = Depends(get_db)):
     """Ask the admin agent about anything in the hub. Always answers, even with no model."""
     question = str(payload.get("question", "")).strip()[:600]
     kind = str(payload.get("kind", "auto"))[:20]
+    session_id = str(payload.get("session_id") or "default")[:64]
     if not question and kind == "auto":
         raise HTTPException(422, "Ask a question first")
 
     snapshot = _admin_snapshot(db)
+    memory = _agent_memory_block(db, session_id)
     answer = _admin_answer(snapshot, question, kind)
-    hits = _product_search(question, limit=3) if question else []
-    if hits:
+    product_words = ("product", "recommend", "supplement", "capsule", "tea", "tablet", "drink",
+                     "plaster", "cream", "soap", "in store", "stock", "range", "which one",
+                     "that one", "first one", "second one", "third one", "how much is the")
+    product_hits = _product_search(question, limit=3) if question and any(w in question.lower() for w in product_words) else []
+    if product_hits and "From the store range" not in answer:
         answer = answer.rstrip() + "\n\nIn store: " + "; ".join(
-            f"{p['name']} ({p['spec']}) R{p['price']}" for p in hits) + "."
+            f"{p['name']} ({p['spec']}) R{p['price']}" for p in product_hits) + "."
     mode = "rules"
 
     try:
@@ -1570,7 +1870,8 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
             "clear sentences. Never invent a client, amount, phone number or date. If the draft does not answer "
             "the question, say what data is missing instead of guessing. No markdown."
         )
-        user = ("FACTS:\n" + json.dumps(snapshot, ensure_ascii=False)[:6000]
+        user = ((memory + "\n\n" if memory else "")
+                + "FACTS:\n" + json.dumps(snapshot, ensure_ascii=False)[:5000]
                 + "\n\nDRAFT ANSWER:\n" + answer
                 + "\n\nQUESTION: " + (question or "Give the daily summary"))
         body = json.dumps({
@@ -1587,7 +1888,17 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
                 with urllib.request.urlopen(req, timeout=25) as response:
                     data = json.loads(response.read())
                 polished = _clean_reply(data.get("message", {}).get("content", ""))
-                if len(polished) > 20:
+                low = polished.lower()
+                # A 1B model sometimes refuses or asks for data; the draft is already correct.
+                refusal = any(k in low for k in (
+                    "can't answer", "cannot answer", "what data is missing", "data missing",
+                    "missing from the facts", "i don't know", "i do not know", "unable to answer",
+                    "no data", "not enough information", "does not contain", "do not contain",
+                    "doesn't contain", "don't contain", "not provided", "isn't provided",
+                    "cannot provide", "can't provide", "medical advice",
+                    "anything else i can help", "not able to provide",
+                    "consult a doctor", "speak to a doctor", "based on the facts"))
+                if len(polished) > 20 and not refusal:
                     answer = polished
                     mode = "model"
                 break
@@ -1597,7 +1908,16 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
         pass
 
     products = _product_search(question, limit=3) if question else []
-    return {"answer": answer, "mode": mode, "facts": snapshot, "products": products}
+
+    # Remember the turn so the next question has context
+    try:
+        _agent_remember(db, session_id, "user", question or kind, mode)
+        _agent_remember(db, session_id, "assistant", answer, mode)
+    except Exception:
+        db.rollback()
+
+    return {"answer": answer, "mode": mode, "facts": snapshot, "products": products,
+            "session_id": session_id}
 
 
 def _whatsapp_link(phone: Optional[str], message: str) -> str:
