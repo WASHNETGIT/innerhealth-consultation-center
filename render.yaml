@@ -29,5 +29,11 @@ services:
         value: https://www.facebook.com/share/1Cfx8cayqM/
       - key: CLINIC_ADDRESS
         value: "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002"
+      - key: CLINIC_EMAIL
+        value: innerhealthconsult@gmail.com
+      - key: SMTP_FROM
+        value: innerhealthconsult@gmail.com
+      - key: RESEND_FROM
+        value: "Inner Health Consultation Center <innerhealthconsult@gmail.com>"
       - key: WHATSAPP_NUMBER
         value: "2785771853"

@@ -520,7 +520,7 @@ def _notify(client: Client, service: BookingService, when: datetime, token: str)
             from email.message import EmailMessage
             mail = EmailMessage()
             mail["Subject"] = "Inner Health Appointment Confirmation"
-            mail["From"] = os.getenv("SMTP_FROM", "bookings@innerhealth.co.za")
+            mail["From"] = os.getenv("SMTP_FROM") or os.getenv("CLINIC_EMAIL", "innerhealthconsult@gmail.com")
             mail["To"] = client.email
             mail.set_content(message)
             with smtplib.SMTP(os.getenv("SMTP_HOST"), int(os.getenv("SMTP_PORT", "587")), timeout=8) as smtp:
@@ -791,48 +791,149 @@ def process_command(payload: CommandRequest, db: Session = Depends(get_db)):
     return {"raw": raw, "intent": "general", "message": f"Processed: {raw}", "data": None}
 
 # ---------------------------------------------------------------------------
-# Assistant (Ollama Local Linux Integration)
+# Assistant (local lightweight Ollama model, clinic-grounded)
 # ---------------------------------------------------------------------------
+
+DEFAULT_OLLAMA_MODEL = "ihc-qwen3-4b"
+
+
+def _ollama_backends() -> List[tuple]:
+    """Ordered (url, model) pairs. The Mac mini primary is skipped while it is unreachable."""
+    pairs = [
+        (os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/"), os.getenv("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL)),
+        (os.getenv("OLLAMA_FALLBACK_BASE_URL", "http://127.0.0.1:11434").rstrip("/"), os.getenv("OLLAMA_FALLBACK_MODEL", DEFAULT_OLLAMA_MODEL)),
+    ]
+    seen, unique = set(), []
+    for url, model in pairs:
+        if (url, model) not in seen:
+            seen.add((url, model))
+            unique.append((url, model))
+    return unique
+
+
+def _assistant_facts(db: Session) -> Dict[str, Any]:
+    """Live clinic facts so the small model never has to guess."""
+    services = []
+    for s in db.query(BookingService).filter_by(is_active=True).all():
+        services.append({"id": s.id, "name": s.name, "minutes": s.duration_minutes,
+                         "price": s.price, "deposit": s.deposit})
+    hours = []
+    names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    for rule in db.query(AvailabilityRule).order_by(AvailabilityRule.day_of_week).all():
+        label = names[rule.day_of_week] if 0 <= rule.day_of_week < 7 else str(rule.day_of_week)
+        if rule.is_working_day and rule.start_time and rule.end_time:
+            hours.append(f"{label} {rule.start_time.strftime('%H:%M')}-{rule.end_time.strftime('%H:%M')}")
+        else:
+            hours.append(f"{label} closed")
+    return {"services": services, "hours": hours}
+
+
+def _public_service(db: Session) -> Optional[BookingService]:
+    return db.query(BookingService).filter_by(is_active=True).order_by(BookingService.id).first()
+
+
+def _next_open_slots(db: Session, service: Optional[BookingService], days: int = 10) -> Dict[str, List[str]]:
+    if not service:
+        return {}
+    found: Dict[str, List[str]] = {}
+    for offset in range(days):
+        day = app_today() + timedelta(days=offset)
+        slots = _slots(db, day, service)[:4]
+        if slots:
+            found[day.isoformat()] = slots
+        if len(found) >= 3:
+            break
+    return found
+
+
+def _assistant_system_prompt(db: Session) -> tuple:
+    facts = _assistant_facts(db)
+    service = _public_service(db)
+    slots = _next_open_slots(db, service)
+    money = lambda v: f"R{int(round(float(v or 0)))}"
+    lines = [
+        "You are the booking assistant for Inner Health Consultation Center, a wellness scan clinic in Sunnyside, Pretoria, South Africa.",
+        "Style: warm, plain, short. Two or three sentences at most. No markdown, no lists unless asked for the full price list.",
+        f"Address: {os.getenv('CLINIC_ADDRESS', '202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002')}.",
+        f"WhatsApp: +{os.getenv('WHATSAPP_NUMBER', '2785771853')}. Email: {os.getenv('CLINIC_EMAIL', 'innerhealthconsult@gmail.com')}. Booking page: /book",
+        "Services and prices: " + "; ".join(
+            f"{s['name']} {money(s['price'])} for {s['minutes']} minutes, {money(s['deposit'])} non-refundable deposit and the rest on arrival"
+            for s in facts["services"]),
+        "Opening hours: " + ", ".join(facts["hours"]) + ".",
+        "Deposits are paid by EFT: FNB, account name Ntombikayise N Mkhaliphi, account 62804835835, branch 250655, cheque account. Reply with the reference we give them.",
+    ]
+    if slots:
+        lines.append("Next open scan slots: " + "; ".join(f"{d} at {', '.join(v)}" for d, v in slots.items()) + ".")
+    lines += [
+        "Rules you must never break: you are not a doctor, you do not diagnose disease, prescribe medicine, interpret scan results or promise a cure. For anything clinical say the scan is reviewed with a qualified practitioner at the consultation.",
+        "If asked something you do not know about the clinic, say you will have the team confirm on WhatsApp rather than inventing it.",
+        "Only Inner Health matters. If asked about anything unrelated, gently bring the conversation back to booking a scan.",
+        "Never promise a slot until the booking page confirms it: always send them to /book to pick a time.",
+    ]
+    return "\n".join(lines), slots
+
+
+def _clean_reply(text: str) -> str:
+    reply = (text or "").strip()
+    # Small models leak their reasoning; keep only the answer.
+    if "<｜end▁of▁thinking｜>" in reply:
+        reply = reply.split("<｜end▁of▁thinking｜>")[-1]
+    for marker in ("<|im_end|>", "<|eot_id|>", "</s>"):
+        reply = reply.replace(marker, "")
+    return reply.strip()
+
 
 @app.get("/api/assistant/health")
 def assistant_health():
-    base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
-    fallback = os.getenv("OLLAMA_FALLBACK_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
-    model = os.getenv("OLLAMA_MODEL", "llama3.2")
-    result = {"connected": False, "primary": {"url": base, "connected": False},
-              "fallback": {"url": fallback, "connected": False}}
-    for name, url in [("primary", base), ("fallback", fallback)]:
+    result = {"connected": False, "backends": [], "model": os.getenv("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL)}
+    for url, model in _ollama_backends():
+        entry = {"url": url, "model": model, "connected": False}
         try:
             req = urllib.request.Request(url + "/api/tags")
             with urllib.request.urlopen(req, timeout=3) as response:
                 data = json.loads(response.read())
-            result[name] = {"url": url, "connected": True, "model": model,
-                            "models": [m.get("name") for m in data.get("models", [])]}
+            available = [m.get("name") for m in data.get("models", [])]
+            entry["connected"] = True
+            entry["has_model"] = model in available
+            entry["models"] = available
             result["connected"] = True
         except Exception as exc:
-            result[name]["error"] = str(exc)
+            entry["error"] = str(exc)
+        result["backends"].append(entry)
     return result
 
+
 @app.post("/api/assistant")
-def assistant_chat(payload: AssistantRequest):
-    backends = [(os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/"), os.getenv("OLLAMA_MODEL", "llama3.2")),
-                (os.getenv("OLLAMA_FALLBACK_BASE_URL", "http://127.0.0.1:11434").rstrip("/"), os.getenv("OLLAMA_FALLBACK_MODEL", "llama3.2"))]
-    history = [{"role": m.get("role"), "content": str(m.get("content", ""))[:4000]}
-               for m in payload.history[-10:] if m.get("role") in ("user", "assistant")]
-    history.append({"role": "user", "content": payload.message[:4000]})
+def assistant_chat(payload: AssistantRequest, db: Session = Depends(get_db)):
+    system_prompt, slots = _assistant_system_prompt(db)
+    history = [{"role": m.get("role"), "content": str(m.get("content", ""))[:2000]}
+               for m in payload.history[-6:] if m.get("role") in ("user", "assistant")]
+    history.append({"role": "user", "content": payload.message[:2000]})
     errors = []
-    for base, model in backends:
-        body = json.dumps({"model": model, "messages": [
-            {"role": "system", "content": "You are the warm, helpful wellness and booking assistant for Inner Health Consultation Center in South Africa. Give clear, concise information about full-body health scans and wellness. Do not diagnose disease or replace clinicians. For appointments, guide clients to /book."},
-            *history], "stream": False}).encode()
+    for base, model in _ollama_backends():
+        body = json.dumps({
+            "model": model,
+            "messages": [{"role": "system", "content": system_prompt}, *history],
+            "stream": False,
+            "keep_alive": os.getenv("OLLAMA_KEEP_ALIVE", "10m"),
+            "options": {"temperature": 0.3, "top_p": 0.9, "num_predict": 220},
+        }).encode()
         req = urllib.request.Request(base + "/api/chat", data=body, headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=60) as response:
+            with urllib.request.urlopen(req, timeout=int(os.getenv("OLLAMA_TIMEOUT", "90"))) as response:
                 data = json.loads(response.read())
-            return {"reply": data.get("message", {}).get("content", ""), "model": data.get("model", model), "backend": base}
+            return {"reply": _clean_reply(data.get("message", {}).get("content", "")),
+                    "model": data.get("model", model), "backend": base, "slots": slots}
         except Exception as exc:
             errors.append(f"{base}: {exc}")
-    raise HTTPException(503, "Ollama assistant is currently unreachable. " + " | ".join(errors))
+    raise HTTPException(503, "The assistant is busy right now. Please WhatsApp us on +"
+                        + os.getenv("WHATSAPP_NUMBER", "2785771853") + " and we will help you book.")
+
+
+@app.post("/api/assistant/book", status_code=201)
+def assistant_book(payload: dict, db: Session = Depends(get_db)):
+    """Create a booking from the assistant's slot picker, reusing the public booking rules."""
+    return create_public_booking(payload, db)
 
 # ---------------------------------------------------------------------------
 # Public Booking APIs
@@ -845,6 +946,7 @@ def public_config():
         "instagram": os.getenv("INSTAGRAM_URL", ""),
         "tiktok": os.getenv("TIKTOK_URL", ""),
         "whatsapp": os.getenv("WHATSAPP_NUMBER", "2785771853"),
+        "email": os.getenv("CLINIC_EMAIL", "innerhealthconsult@gmail.com"),
         "business_name": "Inner Health Consultation Center",
         "address": os.getenv("CLINIC_ADDRESS", "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002"),
     }
