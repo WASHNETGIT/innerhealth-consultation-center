@@ -388,8 +388,8 @@ def _seed_defaults():
             db.add_all([
                 BookingService(name="Full-body scan consultation", description="Full-body scan and consultation with an individual results review.", duration_minutes=45, price=450, deposit=150),
                 BookingService(name="Full-body scan follow-up", description="Follow-up scan consultation and progress review.", duration_minutes=45, price=450, deposit=150),
-                BookingService(name="Wellness report printout", description="Printed copy of your scan report.", duration_minutes=15, price=50, deposit=0),
             ])
+        db.query(BookingService).filter(BookingService.name.like("%Wellness report%")).delete(synchronize_session=False)
         if db.query(AvailabilityRule).count() == 0:
             for weekday in range(7):
                 working = weekday < 6
