@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Book | Inner Health Consultation Center</title><script src="https://cdn.tailwindcss.com"></script><style>body{background:#f7f8f4}.leaf{background:linear-gradient(135deg,#173b32,#28644e)}
+/* === LIQUID GLASS BUTTON SYSTEM === */
+button, .btn-glass, [data-service], [data-time], [data-day]:not(:disabled), .filter-btn {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+button:active:not(:disabled), .btn-glass:active, [data-service]:active, [data-time]:active, [data-day]:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98) !important;
+}
+
+/* Liquid Emerald Glass (Primary CTAs) */
+.leaf, button.leaf, .btn-primary, [type="submit"]:not(.btn-cancel), #new-booking, #new-sale {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(5, 150, 105, 0.88) 50%, rgba(4, 120, 87, 0.94) 100%) !important;
+  backdrop-filter: blur(14px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(190%) !important;
+  border: 1px solid rgba(167, 243, 208, 0.6) !important;
+  border-top-color: rgba(255, 255, 255, 0.75) !important;
+  border-bottom-color: rgba(4, 120, 87, 0.6) !important;
+  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.42), 0 3px 8px -2px rgba(5, 150, 105, 0.25), inset 0 1px 2px 0 rgba(255, 255, 255, 0.75), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.22) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.leaf:hover, button.leaf:hover, .btn-primary:hover, [type="submit"]:hover:not(.btn-cancel), #new-booking:hover, #new-sale:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.96) 0%, rgba(16, 185, 129, 0.92) 50%, rgba(5, 150, 105, 0.96) 100%) !important;
+  box-shadow: 0 14px 30px -4px rgba(16, 185, 129, 0.55), 0 6px 14px -2px rgba(5, 150, 105, 0.35), inset 0 1px 2.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Frosted Liquid Glass (Secondary / Light buttons & service cards) */
+[data-service], [data-time], [data-day]:not(:disabled), .border.bg-white:not(input):not(textarea), #prev, #next, #back, #password-close, #booking-close, #sale-close {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(248, 250, 252, 0.45) 100%) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: rgba(203, 213, 225, 0.5) !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04) !important;
+}
+[data-service]:hover, [data-time]:hover, [data-day]:hover:not(:disabled), #prev:hover, #next:hover, #back:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(220, 252, 231, 0.6) 100%) !important;
+  border-color: rgba(110, 231, 183, 0.8) !important;
+  box-shadow: 0 10px 22px -3px rgba(16, 185, 129, 0.18), 0 4px 8px -2px rgba(16, 185, 129, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Nav / Dark Liquid Glass Buttons */
+header nav button, header nav a, #password-open, #refresh {
+  background: linear-gradient(135deg, rgba(51, 65, 85, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-top-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25) !important;
+}
+header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hover {
+  transform: translateY(-1.5px) !important;
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.85) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 10px 22px -2px rgba(0, 0, 0, 0.35), inset 0 1px 2px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+</style></head><body class="text-slate-800"><header class="leaf text-white"><div class="max-w-5xl mx-auto px-5 py-5 flex justify-between items-center"><a href="/book" class="flex items-center gap-3"><img src="/static/logo.jpg" alt="Inner Health Consultation Hub" class="h-12 w-12 rounded-lg object-cover"><span class="font-semibold tracking-tight">INNER HEALTH <span class="text-emerald-200">CONSULTATION CENTER</span></span></a><a href="/admin/bookings" class="text-sm text-emerald-100">Staff sign in</a></div></header><main class="max-w-5xl mx-auto px-5 py-10"><div class="grid md:grid-cols-[1fr_360px] gap-10 items-start"><section><p class="uppercase tracking-[.2em] text-emerald-800 text-xs font-bold">A little time for your wellbeing</p><h1 class="text-4xl md:text-5xl font-semibold mt-3 leading-tight">Book your consultation</h1><p class="mt-4 text-slate-600 max-w-xl">Choose a service and a time that works for you. We’ll send your appointment details straight to your inbox.</p><div class="flex items-center gap-3 mt-8 text-xs font-medium"><span class="step bg-emerald-800 text-white rounded-full w-7 h-7 grid place-items-center">1</span><span>Service</span><span class="h-px w-8 bg-slate-300"></span><span class="step bg-slate-200 rounded-full w-7 h-7 grid place-items-center">2</span><span>Date & time</span><span class="h-px w-8 bg-slate-300"></span><span class="step bg-slate-200 rounded-full w-7 h-7 grid place-items-center">3</span><span>Your details</span></div><div id="content" class="mt-7"></div></section><aside class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"><h2 class="font-semibold">Your appointment</h2><div id="summary" class="mt-4 text-sm text-slate-500">Select a service to get started.</div><div class="mt-6 pt-5 border-t text-xs text-slate-500">Questions? Contact us and we’ll be happy to help.</div></aside></div></main><footer class="max-w-5xl mx-auto px-5 pb-10 text-center"><div id="social-links" class="flex justify-center gap-3 flex-wrap"></div><p class="text-xs text-slate-400 mt-4">Follow Inner Health Consultation Center or share our booking page.</p></footer><script>
+const $=s=>document.querySelector(s); let services=[], service=null, month=new Date(), selectedDate='', selectedTime='', step=1;
+const money=n=>new Intl.NumberFormat('en-ZA',{style:'currency',currency:'ZAR'}).format(n);
+async function api(url,opt){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opt});let d=await r.json();if(!r.ok)throw Error(d.detail||'Something went wrong');return d}
+function summary(){ $('#summary').innerHTML=service?`<div class="font-medium text-slate-800">${service.name}</div><div class="mt-1">${service.duration_minutes} minutes · ${money(service.price)} total</div><div class="mt-1 text-emerald-800 font-medium">${money(service.deposit)} non-refundable deposit your appointment</div>${selectedDate?`<div class="mt-3 text-slate-800">${new Date(selectedDate+'T12:00').toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long'})} · ${selectedTime||'Choose a time'}</div>`:''}`:'Select a service to get started.'}
+function progress(n){document.querySelectorAll('.step').forEach((x,i)=>{x.className='step rounded-full w-7 h-7 grid place-items-center '+(i<n?'bg-emerald-800 text-white':'bg-slate-200')})}
+function renderServices(){step=1;progress(1);$('#content').innerHTML='<h2 class="text-lg font-semibold mb-3">Choose a service</h2><div class="grid gap-3">'+services.map(s=>`<button data-service="${s.id}" class="text-left bg-white border rounded-xl p-5 hover:border-emerald-700 hover:shadow-sm"><span class="font-semibold">${s.name}</span><span class="float-right font-semibold">${money(s.price)}</span><p class="text-sm text-slate-500 mt-2">${s.description||''}</p><p class="text-xs text-slate-500 mt-2">${s.duration_minutes} minutes · ${money(s.deposit)} non-refundable deposit</p></button>`).join('')+'</div>';document.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{service=services.find(s=>s.id==b.dataset.service);summary();renderCalendar()})}
+async function renderCalendar(){step=2;progress(2);selectedDate='';selectedTime='';summary();let key=month.getFullYear()+'-'+String(month.getMonth()+1).padStart(2,'0');let data=await api(`/api/public/calendar?month=${key}&service_id=${service.id}`);let first=new Date(month.getFullYear(),month.getMonth(),1), offset=(first.getDay()+6)%7, days=Object.entries(data.days);$('#content').innerHTML=`<button id="back" class="text-sm text-emerald-800 mb-4">← Services</button><h2 class="text-lg font-semibold">Choose a date & time</h2><div class="bg-white border rounded-xl p-4 mt-3"><div class="flex justify-between items-center mb-3"><button id="prev" class="px-3 py-1 rounded hover:bg-slate-100">←</button><strong>${first.toLocaleDateString('en-ZA',{month:'long',year:'numeric'})}</strong><button id="next" class="px-3 py-1 rounded hover:bg-slate-100">→</button></div><div class="grid grid-cols-7 text-center text-xs text-slate-400 mb-2">${['M','T','W','T','F','S','S'].map(x=>`<span>${x}</span>`).join('')}</div><div class="grid grid-cols-7 gap-1">${Array.from({length:offset},()=>'<span></span>').join('')}${days.map(([d,ok])=>{let n=Number(d.slice(-2));let past=d<new Date().toISOString().slice(0,10);return `<button ${ok&&!past?'':'disabled'} data-day="${d}" class="py-2 rounded-lg text-sm ${ok&&!past?'hover:bg-emerald-100 text-emerald-900 font-medium':'text-slate-300'}">${n}</button>`}).join('')}</div></div><div id="slots" class="mt-4"></div>`;$('#back').onclick=renderServices;$('#prev').onclick=()=>{month.setMonth(month.getMonth()-1);renderCalendar()};$('#next').onclick=()=>{month.setMonth(month.getMonth()+1);renderCalendar()};document.querySelectorAll('[data-day]').forEach(b=>b.onclick=async()=>{selectedDate=b.dataset.day;let slots=await api(`/api/public/slots?day=${selectedDate}&service_id=${service.id}`);$('#slots').innerHTML='<h3 class="font-medium mb-2">Available times</h3><div class="flex flex-wrap gap-2">'+slots.slots.map(t=>`<button data-time="${t}" class="border bg-white px-4 py-2 rounded-lg text-sm hover:border-emerald-800">${t}</button>`).join('')+'</div>';document.querySelectorAll('[data-time]').forEach(x=>x.onclick=()=>{selectedTime=x.dataset.time;summary();renderDetails()})})}
+function renderDetails(){step=3;progress(3);summary();$('#content').innerHTML=`<button id="back" class="text-sm text-emerald-800 mb-4">← Date & time</button><h2 class="text-lg font-semibold">Your details</h2><form id="form" class="bg-white border rounded-xl p-5 mt-3 space-y-4"><label class="block text-sm">Full name<input name="full_name" required minlength="2" class="mt-1 w-full border rounded-lg p-3" autocomplete="name"></label><label class="block text-sm">Email address<input name="email" type="email" required class="mt-1 w-full border rounded-lg p-3" autocomplete="email"></label><label class="block text-sm">WhatsApp number<input name="phone_whatsapp" type="tel" required pattern="\\+?[0-9][0-9 ()-]{7,18}" placeholder="+27 82 123 4567" class="mt-1 w-full border rounded-lg p-3" autocomplete="tel"></label><div class="grid sm:grid-cols-2 gap-3"><label class="block text-sm">Date of birth <span class="text-slate-400">(optional)</span><input name="date_of_birth" type="date" class="mt-1 w-full border rounded-lg p-3"></label><label class="block text-sm">Gender <span class="text-slate-400">(optional)</span><select name="gender" class="mt-1 w-full border rounded-lg p-3"><option value="">Prefer not to say</option><option>Female</option><option>Male</option><option>Non-binary</option><option>Self-describe</option></select></label></div><label class="block text-sm">Pre-scan notes <span class="text-slate-400">(optional; share only what is relevant)</span><textarea name="medical_notes" rows="3" class="mt-1 w-full border rounded-lg p-3"></textarea></label><label class="block text-sm">Anything else? <span class="text-slate-400">(optional)</span><textarea name="notes" rows="2" class="mt-1 w-full border rounded-lg p-3"></textarea></label><p id="error" class="text-red-700 text-sm"></p><button class="w-full leaf text-white rounded-lg py-3 font-medium">Confirm booking</button></form>`;$('#back').onclick=renderCalendar;$('#form').onsubmit=async e=>{e.preventDefault();let body=Object.fromEntries(new FormData(e.target));Object.assign(body,{service_id:service.id,date:selectedDate,start_time:selectedTime});try{let b=await api('/api/public/bookings',{method:'POST',body:JSON.stringify(body)});location.href=b.manage_url+'?confirmed=1'}catch(err){$('#error').textContent=err.message;if(err.message.includes('booked'))renderCalendar()}}}
+(async()=>{services=await api('/api/public/services');let c=await api('/api/public/config');let links=[];for(let [label,url] of [['Facebook',c.facebook],['Instagram',c.instagram],['TikTok',c.tiktok]])if(url)links.push(`<a target="_blank" rel="noopener" href="${url}" class="border bg-white rounded-full px-4 py-2 text-sm">${label}</a>`);if(c.whatsapp)links.push(`<a target="_blank" rel="noopener" href="https://wa.me/${c.whatsapp.replace(/[^0-9]/g,'')}?text=${encodeURIComponent('Hi, I would like to book a full-body scan consultation.') }" class="bg-emerald-800 text-white rounded-full px-4 py-2 text-sm">WhatsApp us</a>`);$('#social-links').innerHTML=links.join('');renderServices()})();</script></body></html>

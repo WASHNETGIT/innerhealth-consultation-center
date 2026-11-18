@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inner Health Consultation Center — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .fade-in { animation: fade 0.25s ease-in; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px);} to {opacity:1; transform:none;} }
+  
+/* === LIQUID GLASS BUTTON SYSTEM === */
+button, .btn-glass, [data-service], [data-time], [data-day]:not(:disabled), .filter-btn {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+button:active:not(:disabled), .btn-glass:active, [data-service]:active, [data-time]:active, [data-day]:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98) !important;
+}
+
+/* Liquid Emerald Glass (Primary CTAs) */
+.leaf, button.leaf, .btn-primary, [type="submit"]:not(.btn-cancel), #new-booking, #new-sale {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(5, 150, 105, 0.88) 50%, rgba(4, 120, 87, 0.94) 100%) !important;
+  backdrop-filter: blur(14px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(190%) !important;
+  border: 1px solid rgba(167, 243, 208, 0.6) !important;
+  border-top-color: rgba(255, 255, 255, 0.75) !important;
+  border-bottom-color: rgba(4, 120, 87, 0.6) !important;
+  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.42), 0 3px 8px -2px rgba(5, 150, 105, 0.25), inset 0 1px 2px 0 rgba(255, 255, 255, 0.75), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.22) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.leaf:hover, button.leaf:hover, .btn-primary:hover, [type="submit"]:hover:not(.btn-cancel), #new-booking:hover, #new-sale:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.96) 0%, rgba(16, 185, 129, 0.92) 50%, rgba(5, 150, 105, 0.96) 100%) !important;
+  box-shadow: 0 14px 30px -4px rgba(16, 185, 129, 0.55), 0 6px 14px -2px rgba(5, 150, 105, 0.35), inset 0 1px 2.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Frosted Liquid Glass (Secondary / Light buttons & service cards) */
+[data-service], [data-time], [data-day]:not(:disabled), .border.bg-white:not(input):not(textarea), #prev, #next, #back, #password-close, #booking-close, #sale-close {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(248, 250, 252, 0.45) 100%) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: rgba(203, 213, 225, 0.5) !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04) !important;
+}
+[data-service]:hover, [data-time]:hover, [data-day]:hover:not(:disabled), #prev:hover, #next:hover, #back:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(220, 252, 231, 0.6) 100%) !important;
+  border-color: rgba(110, 231, 183, 0.8) !important;
+  box-shadow: 0 10px 22px -3px rgba(16, 185, 129, 0.18), 0 4px 8px -2px rgba(16, 185, 129, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Nav / Dark Liquid Glass Buttons */
+header nav button, header nav a, #password-open, #refresh {
+  background: linear-gradient(135deg, rgba(51, 65, 85, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-top-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25) !important;
+}
+header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hover {
+  transform: translateY(-1.5px) !important;
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.85) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 10px 22px -2px rgba(0, 0, 0, 0.35), inset 0 1px 2px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+</style>
+</head>
+<body class="h-full bg-slate-100 text-slate-800 font-sans" x-data="hub()" x-init="init()">
+
+  <!-- Top Bar -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
+      <div class="text-lg sm:text-xl font-bold tracking-tight flex items-center gap-2">
+        <img src="/static/logo.jpg" alt="Inner Health" class="h-10 w-10 rounded-lg object-cover bg-white">
+        <span>Inner Health <span class="text-emerald-400">Scan Center</span></span>
+      </div>
+      <nav class="flex gap-1 ml-2 flex-wrap">
+        <template x-for="t in tabs" :key="t.id">
+          <button @click="active=t.id"
+            :class="active===t.id ? 'bg-emerald-500 text-white' : 'text-slate-300 hover:bg-slate-700'"
+            class="px-3 py-1.5 rounded-lg text-sm font-medium transition capitalize">
+            <span x-text="t.id==='hub' ? '🏠 Hub' : (pillarById(t.id)?.icon+' '+t.name)"></span>
+          </button>
+        </template>
+      </nav>
+      <div class="ml-auto flex items-center gap-3 text-sm">
+        <span class="hidden md:inline text-slate-400" x-text="'Clients: ' + (dashboard?.total_clients||0)"></span>
+        <a href="/book" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg">Book online</a><a href="/admin/bookings" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg">Booking admin</a><button @click="refreshAll()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- Command Bar -->
+    <div class="bg-slate-800 border-t border-slate-700">
+      <div class="max-w-7xl mx-auto px-4 py-2 flex items-center gap-2">
+        <span class="text-emerald-400 font-mono text-sm">⌘</span>
+        <input x-model="command" @keydown.enter="runCommand()"
+          placeholder='Type a command e.g. "Book John for a health consult on Thursday at 10 AM"'
+          class="flex-1 bg-slate-900 text-white text-sm px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+          autocomplete="off" />
+        <button @click="runCommand()" class="bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          Run
+        </button>
+      </div>
+      <div x-show="cmdMsg" x-cloak x-transition
+        :class="cmdError ? 'bg-red-900 text-red-100' : 'bg-emerald-900 text-emerald-100'"
+        class="max-w-7xl mx-auto mx-4 mb-2 px-3 py-2 rounded-lg text-sm" x-text="cmdMsg"></div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- ================= HUB ================= -->
+    <section x-show="active==='hub'" x-cloak>
+      <!-- Stat cards -->
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="text-3xl font-bold text-slate-800" x-text="dashboard?.total_clients||0"></div>
+          <div class="text-xs text-slate-500 uppercase tracking-wide">Total Clients</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="text-3xl font-bold text-slate-800" x-text="dashboard?.week_appointments||0"></div>
+          <div class="text-xs text-slate-500 uppercase tracking-wide">This Week Appts</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="text-3xl font-bold text-emerald-700" x-text="dashboard?.today_bookings||0"></div>
+          <div class="text-xs text-slate-500 uppercase tracking-wide">Today's Bookings</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="text-3xl font-bold text-emerald-700" x-text="dashboard?.upcoming_bookings||0"></div>
+          <div class="text-xs text-slate-500 uppercase tracking-wide">Upcoming Bookings</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="text-3xl font-bold text-amber-600" x-text="dashboard?.low_stock_count||0"></div>
+          <div class="text-xs text-slate-500 uppercase tracking-wide">Low Stock Items</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="text-3xl font-bold text-sky-600" x-text="dashboard?.pending_reminders||0"></div>
+          <div class="text-xs text-slate-500 uppercase tracking-wide">Pending Reminders</div>
+        </div>
+      </div>
+
+      <!-- Per-pillar overview -->
+      <h2 class="text-lg font-semibold mb-3">Venture Overview</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <template x-for="p in pillars" :key="p.id">
+          <button @click="active=p.id"
+            class="bg-white rounded-xl shadow p-4 text-left hover:shadow-md transition border-l-4"
+            :style="`border-color:${p.color}`">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-2xl" x-text="p.icon"></span>
+              <span class="font-semibold" x-text="p.name"></span>
+            </div>
+            <div class="text-xs text-slate-500 mb-2" x-text="p.desc"></div>
+            <div class="flex gap-4 text-sm">
+              <div><span class="font-bold" x-text="dashboard?.per_pillar?.[p.id]?.week_appointments||0"></span> appts</div>
+              <div><span class="font-bold" x-text="dashboard?.per_pillar?.[p.id]?.clients||0"></span> clients</div>
+            </div>
+          </button>
+        </template>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Upcoming -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <h3 class="font-semibold mb-3">Upcoming This Week</h3>
+          <ul class="space-y-2 max-h-72 overflow-auto">
+            <template x-for="a in (dashboard?.upcoming||[])" :key="a.id">
+              <li class="flex items-center gap-3 text-sm border-b border-slate-100 pb-2">
+                <span class="w-2 h-2 rounded-full" :style="`background:${pillarById(a.pillar)?.color}`"></span>
+                <span class="font-medium" x-text="a.title"></span>
+                <span class="ml-auto text-slate-500" x-text="fmtDate(a.date) + ' ' + a.start"></span>
+              </li>
+            </template>
+            <li x-show="!(dashboard?.upcoming||[]).length" class="text-sm text-slate-400">No upcoming appointments.</li>
+          </ul>
+        </div>
+        <!-- Low stock -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <h3 class="font-semibold mb-3 text-amber-700">⚠ Low Stock Alerts</h3>
+          <ul class="space-y-2 max-h-72 overflow-auto">
+            <template x-for="i in (dashboard?.low_stock||[])" :key="i.id">
+              <li class="flex items-center gap-3 text-sm border-b border-slate-100 pb-2">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span class="font-medium" x-text="i.name"></span>
+                <span class="ml-auto text-slate-500"><span x-text="i.quantity"></span> / reorder <span x-text="i.reorder_level"></span></span>
+              </li>
+            </template>
+            <li x-show="!(dashboard?.low_stock||[]).length" class="text-sm text-slate-400">All stock levels healthy.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PILLAR VIEWS ================= -->
+    <template x-for="p in pillars" :key="p.id">
+      <section x-show="active===p.id" x-cloak>
+        <!-- Pillar header -->
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-3xl" :style="`filter:drop-shadow(0 0 6px ${p.color})`" x-text="p.icon"></span>
+          <div>
+            <h2 class="text-xl font-bold" x-text="p.name"></h2>
+            <p class="text-sm text-slate-500" x-text="p.desc"></p>
+          </div>
+        </div>
+
+        <!-- Tab sub-nav -->
+        <div class="flex gap-2 mb-4 border-b border-slate-200 flex-wrap">
+          <button @click="subtab[p.id]='schedule'"
+            :class="subtab[p.id]==='schedule' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-500'"
+            class="px-3 py-2 border-b-2 text-sm font-medium">📅 Schedule</button>
+          <button @click="subtab[p.id]='clients'"
+            :class="subtab[p.id]==='clients' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-500'"
+            class="px-3 py-2 border-b-2 text-sm font-medium">👥 Clients</button>
+          <template x-if="p.id==='innerhealth' || p.id==='it'">
+            <button @click="subtab[p.id]='inventory'"
+              :class="subtab[p.id]==='inventory' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-500'"
+              class="px-3 py-2 border-b-2 text-sm font-medium">📦 Inventory</button>
+          </template>
+          <button @click="subtab[p.id]='services'"
+            :class="subtab[p.id]==='services' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-slate-500'"
+            class="px-3 py-2 border-b-2 text-sm font-medium">🛠 Services</button>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div x-show="subtab[p.id]==='schedule'">
+          <div class="bg-white rounded-xl shadow p-4 mb-4 flex items-center gap-3 flex-wrap">
+            <span class="text-sm text-slate-500">Week of</span>
+            <input type="date" x-model="weekStart" @change="loadAppointments()" class="border rounded-lg px-2 py-1 text-sm" />
+            <button @click="shiftWeek(-7)" class="px-3 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-sm">‹ Prev</button>
+            <button @click="shiftWeek(7)" class="px-3 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-sm">Next ›</button>
+            <button @click="openApptModal(p.id)" class="ml-auto bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-lg text-sm font-medium">+ New Appointment</button>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-500 border-b">
+                  <th class="text-left py-2 pr-4 font-medium">Time</th>
+                  <template x-for="d in 7" :key="d">
+                    <th class="text-left py-2 px-2 font-medium" x-text="dayLabel(d-1)"></th>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="hr in hours" :key="hr">
+                  <tr class="border-b border-slate-100">
+                    <td class="py-1 pr-4 text-slate-400 font-mono" x-text="fmtHour(hr)"></td>
+                    <template x-for="d in 7" :key="d">
+                      <td class="px-1 py-1 align-top" style="min-width:120px;height:46px">
+                        <template x-for="a in apptsFor(d-1, hr)" :key="a.id">
+                          <div class="rounded px-2 py-1 text-xs text-white mb-1 cursor-pointer hover:opacity-80"
+                               :style="`background:${pillarById(a.pillar)?.color}`"
+                               @click="editAppt(a)" x-text="a.title + ' · ' + a.start"></div>
+                        </template>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">🎨 Thematic batching day for <span x-text="p.name"></span>:
+            <span class="font-medium" x-text="dayName(configs[p.id]?.batch_day)"></span>.
+            Configure in Settings.</p>
+        </div>
+
+        <!-- CLIENTS -->
+        <div x-show="subtab[p.id]==='clients'">
+          <div class="bg-white rounded-xl shadow p-4 mb-4 flex gap-2 flex-wrap">
+            <input x-model="clientSearch" @input.debounce.300ms="loadClients(p.id)" placeholder="Search clients..."
+              class="border rounded-lg px-3 py-1.5 text-sm flex-1 min-w-[200px]" />
+            <button @click="openClientModal()" class="bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-lg text-sm font-medium">+ New Client</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <template x-for="c in clients" :key="c.id">
+              <div class="bg-white rounded-xl shadow p-4 hover:shadow-md transition cursor-pointer"
+                   @click="openClientDetail(c.id)">
+                <div class="font-semibold" x-text="c.name"></div>
+                <div class="text-xs text-slate-500 mt-1" x-text="c.phone || 'no phone'"></div>
+                <div class="text-xs text-slate-500" x-text="c.email || ''"></div>
+                <div class="mt-2 flex gap-3 text-xs text-slate-500">
+                  <span x-text="c.appointment_count + ' appts'"></span>
+                  <span x-text="c.service_count + ' services'"></span>
+                </div>
+              </div>
+            </template>
+            <div x-show="!clients.length" class="text-slate-400 text-sm col-span-full">No clients yet.</div>
+          </div>
+        </div>
+
+        <!-- INVENTORY -->
+        <div x-show="subtab[p.id]==='inventory'">
+          <div class="bg-white rounded-xl shadow p-4 mb-4 flex gap-2 flex-wrap items-center">
+            <label class="text-sm flex items-center gap-2">
+              <input type="checkbox" x-model="lowOnly" @change="loadInventory(p.id)" /> Low stock only
+            </label>
+            <button @click="openItemModal(p.id)" class="ml-auto bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-lg text-sm font-medium">+ Add Item</button>
+          </div>
+          <div class="bg-white rounded-xl shadow overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 text-slate-500">
+                <tr>
+                  <th class="text-left py-2 px-3">Item</th>
+                  <th class="text-left py-2 px-3">Category</th>
+                  <th class="text-right py-2 px-3">Qty</th>
+                  <th class="text-right py-2 px-3">Reorder</th>
+                  <th class="text-right py-2 px-3">Value</th>
+                  <th class="text-center py-2 px-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="i in inventory" :key="i.id">
+                  <tr class="border-b border-slate-100" :class="i.low ? 'bg-amber-50' : ''">
+                    <td class="py-2 px-3 font-medium" x-text="i.name"></td>
+                    <td class="py-2 px-3 text-slate-500" x-text="i.category||'-'"></td>
+                    <td class="py-2 px-3 text-right" :class="i.low ? 'text-amber-700 font-bold' : ''" x-text="i.quantity"></td>
+                    <td class="py-2 px-3 text-right text-slate-500" x-text="i.reorder_level"></td>
+                    <td class="py-2 px-3 text-right" x-text="'R'+ (i.value||0).toFixed(2)"></td>
+                    <td class="py-2 px-3 text-center whitespace-nowrap">
+                      <button @click="adjustStock(i, 1)" class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200">+1</button>
+                      <button @click="adjustStock(i, -1)" class="px-2 py-0.5 bg-red-100 text-red-700 rounded hover:bg-red-200">-1</button>
+                      <button @click="editItem(i)" class="px-2 py-0.5 bg-slate-100 rounded hover:bg-slate-200">✎</button>
+                    </td>
+                  </tr>
+                </template>
+                <tr x-show="!inventory.length"><td colspan="6" class="py-4 text-center text-slate-400">No inventory items.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SERVICES -->
+        <div x-show="subtab[p.id]==='services'">
+          <div class="bg-white rounded-xl shadow p-4 mb-4 flex gap-2 flex-wrap">
+            <select x-model="serviceClientId" class="border rounded-lg px-2 py-1.5 text-sm">
+              <option value="">Select client...</option>
+              <template x-for="c in clients" :key="c.id">
+                <option :value="c.id" x-text="c.name"></option>
+              </template>
+            </select>
+            <input x-model="serviceDesc" placeholder="Service description..." class="border rounded-lg px-3 py-1.5 text-sm flex-1 min-w-[200px]" />
+            <input x-model="serviceAmount" type="number" step="0.01" placeholder="Amount" class="border rounded-lg px-2 py-1.5 text-sm w-28" />
+            <button @click="addService(p.id)" class="bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-lg text-sm font-medium">Log Service</button>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4">
+            <template x-for="c in clients" :key="c.id">
+              <div class="mb-4" x-show="servicesByClient[c.id]?.length">
+                <div class="font-semibold text-sm mb-1" x-text="c.name"></div>
+                <ul class="space-y-1">
+                  <template x-for="s in servicesByClient[c.id]||[]" :key="s.id">
+                    <li class="text-sm text-slate-600 flex gap-2 border-b border-slate-100 pb-1">
+                      <span x-text="s.performed_on||'n/a'"></span>
+                      <span class="flex-1" x-text="s.description"></span>
+                      <span class="text-slate-400" x-text="s.amount ? 'R'+s.amount : ''"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+            <div x-show="!Object.keys(servicesByClient).length" class="text-slate-400 text-sm">No service records.</div>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <!-- ================= SETTINGS ================= -->
+    <section x-show="active==='settings'" x-cloak>
+      <h2 class="text-lg font-semibold mb-3">⚙ Settings — Thematic Batching & Reminders</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <template x-for="p in pillars" :key="p.id">
+          <div class="bg-white rounded-xl shadow p-4">
+            <div class="font-semibold mb-2 flex items-center gap-2">
+              <span x-text="p.icon"></span><span x-text="p.name"></span>
+            </div>
+            <label class="text-sm text-slate-600 block mb-1">Batching day</label>
+            <select x-model.number="configs[p.id].batch_day" @change="saveConfig(p.id)"
+              class="border rounded-lg px-2 py-1.5 text-sm w-full mb-3">
+              <template x-for="(d,idx) in dayNames" :key="idx">
+                <option :value="idx" x-text="d"></option>
+              </template>
+            </select>
+            <label class="text-sm text-slate-600 block mb-1">Reminder channel</label>
+            <select x-model="configs[p.id].reminder_channel" @change="saveConfig(p.id)"
+              class="border rounded-lg px-2 py-1.5 text-sm w-full mb-3">
+              <option value="whatsapp">WhatsApp</option>
+              <option value="sms">SMS</option>
+              <option value="email">Email</option>
+              <option value="none">None</option>
+            </select>
+            <label class="text-sm text-slate-600 block mb-1">Remind hours before</label>
+            <input type="number" x-model.number="configs[p.id].reminder_hours_before" @change="saveConfig(p.id)"
+              class="border rounded-lg px-2 py-1.5 text-sm w-full" />
+          </div>
+        </template>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-4 mt-4">
+        <h3 class="font-semibold mb-2">🔔 Automated Reminders (placeholder hooks)</h3>
+        <div class="flex gap-2 mb-3 flex-wrap">
+          <button @click="generateReminders()" class="bg-sky-500 hover:bg-sky-400 text-white px-3 py-1.5 rounded-lg text-sm font-medium">Generate Reminders</button>
+          <button @click="sendAllReminders()" class="bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-lg text-sm font-medium">Send All (placeholder)</button>
+        </div>
+        <ul class="space-y-2 max-h-72 overflow-auto">
+          <template x-for="r in reminders" :key="r.id">
+            <li class="flex items-center gap-2 text-sm border-b border-slate-100 pb-2">
+              <span class="px-2 py-0.5 rounded text-xs"
+                :class="r.status==='sent' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                x-text="r.status"></span>
+              <span class="capitalize font-medium" x-text="r.channel"></span>
+              <span class="text-slate-600" x-text="r.message"></span>
+              <button @click="sendReminder(r)" class="ml-auto text-xs px-2 py-1 bg-slate-100 rounded hover:bg-slate-200">Send</button>
+            </li>
+          </template>
+          <li x-show="!reminders.length" class="text-sm text-slate-400">No reminders generated yet.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ Appointment Modal ============ -->
+  <div x-show="apptModal" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-40 p-4"
+       @click.self="apptModal=false">
+    <div class="bg-white rounded-xl shadow-xl p-5 w-full max-w-md fade-in">
+      <h3 class="font-semibold mb-4" x-text="apptForm.id ? 'Edit Appointment' : 'New Appointment'"></h3>
+      <div class="space-y-3 text-sm">
+        <input x-model="apptForm.title" placeholder="Title" class="w-full border rounded-lg px-3 py-2" />
+        <select x-model="apptForm.pillar" class="w-full border rounded-lg px-3 py-2">
+          <template x-for="p in pillars" :key="p.id">
+            <option :value="p.id" x-text="p.name"></option>
+          </template>
+        </select>
+        <select x-model="apptForm.client_id" class="w-full border rounded-lg px-3 py-2">
+          <option value="">No client</option>
+          <template x-for="c in clients" :key="c.id">
+            <option :value="c.id" x-text="c.name"></option>
+          </template>
+        </select>
+        <div class="flex gap-2">
+          <input type="date" x-model="apptForm.date" class="flex-1 border rounded-lg px-3 py-2" />
+        </div>
+        <div class="flex gap-2">
+          <input type="time" x-model="apptForm.start_time" class="flex-1 border rounded-lg px-3 py-2" />
+          <input type="time" x-model="apptForm.end_time" class="flex-1 border rounded-lg px-3 py-2" />
+        </div>
+        <textarea x-model="apptForm.notes" placeholder="Notes" class="w-full border rounded-lg px-3 py-2"></textarea>
+        <div x-show="apptConflicts.length" class="bg-red-50 text-red-700 text-xs p-2 rounded">
+          ⚠ <span x-text="apptConflicts.length"></span> conflict(s):
+          <template x-for="c in apptConflicts" :key="c.id">
+            <span class="block" x-text="c.title + ' — ' + c.date + ' ' + c.start"></span>
+          </template>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button x-show="apptForm.id" @click="deleteAppt()" class="px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm">Delete</button>
+        <button @click="saveAppt()" class="ml-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg text-sm font-medium">Save</button>
+        <button @click="apptModal=false" class="px-4 py-2 bg-slate-200 rounded-lg text-sm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Client Modal ============ -->
+  <div x-show="clientModal" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-40 p-4"
+       @click.self="clientModal=false">
+    <div class="bg-white rounded-xl shadow-xl p-5 w-full max-w-md fade-in">
+      <h3 class="font-semibold mb-4">New Client</h3>
+      <div class="space-y-3 text-sm">
+        <input x-model="clientForm.name" placeholder="Full name" class="w-full border rounded-lg px-3 py-2" />
+        <input x-model="clientForm.phone" placeholder="Phone" class="w-full border rounded-lg px-3 py-2" />
+        <input x-model="clientForm.email" placeholder="Email" class="w-full border rounded-lg px-3 py-2" />
+        <select x-model="clientForm.pillar" class="w-full border rounded-lg px-3 py-2">
+          <option value="">Primary pillar (optional)</option>
+          <template x-for="p in pillars" :key="p.id">
+            <option :value="p.id" x-text="p.name"></option>
+          </template>
+        </select>
+        <textarea x-model="clientForm.notes" placeholder="Notes" class="w-full border rounded-lg px-3 py-2"></textarea>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button @click="saveClient()" class="ml-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg text-sm font-medium">Save</button>
+        <button @click="clientModal=false" class="px-4 py-2 bg-slate-200 rounded-lg text-sm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Item Modal ============ -->
+  <div x-show="itemModal" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-40 p-4"
+       @click.self="itemModal=false">
+    <div class="bg-white rounded-xl shadow-xl p-5 w-full max-w-md fade-in">
+      <h3 class="font-semibold mb-4" x-text="itemForm.id ? 'Edit Item' : 'New Inventory Item'"></h3>
+      <div class="space-y-3 text-sm">
+        <input x-model="itemForm.name" placeholder="Item name" class="w-full border rounded-lg px-3 py-2" />
+        <input x-model="itemForm.category" placeholder="Category" class="w-full border rounded-lg px-3 py-2" />
+        <input x-model="itemForm.sku" placeholder="SKU" class="w-full border rounded-lg px-3 py-2" />
+        <div class="flex gap-2">
+          <input type="number" x-model.number="itemForm.quantity" placeholder="Qty" class="flex-1 border rounded-lg px-3 py-2" />
+          <input type="number" x-model.number="itemForm.reorder_level" placeholder="Reorder" class="flex-1 border rounded-lg px-3 py-2" />
+        </div>
+        <div class="flex gap-2">
+          <input type="number" step="0.01" x-model.number="itemForm.unit_price" placeholder="Unit price" class="flex-1 border rounded-lg px-3 py-2" />
+          <input x-model="itemForm.supplier" placeholder="Supplier" class="flex-1 border rounded-lg px-3 py-2" />
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button x-show="itemForm.id" @click="deleteItem()" class="px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm">Delete</button>
+        <button @click="saveItem()" class="ml-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg text-sm font-medium">Save</button>
+        <button @click="itemModal=false" class="px-4 py-2 bg-slate-200 rounded-lg text-sm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Client Detail Modal ============ -->
+  <div x-show="detailModal" x-cloak class="fixed inset-0 bg-black/40 flex items-center justify-center z-40 p-4 overflow-auto"
+       @click.self="detailModal=false">
+    <div class="bg-white rounded-xl shadow-xl p-5 w-full max-w-lg fade-in my-8">
+      <div class="flex justify-between items-start mb-3">
+        <h3 class="font-semibold text-lg" x-text="detail?.name"></h3>
+        <button @click="detailModal=false" class="text-slate-400 hover:text-slate-700">✕</button>
+      </div>
+      <div class="text-sm text-slate-500 mb-4">
+        <div x-text="detail?.phone || ''"></div>
+        <div x-text="detail?.email || ''"></div>
+        <div x-text="detail?.notes || ''" class="mt-1 italic"></div>
+      </div>
+
+      <h4 class="font-semibold text-sm mb-1">Appointments</h4>
+      <ul class="mb-3 text-sm space-y-1">
+        <template x-for="a in (detail?.appointments||[])" :key="a.id">
+          <li class="flex gap-2 border-b border-slate-100 pb-1">
+            <span x-text="a.date"></span><span x-text="a.start"></span>
+            <span class="ml-auto capitalize" x-text="a.status"></span>
+          </li>
+        </template>
+        <li x-show="!(detail?.appointments||[]).length" class="text-slate-400">None.</li>
+      </ul>
+
+      <h4 class="font-semibold text-sm mb-1">Online booking history</h4>
+      <ul class="mb-3 text-sm space-y-1">
+        <template x-for="b in (detail?.bookings||[])" :key="b.id">
+          <li class="flex gap-2 border-b border-slate-100 pb-1">
+            <span x-text="b.date"></span><span x-text="b.start"></span>
+            <span class="flex-1" x-text="b.service"></span>
+            <span class="capitalize" x-text="b.status"></span>
+          </li>
+        </template>
+        <li x-show="!(detail?.bookings||[]).length" class="text-slate-400">None.</li>
+      </ul>
+
+      <h4 class="font-semibold text-sm mb-1">Services</h4>
+      <ul class="mb-3 text-sm space-y-1">
+        <template x-for="s in (detail?.services||[])" :key="s.id">
+          <li class="flex gap-2 border-b border-slate-100 pb-1">
+            <span x-text="s.performed_on||'n/a'"></span>
+            <span class="flex-1" x-text="s.description"></span>
+            <span x-text="s.amount ? 'R'+s.amount : ''"></span>
+          </li>
+        </template>
+        <li x-show="!(detail?.services||[]).length" class="text-slate-400">None.</li>
+      </ul>
+
+      <h4 class="font-semibold text-sm mb-1">Contact Log</h4>
+      <textarea x-model="contactMsg" placeholder="Add contact note (WhatsApp/call/email)..."
+        class="w-full border rounded-lg px-3 py-2 text-sm mb-2"></textarea>
+      <div class="flex gap-2 mb-2">
+        <select x-model="contactChannel" class="border rounded-lg px-2 py-1.5 text-sm">
+          <option value="whatsapp">WhatsApp</option>
+          <option value="call">Call</option>
+          <option value="sms">SMS</option>
+          <option value="email">Email</option>
+          <option value="inperson">In-person</option>
+        </select>
+        <button @click="addContactLog()" class="bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-lg text-sm">Log</button>
+      </div>
+      <ul class="text-sm space-y-1 max-h-32 overflow-auto">
+        <template x-for="l in (detail?.contact_logs||[])" :key="l.id">
+          <li class="border-b border-slate-100 pb-1">
+            <span class="text-slate-400 text-xs" x-text="fmtTs(l.timestamp)"></span>
+            <span class="capitalize font-medium" x-text="l.channel"></span>
+            <span x-text="l.message"></span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-slate-400 py-6">
+    Inner Health Consultation Center · Appointments, clients & service management
+  </footer>
+
+  <aside class="fixed bottom-4 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden">
+    <button id="ai-toggle" class="w-full bg-emerald-950 text-white text-left px-4 py-3 font-medium flex justify-between"><span>Ask Inner Health assistant</span><span id="ai-state" class="text-emerald-200 text-xs">Ollama</span></button>
+    <div id="ai-panel" class="hidden">
+      <div id="ai-messages" class="h-64 overflow-auto p-3 space-y-3 text-sm"><div class="bg-emerald-50 rounded-lg p-3">Hello! I can answer general questions and help you find a consultation. To book, visit <a class="underline" href="/book">online booking</a>.</div></div>
+      <form id="ai-form" class="border-t p-2 flex gap-2"><input id="ai-input" class="flex-1 border rounded-lg px-3 py-2 text-sm" placeholder="Ask a question…" required><button class="bg-emerald-800 text-white rounded-lg px-3">Send</button></form>
+    </div>
+  </aside>
+  <script>
+    const aiHistory=[];document.querySelector('#ai-toggle').onclick=()=>document.querySelector('#ai-panel').classList.toggle('hidden');
+    fetch('/api/assistant/health').then(r=>r.json()).then(s=>{let a=document.querySelector('#ai-state');a.textContent=s.primary?.connected?'M4 Ollama · '+s.primary.model:s.fallback?.connected?'Local fallback · '+s.fallback.model:'AI offline'}).catch(()=>{});
+    document.querySelector('#ai-form').onsubmit=async e=>{e.preventDefault();let input=document.querySelector('#ai-input'),msg=input.value.trim();if(!msg)return;input.value='';const box=document.querySelector('#ai-messages');box.insertAdjacentHTML('beforeend',`<div class="bg-slate-100 rounded-lg p-3 ml-8"></div>`);box.lastElementChild.textContent=msg;let pending=document.createElement('div');pending.className='bg-emerald-50 rounded-lg p-3 mr-8';pending.textContent='Thinking…';box.appendChild(pending);box.scrollTop=box.scrollHeight;try{let r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,history:aiHistory})}),d=await r.json();if(!r.ok)throw Error(d.detail||'Assistant unavailable');pending.textContent=d.reply;aiHistory.push({role:'user',content:msg},{role:'assistant',content:d.reply})}catch(err){pending.textContent=err.message}box.scrollTop=box.scrollHeight};
+    function hub() {
+      return {
+        // state
+        pillars: [], tabs: [], active: 'hub',
+        dashboard: null,
+        configs: {}, dayNames: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+        clients: [], clientSearch: '',
+        inventory: [], lowOnly: false,
+        appointments: [], weekStart: '', hours: Array.from({length:12}, (_,i)=>i+8), // 8..19
+        reminders: [],
+        servicesByClient: {}, serviceClientId: '', serviceDesc: '', serviceAmount: '',
+        // command
+        command: '', cmdMsg: '', cmdError: false,
+        // modals
+        apptModal: false, clientModal: false, itemModal: false, detailModal: false,
+        apptConflicts: [],
+        subtab: {},
+
+        apptForm: { id:null, title:'', pillar:'', client_id:'', date:'', start_time:'09:00', end_time:'10:00', notes:'' },
+        clientForm: { name:'', phone:'', email:'', pillar:'', notes:'' },
+        itemForm: { id:null, pillar:'', name:'', category:'', sku:'', quantity:0, reorder_level:5, unit_price:null, supplier:'' },
+        detail: null, contactMsg: '', contactChannel: 'whatsapp',
+
+        async init() {
+          await this.loadMeta();
+          await this.refreshAll();
+          // default sub-tabs
+          this.pillars.forEach(p => this.subtab[p.id] = 'schedule');
+          this.tabs = [{id:'hub', name:'Hub'}];
+          this.pillars.forEach(p => this.tabs.push({id:p.id, name:p.name}));
+          this.tabs.push({id:'settings', name:'Settings'});
+          // default week start = Monday of current week
+          const d = new Date(); const day = (d.getDay()+6)%7;
+          const mon = new Date(d); mon.setDate(d.getDate()-day);
+          this.weekStart = mon.toISOString().slice(0,10);
+        },
+
+        async refreshAll() {
+          await Promise.all([this.loadDashboard(), this.loadClients(), this.loadInventory(),
+                             this.loadAppointments(), this.loadReminders(), this.loadConfigs()]);
+        },
+
+        async api(url, opts={}) {
+          const res = await fetch(url, Object.assign({headers:{'Content-Type':'application/json'}}, opts));
+          if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.detail||res.statusText); }
+          return res.json();
+        },
+
+        async loadMeta() {
+          const m = await this.api('/api/pillars');
+          this.pillars = m.pillars;
+        },
+        pillarById(id){ return this.pillars.find(p=>p.id===id); },
+
+        async loadDashboard(){ this.dashboard = await this.api('/api/dashboard'); },
+        async loadConfigs(){
+          const c = await this.api('/api/pillar-configs');
+          this.configs = c;
+        },
+        async saveConfig(pid){
+          const cfg = this.configs[pid];
+          await this.api('/api/pillar-configs/'+pid, {method:'PUT', body:JSON.stringify(cfg)});
+        },
+
+        async loadClients(pillar){
+          const url = '/api/clients?pillar=' + (pillar||'') + '&search=' + encodeURIComponent(this.clientSearch);
+          this.clients = await this.api(url);
+          await this.loadServices(pillar);
+        },
+        async openClientDetail(id){
+          this.detail = await this.api('/api/clients/'+id);
+          this.detailModal = true;
+        },
+        async saveClient(){
+          await this.api('/api/clients', {method:'POST', body:JSON.stringify(this.clientForm)});
+          this.clientModal = false;
+          this.clientForm = { name:'', phone:'', email:'', pillar:'', notes:'' };
+          await this.loadClients(this.active); await this.loadDashboard();
+        },
+        async addContactLog(){
+          if(!this.contactMsg.trim()) return;
+          await this.api('/api/contact-logs', {method:'POST', body:JSON.stringify({
+            client_id:this.detail.id, pillar:this.detail.pillar||null,
+            channel:this.contactChannel, message:this.contactMsg
+          })});
+          this.contactMsg='';
+          this.detail = await this.api('/api/clients/'+this.detail.id);
+        },
+
+        async loadInventory(pillar){
+          const url = '/api/inventory?pillar=' + (pillar||'') + (this.lowOnly?'&low_stock=true':'');
+          this.inventory = await this.api(url);
+        },
+        async adjustStock(item, delta){
+          const r = await this.api('/api/inventory/'+item.id+'/adjust?delta='+delta, {method:'PATCH'});
+          item.quantity = r.quantity; item.low = r.low;
+          await this.loadDashboard();
+        },
+        async saveItem(){
+          if(this.itemForm.id){
+            await this.api('/api/inventory/'+this.itemForm.id, {method:'PUT', body:JSON.stringify(this.itemForm)});
+          } else {
+            await this.api('/api/inventory', {method:'POST', body:JSON.stringify(this.itemForm)});
+          }
+          this.itemModal=false;
+          await this.loadInventory(this.active); await this.loadDashboard();
+        },
+        async deleteItem(){
+          await this.api('/api/inventory/'+this.itemForm.id, {method:'DELETE'});
+          this.itemModal=false; await this.loadInventory(this.active);
+        },
+        editItem(i){ this.itemForm = Object.assign({}, i); this.itemModal=true; },
+
+        async loadAppointments(){
+          const url = '/api/appointments?week_start=' + this.weekStart + (this.active!=='hub' ? '&pillar='+this.active : '');
+          this.appointments = await this.api(url);
+        },
+        apptsFor(dayIdx, hr){
+          // dayIdx 0..6, hr 8..19. We map date to weekday of weekStart.
+          const ws = new Date(this.weekStart); ws.setDate(ws.getDate()+dayIdx);
+          const iso = ws.toISOString().slice(0,10);
+          return this.appointments.filter(a => a.date===iso && parseInt(a.start.split(':')[0])===hr);
+        },
+        dayLabel(idx){ const d=new Date(this.weekStart); d.setDate(d.getDate()+idx); return this.dayNames[idx]+' '+(d.getMonth()+1)+'/'+d.getDate(); },
+
+        async saveAppt(){
+          const body = Object.assign({}, this.apptForm);
+          body.client_id = body.client_id ? parseInt(body.client_id) : null;
+          let r;
+          if(body.id){
+            r = await this.api('/api/appointments/'+body.id, {method:'PUT', body:JSON.stringify(body)});
+          } else {
+            r = await this.api('/api/appointments', {method:'POST', body:JSON.stringify(body)});
+          }
+          this.apptConflicts = r.conflicts||[];
+          if(this.apptConflicts.length){ return; } // show conflicts, keep modal
+          this.apptModal=false; this.apptConflicts=[];
+          await this.loadAppointments(); await this.loadDashboard();
+        },
+        async deleteAppt(){
+          await this.api('/api/appointments/'+this.apptForm.id, {method:'DELETE'});
+          this.apptModal=false; await this.loadAppointments(); await this.loadDashboard();
+        },
+        editAppt(a){
+          this.apptForm = { id:a.id, title:a.title, pillar:a.pillar, client_id:a.client_id||'',
+            date:a.date, start_time:a.start, end_time:a.end||'10:00', notes:a.notes||'' };
+          this.apptConflicts=[]; this.apptModal=true;
+        },
+        openApptModal(pillar){
+          this.apptForm = { id:null, title:'', pillar:pillar||'it', client_id:'',
+            date:this.weekStart, start_time:'09:00', end_time:'10:00', notes:'' };
+          this.apptConflicts=[]; this.apptModal=true;
+        },
+
+        async loadReminders(){ this.reminders = await this.api('/api/reminders'); },
+        async generateReminders(){ const r = await this.api('/api/reminders/generate', {method:'POST'}); await this.loadReminders(); this.toast(r.created+' reminder(s) generated'); },
+        async sendAllReminders(){ await this.api('/api/reminders/send-all', {method:'POST'}); await this.loadReminders(); },
+        async sendReminder(r){ await this.api('/api/reminders/'+r.id+'/send', {method:'POST'}); await this.loadReminders(); },
+
+        async loadServices(pillar){
+          // load service records via clients detail is heavy; use per-client if needed.
+          // Simpler: we only show services in the services tab using client detail on demand.
+          this.servicesByClient = {};
+          for(const c of this.clients){
+            try {
+              const det = await this.api('/api/clients/'+c.id);
+              this.servicesByClient[c.id] = det.services.filter(s => !pillar || s.pillar===pillar);
+            } catch(e){}
+          }
+        },
+        async addService(pillar){
+          if(!this.serviceClientId || !this.serviceDesc.trim()) return;
+          const body = { client_id: parseInt(this.serviceClientId), pillar, description:this.serviceDesc,
+            amount: this.serviceAmount ? parseFloat(this.serviceAmount) : null,
+            performed_on: this.weekStart };
+          await this.api('/api/service-records', {method:'POST', body:JSON.stringify(body)});
+          this.serviceDesc=''; this.serviceAmount='';
+          await this.loadServices(pillar);
+        },
+
+        async runCommand(){
+          if(!this.command.trim()) return;
+          try {
+            const r = await this.api('/api/command', {method:'POST', body:JSON.stringify({command:this.command})});
+            this.cmdError = !r.intent;
+            this.cmdMsg = r.message;
+            this.command='';
+            await this.refreshAll();
+            setTimeout(()=>this.cmdMsg='', 6000);
+          } catch(e){
+            this.cmdError=true; this.cmdMsg='Error: '+e.message;
+          }
+        },
+
+        // helpers
+        shiftWeek(days){
+          const d = new Date(this.weekStart); d.setDate(d.getDate()+days);
+          this.weekStart = d.toISOString().slice(0,10);
+          this.loadAppointments();
+        },
+        openClientModal(){ this.clientForm={name:'',phone:'',email:'',pillar:'',notes:''}; this.clientModal=true; },
+        openItemModal(pillar){ this.itemForm={id:null,pillar:pillar,name:'',category:'',sku:'',quantity:0,reorder_level:5,unit_price:null,supplier:''}; this.itemModal=true; },
+        fmtDate(iso){ const d=new Date(iso); return this.dayNames[(d.getDay()+6)%7].slice(0,3)+' '+d.getDate(); },
+        fmtHour(h){ return (h<10?'0':'')+h+':00'; },
+        fmtTs(ts){ return new Date(ts).toLocaleString(); },
+        dayName(idx){ return idx!=null ? this.dayNames[idx] : '-'; },
+        toast(msg){ this.cmdError=false; this.cmdMsg=msg; setTimeout(()=>this.cmdMsg='',4000); },
+      }
+    }
+  </script>
+</body>
+</html>

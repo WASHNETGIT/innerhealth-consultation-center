@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: innerhealth-consultation-center
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: BOOKING_TOKEN_SECRET
+        sync: false
+      - key: PUBLIC_BASE_URL
+        value: https://innerhealth-consultation-center.onrender.com
+      - key: APP_TIMEZONE
+        value: Africa/Johannesburg
+      - key: BANK_ACCOUNT_NAME
+        value: NTOMBIKAYISE N MKHALIPHI
+      - key: BANK_NAME
+        value: FNB
+      - key: BANK_ACCOUNT_NUMBER
+        value: "62804835835"
+      - key: BANK_BRANCH_CODE
+        value: "250655"
+      - key: BANK_ACCOUNT_TYPE
+        value: Cheque
+      - key: FACEBOOK_URL
+        value: https://www.facebook.com/share/1Cfx8cayqM/
+      - key: WHATSAPP_NUMBER
+        value: "2785771853"
