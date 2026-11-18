@@ -15,8 +15,8 @@ from datetime import datetime, timedelta, date, time
 from typing import Optional, List, Dict, Any
 from zoneinfo import ZoneInfo
 
-from fastapi import FastAPI, HTTPException, Request, Form, Depends, Header
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response
+from fastapi import FastAPI, HTTPException, Request, Form, Depends, Header, Body
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -175,12 +175,18 @@ class Reminder(Base):
     __tablename__ = "reminders"
 
     id = Column(Integer, primary_key=True, index=True)
-    appointment_id = Column(Integer, ForeignKey("appointments.id", ondelete="CASCADE"), nullable=False)
+    booking_id = Column(Integer, ForeignKey("bookings.id", ondelete="CASCADE"), nullable=True)
+    appointment_id = Column(Integer, ForeignKey("appointments.id", ondelete="CASCADE"), nullable=True)
     channel = Column(String(20), nullable=False)
     send_at = Column(DateTime, nullable=False)
+    scheduled_for = Column(DateTime, nullable=True)
     status = Column(String(20), nullable=False, default="pending")
     sent_at = Column(DateTime, nullable=True)
     message = Column(Text, nullable=False)
+    recipient = Column(String(120), nullable=True)
+    meta = Column(Text, nullable=True)
+    error = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=app_now)
 
 
 class CommandLog(Base):
@@ -360,6 +366,74 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory=STATIC_DIR)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+# ---------------------------------------------------------------------------
+# Event bus: push state changes to every open dashboard over Server-Sent Events
+# ---------------------------------------------------------------------------
+
+import asyncio
+import queue
+import threading
+
+
+class EventBus:
+    """Fan-out broadcast of state-change events to all connected SSE clients.
+
+    Publishers may be called from sync request handlers, so publish() is
+    thread-safe: it puts the event on per-subscriber queues, and each SSE
+    generator (an asyncio task) drains its own queue.
+    """
+
+    def __init__(self) -> None:
+        self._subscribers: Dict[int, "queue.Queue[dict]"] = {}
+        self._lock = threading.Lock()
+        self._seq = 0
+        self.last_event: Dict[str, Any] = {"type": "boot", "at": app_now().isoformat(timespec="seconds")}
+
+    def subscribe(self) -> tuple:
+        with self._lock:
+            self._seq += 1
+            sid = self._seq
+            q: "queue.Queue[dict]" = queue.Queue(maxsize=200)
+            self._subscribers[sid] = q
+        return sid, q
+
+    def unsubscribe(self, sid: int) -> None:
+        with self._lock:
+            self._subscribers.pop(sid, None)
+
+    def publish(self, event_type: str, payload: Optional[Dict[str, Any]] = None) -> None:
+        event = {
+            "type": event_type,
+            "at": app_now().isoformat(timespec="seconds"),
+            "data": payload or {},
+        }
+        self.last_event = event
+        with self._lock:
+            targets = list(self._subscribers.values())
+        for q in targets:
+            try:
+                q.put_nowait(event)
+            except queue.Full:
+                pass  # slow client: drop rather than block the request
+
+    @property
+    def client_count(self) -> int:
+        with self._lock:
+            return len(self._subscribers)
+
+
+events = EventBus()
+
+
+def emit(event_type: str, **payload) -> None:
+    """Shorthand for events.publish used across request handlers."""
+    try:
+        events.publish(event_type, payload)
+    except Exception:
+        pass
+
 
 def get_db():
     db = SessionLocal()
@@ -569,6 +643,7 @@ def update_pillar_config(pillar: str, payload: PillarConfigUpdate, db: Session =
         for k, v in payload.model_dump().items():
             setattr(cfg, k, v)
     db.commit()
+    emit("pillar.updated")
     return {"status": "ok"}
 
 @app.get("/api/dashboard")
@@ -614,6 +689,7 @@ def create_client(payload: ClientCreate, db: Session = Depends(get_db)):
     c.phone_whatsapp = c.phone
     db.add(c)
     db.commit()
+    emit("client.created", name=getattr(client, "name", None))
     db.refresh(c)
     return {"id": c.id, "name": c.name}
 
@@ -647,6 +723,7 @@ def update_client(client_id: int, payload: ClientUpdate, db: Session = Depends(g
     for k, v in data.items():
         setattr(c, k, v)
     db.commit()
+    emit("client.updated")
     return {"id": c.id, "name": c.name}
 
 @app.delete("/api/clients/{client_id}")
@@ -656,6 +733,7 @@ def delete_client(client_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "client not found")
     db.delete(c)
     db.commit()
+    emit("client.deleted")
     return {"ok": True}
 
 @app.get("/api/appointments")
@@ -677,6 +755,7 @@ def create_appointment(payload: AppointmentCreate, db: Session = Depends(get_db)
     appt = Appointment(**payload.model_dump(exclude={"end_time"}), end_time=end_time)
     db.add(appt)
     db.commit()
+    emit("appointment.created")
     db.refresh(appt)
     return {"id": appt.id, "title": appt.title}
 
@@ -688,6 +767,7 @@ def update_appointment(appt_id: int, payload: AppointmentCreate, db: Session = D
     for k, v in payload.model_dump().items():
         setattr(a, k, v)
     db.commit()
+    emit("appointment.updated")
     return {"id": a.id}
 
 @app.patch("/api/appointments/{appt_id}/status")
@@ -697,6 +777,7 @@ def patch_appointment_status(appt_id: int, status: str, db: Session = Depends(ge
         raise HTTPException(404, "appointment not found")
     a.status = status
     db.commit()
+    emit("appointment.status")
     return {"id": a.id, "status": a.status}
 
 @app.delete("/api/appointments/{appt_id}")
@@ -706,6 +787,7 @@ def delete_appointment(appt_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "appointment not found")
     db.delete(a)
     db.commit()
+    emit("appointment.deleted")
     return {"ok": True}
 
 @app.get("/api/inventory")
@@ -726,6 +808,7 @@ def create_inventory(payload: InventoryCreate, db: Session = Depends(get_db)):
     item = InventoryItem(**payload.model_dump())
     db.add(item)
     db.commit()
+    emit("inventory.created")
     db.refresh(item)
     return {"id": item.id, "name": item.name}
 
@@ -737,6 +820,7 @@ def update_inventory(item_id: int, payload: InventoryCreate, db: Session = Depen
     for k, v in payload.model_dump().items():
         setattr(item, k, v)
     db.commit()
+    emit("inventory.updated")
     return {"id": item.id}
 
 @app.patch("/api/inventory/{item_id}/adjust")
@@ -746,6 +830,7 @@ def adjust_inventory(item_id: int, delta: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "item not found")
     item.quantity = max(0, item.quantity + delta)
     db.commit()
+    emit("inventory.updated")
     return {"id": item.id, "quantity": item.quantity, "low": item.quantity <= item.reorder_level}
 
 @app.delete("/api/inventory/{item_id}")
@@ -755,6 +840,7 @@ def delete_inventory(item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "item not found")
     db.delete(item)
     db.commit()
+    emit("inventory.deleted")
     return {"ok": True}
 
 @app.post("/api/contact-logs", status_code=201)
@@ -762,6 +848,7 @@ def create_contact_log(payload: ContactLogCreate, db: Session = Depends(get_db))
     log = ContactLog(**payload.model_dump())
     db.add(log)
     db.commit()
+    emit("contact.logged")
     db.refresh(log)
     return {"id": log.id}
 
@@ -770,6 +857,7 @@ def create_service_record(payload: ServiceRecordCreate, db: Session = Depends(ge
     s = ServiceRecord(**payload.model_dump())
     db.add(s)
     db.commit()
+    emit("service.logged")
     db.refresh(s)
     return {"id": s.id}
 
@@ -778,13 +866,247 @@ def list_reminders(db: Session = Depends(get_db)):
     rems = db.query(Reminder).order_by(Reminder.send_at.desc()).limit(20).all()
     return [{"id": r.id, "appointment_id": r.appointment_id, "channel": r.channel, "send_at": r.send_at.isoformat(), "status": r.status, "message": r.message} for r in rems]
 
-@app.post("/api/reminders/generate")
-def generate_reminders(db: Session = Depends(get_db)):
-    return {"generated": 0}
+@app.get("/api/events")
+async def event_stream(request: Request):
+    """Server-Sent Events stream. Every dashboard opens one and stays connected.
 
-@app.post("/api/reminders/send-all")
+    The browser receives a `state` event the moment anything changes, so the
+    admin UI never polls. A heartbeat comment every 20s keeps proxies and
+    mobile networks from closing the connection.
+    """
+
+    async def generator():
+        sid, q = events.subscribe()
+        try:
+            yield "retry: 3000\n\n"
+            yield f"event: ready\ndata: {json.dumps({'connected_at': app_now().isoformat(timespec='seconds'), 'clients': events.client_count})}\n\n"
+            last = events.last_event
+            if last:
+                yield f"event: state\ndata: {json.dumps(last)}\n\n"
+            while True:
+                if await request.is_disconnected():
+                    break
+                try:
+                    event = await asyncio.to_thread(q.get, True, 20)
+                except queue.Empty:
+                    yield ": keepalive\n\n"
+                    continue
+                yield f"event: state\ndata: {json.dumps(event)}\n\n"
+        finally:
+            events.unsubscribe(sid)
+
+    return StreamingResponse(
+        generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@app.get("/api/events/status")
+def event_status():
+    return {"clients": events.client_count, "last_event": events.last_event}
+
+
+@app.post("/api/events/ping", dependencies=[Depends(require_admin)])
+def event_ping():
+    emit("ping", source="admin")
+    return {"ok": True, "clients": events.client_count}
+
+
+@app.get("/api/reminders/generate", dependencies=[Depends(require_admin)])
+def reminders_generate_get():
+    return {"detail": "Use POST with an optional JSON body: hours_ahead, dry_run, include_deposits, include_balances, include_winback"}
+
+
+@app.post("/api/reminders/generate", dependencies=[Depends(require_admin)])
+async def generate_reminders(payload: dict = Body(default={}), db: Session = Depends(get_db)):
+    """Generate smart reminders using AI. Creates reminder records for upcoming bookings."""
+    today = app_today()
+    now = app_now()
+    hours_ahead = int(payload.get("hours_ahead", 30))
+    include_deposits = payload.get("include_deposits", True)
+    include_balances = payload.get("include_balances", True)
+    include_winback = payload.get("include_winback", False)
+    dry_run = payload.get("dry_run", False)
+
+    bookings = db.query(PublicBooking).filter(
+        PublicBooking.status.in_(("confirmed", "arriving_soon", "pending_deposit")),
+        PublicBooking.booking_date >= today
+    ).all()
+
+    clinic_name = "Inner Health Consultation Center"
+    clinic_addr = os.getenv("CLINIC_ADDRESS", "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002")
+    wa_number = os.getenv("WHATSAPP_NUMBER", "2785771853")
+    email_addr = os.getenv("CLINIC_EMAIL", "innerhealthconsult@gmail.com")
+
+    created = 0
+    skipped = 0
+
+    for b in bookings:
+        when = datetime.combine(b.booking_date, b.start_time)
+        hours_until = (when - now).total_seconds() / 3600
+        if hours_until <= 0 or hours_until > hours_ahead:
+            continue
+
+        client = b.client
+        phone = client.phone_whatsapp or client.phone
+        first_name = (client.name or "").split()[0]
+
+        # Deposit reminder
+        if include_deposits and b.status == "pending_deposit":
+            existing = db.query(Reminder).filter(
+                Reminder.appointment_id == b.id,
+                Reminder.channel == "whatsapp",
+                Reminder.message.like(f"%deposit%{b.booking_ref}%")
+            ).first()
+            if not existing:
+                msg = await _ai_reminder_text(db, {
+                    "type": "deposit",
+                    "first_name": first_name,
+                    "date": b.booking_date.strftime("%A %d %B"),
+                    "time": b.start_time.strftime("%H:%M"),
+                    "deposit": b.service.deposit,
+                    "ref": b.booking_ref,
+                    "clinic": clinic_name,
+                    "address": clinic_addr,
+                    "bank": {"name": "FNB", "account": "Ntombikayise N Mkhaliphi", "number": "62804835835", "branch": "250655"}
+                })
+                if not dry_run:
+                    rem = Reminder(
+                        appointment_id=b.id, pillar="innerhealth", channel="whatsapp",
+                        recipient=phone, message=msg, scheduled_for=now, status="pending"
+                    )
+                    db.add(rem)
+                created += 1
+            else:
+                skipped += 1
+
+        # 24h / 2h appointment reminder
+        if b.status in ("confirmed", "arriving_soon"):
+            for window, label in [(24, "24h"), (2, "2h")]:
+                if abs(hours_until - window) <= 1.5:  # within 90 min of target
+                    existing = db.query(Reminder).filter(
+                        Reminder.appointment_id == b.id,
+                        Reminder.channel == "whatsapp",
+                        Reminder.message.like(f"%{label}%{b.booking_ref}%")
+                    ).first()
+                    if not existing:
+                        msg = await _ai_reminder_text(db, {
+                            "type": "appointment",
+                            "first_name": first_name,
+                            "date": b.booking_date.strftime("%A %d %B"),
+                            "time": b.start_time.strftime("%H:%M"),
+                            "balance": b.balance_due if not b.balance_paid else 0,
+                            "ref": b.booking_ref,
+                            "clinic": clinic_name,
+                            "address": clinic_addr
+                        })
+                        if not dry_run:
+                            rem = Reminder(
+                                appointment_id=b.id, pillar="innerhealth", channel="whatsapp",
+                                recipient=phone, message=msg, scheduled_for=now, status="pending"
+                            )
+                            db.add(rem)
+                        created += 1
+                    else:
+                        skipped += 1
+
+    # Win-back reminders for lapsed clients
+    if include_winback:
+        snapshot = _admin_snapshot(db)
+        for row in snapshot["clients"]["lapsed_list"][:20]:
+            existing = db.query(Reminder).filter(
+                Reminder.recipient == row["phone"],
+                Reminder.channel == "whatsapp",
+                Reminder.message.like(f"%{clinic_name}%{row['name']}%"),
+                Reminder.created_at >= now - timedelta(days=7)
+            ).first()
+            if not existing:
+                msg = await _ai_reminder_text(db, {
+                    "type": "winback",
+                    "first_name": row["name"].split()[0],
+                    "days_since": row["days_since"],
+                    "clinic": clinic_name,
+                    "whatsapp": wa_number
+                })
+                if not dry_run:
+                    rem = Reminder(
+                        appointment_id=None, pillar="innerhealth", channel="whatsapp",
+                        recipient=row["phone"], message=msg, scheduled_for=now, status="pending"
+                    )
+                    db.add(rem)
+                created += 1
+            else:
+                skipped += 1
+
+    if not dry_run:
+        db.commit()
+    return {"created": created, "skipped": skipped, "dry_run": dry_run}
+
+
+@app.post("/api/reminders/send-all", dependencies=[Depends(require_admin)])
 def send_all_reminders(db: Session = Depends(get_db)):
-    return {"sent": 0}
+    """Send all pending reminders via WhatsApp (creates wa.me links) and email if configured."""
+    now = app_now()
+    pending = db.query(Reminder).filter(Reminder.status == "pending").all()
+    sent = 0
+    failed = 0
+    for r in pending:
+        try:
+            wa_link = f"https://wa.me/{re.sub(r'[^0-9]', '', r.recipient or '')}?text={urllib.parse.quote(r.message)}"
+            # Log the send
+            r.status = "sent"
+            r.sent_at = now
+            r.meta = json.dumps({"wa_link": wa_link})
+            sent += 1
+        except Exception as e:
+            r.status = "failed"
+            r.error = str(e)
+            failed += 1
+    db.commit()
+    emit("reminders.sent")
+    return {"sent": sent, "failed": failed, "total": len(pending)}
+
+
+async def _ai_reminder_text(db: Session, ctx: dict) -> str:
+    """Use the local admin model to craft a warm, concise reminder."""
+    try:
+        system = (
+            "You write short, warm WhatsApp reminders for Inner Health Consultation Center, Pretoria. "
+            "Max 2 sentences. No markdown. Include the reference number. Sound human, not robotic."
+        )
+        user = json.dumps(ctx, ensure_ascii=False)
+        body = json.dumps({
+            "model": ADMIN_MODEL,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "stream": False, "keep_alive": "10m",
+            "options": {"temperature": 0.3, "num_predict": 160}
+        }).encode()
+        for base, _ in _ollama_backends():
+            try:
+                req = urllib.request.Request(base + "/api/chat", data=body, headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = json.loads(resp.read())
+                txt = _clean_reply(data.get("message", {}).get("content", ""))
+                if len(txt) > 20:
+                    return txt
+            except Exception:
+                continue
+    except Exception:
+        pass
+    # Fallback templates
+    if ctx.get("type") == "deposit":
+        return f"Hi {ctx['first_name']}, your {ctx['clinic']} scan on {ctx['date']} at {ctx['time']} needs the R{int(ctx['deposit'])} deposit to confirm. Ref {ctx['ref']}. FNB: {ctx['bank']['account']}, {ctx['bank']['number']}, branch {ctx['bank']['branch']}."
+    if ctx.get("type") == "appointment":
+        bal = f" Balance R{int(ctx['balance'])} due." if ctx.get('balance') else ""
+        return f"Hi {ctx['first_name']}, reminder: your scan is {ctx['date']} at {ctx['time']} at {ctx['address']}. Ref {ctx['ref']}.{bal}"
+    if ctx.get("type") == "winback":
+        return f"Hi {ctx['first_name']}, it's been {ctx['days_since']} days since your last scan with {ctx['clinic']}. Want to book again? Reply here or WhatsApp {ctx['whatsapp']}."
+    return "Reminder from Inner Health Consultation Center."
 
 @app.post("/api/command")
 def process_command(payload: CommandRequest, db: Session = Depends(get_db)):
@@ -863,6 +1185,7 @@ def _assistant_system_prompt(db: Session) -> tuple:
         "Opening hours: " + ", ".join(facts["hours"]) + ".",
         "Deposits are paid by EFT: FNB, account name Ntombikayise N Mkhaliphi, account 62804835835, branch 250655, cheque account. Reply with the reference we give them.",
     ]
+    lines.append("We also stock the Green World natural health range in store: " + _product_summary_line() + ".")
     if slots:
         lines.append("Next open scan slots: " + "; ".join(f"{d} at {', '.join(v)}" for d, v in slots.items()) + ".")
     lines += [
@@ -872,6 +1195,123 @@ def _assistant_system_prompt(db: Session) -> tuple:
         "Never promise a slot until the booking page confirms it: always send them to /book to pick a time.",
     ]
     return "\n".join(lines), slots
+
+
+# ---------------------------------------------------------------------------
+# Product catalog (Green World range, loaded from static/products/catalog.json)
+# ---------------------------------------------------------------------------
+
+PRODUCTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "products", "catalog.json")
+_PRODUCTS_CACHE: Dict[str, Any] = {"mtime": None, "items": []}
+
+
+def _products() -> List[Dict[str, Any]]:
+    """Load and cache the product catalog, reloading when the file changes."""
+    try:
+        mtime = os.path.getmtime(PRODUCTS_FILE)
+    except OSError:
+        return []
+    if _PRODUCTS_CACHE["mtime"] != mtime:
+        try:
+            with open(PRODUCTS_FILE, "r", encoding="utf-8") as fh:
+                items = json.load(fh)
+            _PRODUCTS_CACHE["items"] = items if isinstance(items, list) else []
+            _PRODUCTS_CACHE["mtime"] = mtime
+        except Exception:
+            return _PRODUCTS_CACHE["items"]
+    return _PRODUCTS_CACHE["items"]
+
+
+def _product_summary_line() -> str:
+    items = _products()
+    if not items:
+        return "a range of supplements, teas, skin and oral care"
+    cats: Dict[str, int] = {}
+    for p in items:
+        cats[p.get("categoryName") or p.get("category") or "other"] = cats.get(p.get("categoryName") or p.get("category") or "other", 0) + 1
+    return f"{len(items)} products across " + ", ".join(f"{n} ({c})" for n, c in sorted(cats.items()))
+
+
+def _product_public(p: Dict[str, Any]) -> Dict[str, Any]:
+    """Trim a catalog row to what the UI needs."""
+    return {
+        "code": p.get("code"),
+        "name": p.get("name"),
+        "spec": p.get("spec"),
+        "price": p.get("price"),
+        "category": p.get("category"),
+        "categoryName": p.get("categoryName"),
+        "badge": p.get("badge"),
+        "description": p.get("description"),
+        "benefits": p.get("benefits") or [],
+        "dosage": p.get("dosage"),
+        "tags": p.get("tags") or [],
+        "image": p.get("image"),
+        "gallery": (p.get("gallery") or [p.get("image")])[:4],
+    }
+
+
+_STOPWORDS = set("""a an the and or of for to in on at with my me i we you your is are be it this that what which
+who how much cost costs price prices do does have has can could would should please show tell give recommend
+something good best help need want looking about from as by if not no yes thanks thank hi hello""".split())
+
+
+def _product_search(query: str, limit: int = 5) -> List[Dict[str, Any]]:
+    """Rank products against a free-text query using tags, name, description and benefits."""
+    items = _products()
+    if not items:
+        return []
+    raw = (query or "").lower()
+    tokens = [t for t in re.findall(r"[a-z0-9]+", raw) if len(t) > 2 and t not in _STOPWORDS]
+    if not tokens:
+        return []
+    scored: List[tuple] = []
+    for p in items:
+        hay_tags = " ".join(p.get("tags") or []).lower()
+        hay_name = (p.get("name") or "").lower()
+        hay_desc = (p.get("description") or "").lower()
+        hay_ben = " ".join(p.get("benefits") or []).lower()
+        hay_cat = ((p.get("categoryName") or "") + " " + (p.get("category") or "")).lower()
+        score = 0
+        for t in tokens:
+            if t in hay_tags:
+                score += 6
+            if t in hay_name:
+                score += 5
+            if t in hay_ben:
+                score += 3
+            if t in hay_desc:
+                score += 2
+            if t in hay_cat:
+                score += 2
+            if len(t) > 4 and t[:-1] in hay_tags:
+                score += 2
+        # exact code lookup, e.g. "W01"
+        if raw.strip().upper() == (p.get("code") or "").upper():
+            score += 50
+        if score:
+            scored.append((score, p))
+    scored.sort(key=lambda x: (-x[0], x[1].get("code") or ""))
+    return [_product_public(p) for _, p in scored[:limit]]
+
+
+@app.get("/api/products")
+def list_products(category: str = "", q: str = "", limit: int = 100):
+    items = _products()
+    if q:
+        return {"products": _product_search(q, limit=limit)}
+    if category:
+        items = [p for p in items if (p.get("category") or "") == category]
+    return {"products": [_product_public(p) for p in items[:max(1, min(limit, 200))]]}
+
+
+@app.get("/api/products/{code}")
+def get_product(code: str):
+    for p in _products():
+        if (p.get("code") or "").upper() == code.upper():
+            return _product_public(p)
+    raise HTTPException(404, "Product not found")
+
 
 
 def _clean_reply(text: str) -> str:
@@ -1116,6 +1556,10 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
 
     snapshot = _admin_snapshot(db)
     answer = _admin_answer(snapshot, question, kind)
+    hits = _product_search(question, limit=3) if question else []
+    if hits:
+        answer = answer.rstrip() + "\n\nIn store: " + "; ".join(
+            f"{p['name']} ({p['spec']}) R{p['price']}" for p in hits) + "."
     mode = "rules"
 
     try:
@@ -1152,7 +1596,8 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
     except Exception:
         pass
 
-    return {"answer": answer, "mode": mode, "facts": snapshot}
+    products = _product_search(question, limit=3) if question else []
+    return {"answer": answer, "mode": mode, "facts": snapshot, "products": products}
 
 
 def _whatsapp_link(phone: Optional[str], message: str) -> str:
@@ -1357,6 +1802,7 @@ def create_public_booking(payload: dict, db: Session = Depends(get_db)):
         booking.token_hash = hashlib.sha256(token.encode()).hexdigest()
         booking.booking_ref = f"SCN-{1000 + booking.id}"
         db.commit()
+        emit("booking.created")
     except Exception:
         db.rollback()
         raise HTTPException(409, "That time was just booked. Please choose another slot.")
@@ -1389,6 +1835,7 @@ def payment_deposit_confirm(payload: dict, x_payment_secret: str = Header(defaul
     b.deposit_paid = amount
     b.status = "confirmed"
     db.commit()
+    emit("booking.deposit_paid", booking_id=b.id)
     token = _manage_token(b.id)
     _notify(b.client, b.service, datetime.combine(b.booking_date, b.start_time), token)
     return {"ok": True, "reference": b.booking_ref, "status": b.status}
@@ -1418,6 +1865,7 @@ def cancel_public_booking(token: str, db: Session = Depends(get_db)):
         raise HTTPException(409, "This booking can no longer be cancelled")
     b.status = "cancelled"
     db.commit()
+    emit("booking.cancelled")
     return {"ok": True}
 
 @app.get("/api/public/manage/{token}/slots")
@@ -1450,6 +1898,7 @@ def reschedule_public_booking(token: str, payload: dict, db: Session = Depends(g
     b.start_time = start
     b.end_time = (datetime.combine(day, start) + timedelta(minutes=b.service.duration_minutes)).time()
     db.commit()
+    emit("booking.rescheduled")
     _notify(b.client, b.service, datetime.combine(day, start), token)
     return {"ok": True}
 
@@ -1520,6 +1969,7 @@ def admin_booking_status(booking_id: int, payload: dict, db: Session = Depends(g
     if "status" in payload:
         b.status = payload["status"]
     db.commit()
+    emit("booking.status", booking_id=b.id)
     return {"ok": True}
 
 @app.post("/api/admin/bookings/{booking_id}/collect-balance", dependencies=[Depends(require_admin)])
@@ -1536,6 +1986,7 @@ def collect_booking_balance(booking_id: int, payload: dict, db: Session = Depend
     if b.status != "cancelled":
         b.status = "completed"
     db.commit()
+    emit("booking.balance_paid", booking_id=b.id)
     return {"ok": True, "total_collected": b.deposit_paid + b.total_fee - b.service.deposit}
 
 @app.patch("/api/admin/bookings/{booking_id}/deposit", dependencies=[Depends(require_admin)])
@@ -1546,6 +1997,7 @@ def mark_deposit_paid(booking_id: int, db: Session = Depends(get_db)):
     b.deposit_paid = b.service.deposit
     b.status = "confirmed"
     db.commit()
+    emit("booking.deposit_paid", booking_id=b.id)
     return {"ok": True}
 
 @app.post("/api/admin/walk-in-sales", dependencies=[Depends(require_admin)])
@@ -1562,6 +2014,7 @@ def create_walk_in_sale(payload: dict, db: Session = Depends(get_db)):
     )
     db.add(sale)
     db.commit()
+    emit("sale.created", amount=payload.get("amount_zar"))
     return {"ok": True, "id": sale.id}
 
 @app.post("/api/admin/bookings/manual", dependencies=[Depends(require_admin)])
@@ -1601,6 +2054,7 @@ def create_manual_scan_booking(payload: dict, db: Session = Depends(get_db)):
     token = _manage_token(b.id)
     b.token_hash = hashlib.sha256(token.encode()).hexdigest()
     db.commit()
+    emit("booking.created")
     _notify(client, service, datetime.combine(day, start), token)
     return {"id": b.id, "booking_ref": b.booking_ref}
 
@@ -1728,6 +2182,7 @@ def admin_create_service(payload: dict, db: Session = Depends(get_db)):
     )
     db.add(s)
     db.commit()
+    emit("service.created")
     return {"id": s.id}
 
 @app.put("/api/admin/booking-services/{service_id}", dependencies=[Depends(require_admin)])
@@ -1739,6 +2194,7 @@ def admin_update_service(service_id: int, payload: dict, db: Session = Depends(g
         if k in payload:
             setattr(s, k, payload[k])
     db.commit()
+    emit("service.updated")
     return {"id": s.id}
 
 @app.get("/api/admin/availability", dependencies=[Depends(require_admin)])
@@ -1760,6 +2216,7 @@ def admin_update_availability(weekday: int, payload: dict, db: Session = Depends
     r.start_time = time.fromisoformat(payload["start_time"]) if payload.get("start_time") else None
     r.end_time = time.fromisoformat(payload["end_time"]) if payload.get("end_time") else None
     db.commit()
+    emit("availability.updated")
     return {"ok": True}
 
 @app.get("/api/admin/blocked-dates", dependencies=[Depends(require_admin)])
@@ -1775,6 +2232,7 @@ def add_blocked_date(payload: dict, db: Session = Depends(get_db)):
     else:
         db.add(BlockedDate(date=d, reason=payload.get("reason", "")))
     db.commit()
+    emit("availability.updated")
     return {"ok": True}
 
 @app.delete("/api/admin/blocked-dates/{blocked_id}", dependencies=[Depends(require_admin)])
@@ -1783,6 +2241,7 @@ def delete_blocked_date(blocked_id: int, db: Session = Depends(get_db)):
     if b:
         db.delete(b)
         db.commit()
+        emit("availability.updated")
     return {"ok": True}
 
 @app.post("/api/admin/reminders/run", dependencies=[Depends(require_admin)])
@@ -1798,6 +2257,7 @@ def run_booking_reminders(db: Session = Depends(get_db)):
             setattr(b, field, True)
             sent += 1
     db.commit()
+    emit("reminders.run")
     return {"sent": sent}
 
 # ---------------------------------------------------------------------------
@@ -1813,6 +2273,7 @@ def agent_heartbeat(payload: dict, db: Session = Depends(get_db)):
     else:
         db.add(AIAgentHeartbeat(model=model, last_seen=app_now()))
     db.commit()
+    emit("agent.heartbeat")
     return {"status": "ok"}
 
 @app.get("/api/agent/queue", dependencies=[Depends(require_ai_agent)])
@@ -1836,6 +2297,7 @@ def local_ai_update(booking_id: int, payload: dict, db: Session = Depends(get_db
     if "report" in payload:
         b.ai_scan_report = str(payload["report"])[:20000]
     db.commit()
+    emit("booking.scan_updated", booking_id=b.id)
     return {"ok": True}
 
 # ---------------------------------------------------------------------------

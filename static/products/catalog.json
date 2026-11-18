@@ -1,0 +1,2464 @@
+[
+ {
+  "code": "W01",
+  "name": "Cordyceps Plus Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 390,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Bestseller",
+  "description": "A premium formulation combining Cordyceps sinensis with complementary botanicals to support respiratory stamina, strengthen kidney Qi, and boost overall immune resilience. Each capsule delivers bioactive cordycepin and adenosine compounds shown to enhance oxygen utilisation at cellular level.",
+  "benefits": [
+   "Strengthens lung capacity and respiratory endurance",
+   "Nourishes kidney essence and adrenal vitality",
+   "Enhances cellular oxygen absorption and stamina",
+   "Boosts immune defence and reduces chronic fatigue"
+  ],
+  "dosage": "1–2 capsules, 1–2 times daily before meals with warm water",
+  "tags": [
+   "immunity",
+   "respiratory",
+   "lungs",
+   "kidney",
+   "fatigue",
+   "energy",
+   "cordyceps"
+  ],
+  "image": "/static/products/IMG_3519.jpg",
+  "gallery": [
+   "/static/products/IMG_3519.jpg",
+   "/static/products/IMG_3520.jpg"
+  ]
+ },
+ {
+  "code": "W02",
+  "name": "Spirulina Plus Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 410,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Superfood",
+  "description": "Concentrated nutrient-dense blue-green microalgae (Arthrospira platensis) delivering complete plant proteins, chlorophyll, phycocyanin, bioavailable iron, B-vitamins, and essential fatty acids. Spirulina is nature's most nutrient-dense whole food, supporting cellular nutrition, detoxification, and sustained energy.",
+  "benefits": [
+   "Complete plant-based amino acid profile for tissue repair",
+   "Combats nutritional deficiencies, anaemia, and iron shortage",
+   "Natural heavy metal and pollutant detoxification",
+   "Sustained all-day vitality, stamina, and mental clarity"
+  ],
+  "dosage": "2–3 capsules, 2 times daily with warm water",
+  "tags": [
+   "nutrition",
+   "superfood",
+   "anemia",
+   "energy",
+   "detox",
+   "protein",
+   "spirulina"
+  ],
+  "image": "/static/products/IMG_3521.jpg",
+  "gallery": [
+   "/static/products/IMG_3521.jpg",
+   "/static/products/IMG_3522.jpg",
+   "/static/products/IMG_3523.jpg"
+  ]
+ },
+ {
+  "code": "W03",
+  "name": "Propolis Plus Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 527,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Immune Shield",
+  "description": "Natural beehive resin extract concentrated with bioactive bioflavonoids (quercetin, kaempferol), phenolic acids, and chrysin — collectively known as nature's ultimate antimicrobial protector. Propolis has been used for centuries to fight bacterial, viral, and fungal threats while promoting cellular healing.",
+  "benefits": [
+   "Natural broad-spectrum antimicrobial and antioxidant defence",
+   "Soothes internal and oral inflammation and ulcers",
+   "Reinforces throat, gum, and upper respiratory tract health",
+   "Promotes rapid cellular regeneration and wound healing"
+  ],
+  "dosage": "1–2 capsules daily with meals",
+  "tags": [
+   "immunity",
+   "antibacterial",
+   "inflammation",
+   "throat",
+   "antioxidant",
+   "propolis"
+  ],
+  "image": "/static/products/IMG_3524.jpg",
+  "gallery": [
+   "/static/products/IMG_3524.jpg",
+   "/static/products/IMG_3525.jpg",
+   "/static/products/IMG_3526.jpg"
+  ]
+ },
+ {
+  "code": "W04",
+  "name": "Ganoderma Plus Capsule",
+  "spec": "300mg × 60 capsules",
+  "price": 449,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Reishi King",
+  "description": "Cracked-spore organic Red Reishi mushroom (Ganoderma lucidum) standardised to beta-glucans and triterpenes. Known as the 'Mushroom of Immortality' in traditional Chinese medicine, Ganoderma supports liver harmony, stress adaptation, immune modulation, and cardiovascular balance for longevity.",
+  "benefits": [
+   "Adapts the body to chronic physical and mental stress",
+   "Protects liver enzymes and supports hepatic detoxification",
+   "Modulates and balances immune response",
+   "Supports restful sleep, emotional calm, and heart health"
+  ],
+  "dosage": "1–2 capsules, 2 times daily with warm water",
+  "tags": [
+   "reishi",
+   "longevity",
+   "liver",
+   "stress",
+   "sleep",
+   "heart",
+   "ganoderma"
+  ],
+  "image": "/static/products/IMG_3546.jpg",
+  "gallery": [
+   "/static/products/IMG_3546.jpg",
+   "/static/products/IMG_3547.jpg",
+   "/static/products/IMG_3548.jpg"
+  ]
+ },
+ {
+  "code": "W05",
+  "name": "Danshen Combo / Cardio Power Capsule",
+  "spec": "300mg × 30 capsules",
+  "price": 371,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Heart Care",
+  "description": "A synergistic traditional Chinese cardiovascular formula combining Salvia miltiorrhiza (Danshen), Panax notoginseng, and natural Borneol. These three herbs work together to improve coronary microcirculation, reduce arterial stiffness, and protect heart muscle from ischaemic damage.",
+  "benefits": [
+   "Improves blood circulation in coronary and cerebral arteries",
+   "Assists in healthy blood pressure balance and regulation",
+   "Prevents arterial stiffness, micro-clots, and plaque build-up",
+   "Relieves chest tightness, palpitations, and laboured breathing"
+  ],
+  "dosage": "1–2 capsules, 2 times daily with warm water",
+  "tags": [
+   "cardiovascular",
+   "heart",
+   "circulation",
+   "blood pressure",
+   "danshen",
+   "chest"
+  ],
+  "image": "/static/products/IMG_3590.jpg",
+  "gallery": [
+   "/static/products/IMG_3590.jpg",
+   "/static/products/IMG_3591.jpg",
+   "/static/products/IMG_3592.jpg"
+  ]
+ },
+ {
+  "code": "W06",
+  "name": "Soy Power Capsule",
+  "spec": "300mg × 90 capsules",
+  "price": 351,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Hormone Harmony",
+  "description": "High-purity soybean isoflavone extract (genistein and daidzein) clinically designed to support natural hormonal balance, relieve menopausal discomfort, maintain youthful skin elasticity, and protect bone density. Isoflavones act as natural phyto-oestrogens that regulate oestrogen receptor activity.",
+  "benefits": [
+   "Relieves menopausal hot flashes, night sweats, and mood swings",
+   "Supports balanced female oestrogen levels naturally",
+   "Enhances skin hydration, collagen synthesis, and elasticity",
+   "Protects bone density against osteoporosis after age 40"
+  ],
+  "dosage": "1–2 capsules, 1–2 times daily with warm water",
+  "tags": [
+   "women",
+   "hormones",
+   "menopause",
+   "skin",
+   "bone density",
+   "soy",
+   "isoflavones"
+  ],
+  "image": "/static/products/IMG_3593.jpg",
+  "gallery": [
+   "/static/products/IMG_3593.jpg",
+   "/static/products/IMG_3594.jpg",
+   "/static/products/IMG_3595.jpg"
+  ]
+ },
+ {
+  "code": "W07",
+  "name": "A-Power Capsule",
+  "spec": "360mg × 60 capsules",
+  "price": 780,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Deep Immunity",
+  "description": "An advanced bio-immunological botanical blend engineered for individuals requiring maximum immune system strengthening and deep cellular recovery. This formulation contains potent adaptogenic herbs and bioactive polysaccharides that stimulate T-lymphocyte activity, NK cell production, and vital organ protection.",
+  "benefits": [
+   "Deep immune replenishment for weakened or compromised systems",
+   "Accelerates post-illness and post-surgical rehabilitation",
+   "Protects vital organs against oxidative and toxic stress",
+   "Stimulates healthy T-cell, NK-cell, and macrophage activity"
+  ],
+  "dosage": "1–2 capsules, 2 times daily after meals with warm water",
+  "tags": [
+   "immunity",
+   "recovery",
+   "t-cells",
+   "vitality",
+   "chronic illness",
+   "immune boost"
+  ],
+  "image": "/static/products/IMG_3596.jpg",
+  "gallery": [
+   "/static/products/IMG_3596.jpg",
+   "/static/products/IMG_3597.jpg",
+   "/static/products/IMG_3598.jpg"
+  ]
+ },
+ {
+  "code": "W08",
+  "name": "Vig Power Capsule",
+  "spec": "300mg × 6 capsules",
+  "price": 507,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Men's Power",
+  "description": "A concentrated herbal formulation combining Epimedium (Horny Goat Weed), Cuscuta seed, Ginseng root, and Cnidium to support male reproductive vitality, physical endurance, and healthy testosterone levels. This formula tonifies kidney Yang and promotes circulation to reproductive organs.",
+  "benefits": [
+   "Enhances male physical stamina, confidence, and vigour",
+   "Supports healthy prostate function and urinary comfort",
+   "Boosts reproductive energy, circulation, and libido",
+   "Fast-acting natural botanical vitality support"
+  ],
+  "dosage": "1 capsule 30–45 minutes before activity, or as directed by practitioner",
+  "tags": [
+   "men",
+   "vitality",
+   "endurance",
+   "stamina",
+   "reproductive",
+   "testosterone",
+   "libido"
+  ],
+  "image": "/static/products/IMG_3599.jpg",
+  "gallery": [
+   "/static/products/IMG_3599.jpg",
+   "/static/products/IMG_3600.jpg",
+   "/static/products/IMG_3601.jpg"
+  ]
+ },
+ {
+  "code": "W09",
+  "name": "Ginseng RHs Capsule",
+  "spec": "350mg × 30 capsules",
+  "price": 741,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Cellular Shield",
+  "description": "A high-potency rare ginsenoside Rh2 extract derived from red Panax ginseng, specifically designed to regulate cellular division, support normal cell cycle activity, and boost vital Qi energy. Ginsenoside Rh2 has been researched for its role in supporting healthy immune surveillance and cellular repair.",
+  "benefits": [
+   "Supports healthy cellular division and immune surveillance",
+   "Revitalises deep cellular repair mechanisms",
+   "Elevates physical stamina, endurance, and vital energy",
+   "Protects healthy cells during physical and oxidative stress"
+  ],
+  "dosage": "1 capsule twice daily with warm water",
+  "tags": [
+   "ginseng",
+   "cellular",
+   "immunity",
+   "vitality",
+   "longevity",
+   "cancer support"
+  ],
+  "image": "/static/products/IMG_3602.jpg",
+  "gallery": [
+   "/static/products/IMG_3602.jpg",
+   "/static/products/IMG_3603.jpg",
+   "/static/products/IMG_3604.jpg"
+  ]
+ },
+ {
+  "code": "W23",
+  "name": "Kidney Tonifying Capsule (Men)",
+  "spec": "500mg × 100 capsules",
+  "price": 585,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Men's Health",
+  "description": "A botanical tonic formulated specifically for men with Polygonatum sibiricum, Cuscuta chinensis, and Rehmannia glutinosa to nourish kidney essence, strengthen lumbar vertebrae, prevent vital energy drain, and support healthy adrenal-kidney function in aging men.",
+  "benefits": [
+   "Strengthens kidney function and adrenal energy balance",
+   "Relieves lower back soreness, knee weakness, and cold extremities",
+   "Reduces nighttime urinary frequency and urgency",
+   "Enhances overall physical endurance and male vitality"
+  ],
+  "dosage": "2 capsules twice daily with warm water",
+  "tags": [
+   "men",
+   "kidney",
+   "back pain",
+   "vitality",
+   "urinary",
+   "adrenal"
+  ],
+  "image": "/static/products/IMG_3605.jpg",
+  "gallery": [
+   "/static/products/IMG_3605.jpg",
+   "/static/products/IMG_3606.jpg"
+  ]
+ },
+ {
+  "code": "W24",
+  "name": "Kidney Tonifying Capsule (Women)",
+  "spec": "500mg × 100 capsules",
+  "price": 585,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Women's Health",
+  "description": "A tailored botanical formula for women combining Rehmannia, Dioscorea, and Cornus to replenish vital kidney Yin essence, regulate urinary comfort, relieve chronic lethargy, and maintain hormonal and fluid balance in women of all ages.",
+  "benefits": [
+   "Nourishes feminine kidney Yin and vital essence",
+   "Supports bladder and urinary tract health and comfort",
+   "Relieves chronic lethargy, cold extremities, and low back ache",
+   "Promotes youthful glow, hormonal equilibrium, and vigour"
+  ],
+  "dosage": "2 capsules twice daily with warm water",
+  "tags": [
+   "women",
+   "kidney",
+   "vitality",
+   "urinary",
+   "fatigue",
+   "hormones"
+  ],
+  "image": "/static/products/IMG_3607.jpg",
+  "gallery": [
+   "/static/products/IMG_3607.jpg",
+   "/static/products/IMG_3608.jpg"
+  ]
+ },
+ {
+  "code": "W25",
+  "name": "Pure Protein Powder",
+  "spec": "500g per can",
+  "price": 683,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "High Bioavailability",
+  "description": "A premium isolated soy and whey protein blend providing a full essential amino acid spectrum with low fat, zero cholesterol, and rapid digestibility. Designed for muscle maintenance, tissue repair, post-surgical recovery, and ensuring adequate protein intake in elderly or recovering individuals.",
+  "benefits": [
+   "Rebuilds lean muscle mass and prevents muscle wasting",
+   "Accelerates post-surgical, wound, and illness recovery",
+   "Strengthens frail immune systems with protein building blocks",
+   "Easily digested with maximum nitrogen retention and absorption"
+  ],
+  "dosage": "1–2 scoops (10–20g) dissolved in warm water, milk, or oats daily",
+  "tags": [
+   "protein",
+   "muscle",
+   "recovery",
+   "nutrition",
+   "strength",
+   "elderly"
+  ],
+  "image": "/static/products/IMG_3609.jpg",
+  "gallery": [
+   "/static/products/IMG_3609.jpg",
+   "/static/products/IMG_3610.jpg"
+  ]
+ },
+ {
+  "code": "W26",
+  "name": "Multi-Vitamin Tablet (Children)",
+  "spec": "1g × 30 tablets",
+  "price": 166,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Kids Care",
+  "description": "A chewable complete multi-vitamin and mineral complex scientifically formulated for growing children to ensure optimal brain development, strong skeletal growth, and robust immune defences during critical developmental years.",
+  "benefits": [
+   "Fills micronutrient gaps in picky or selective eaters",
+   "Supports healthy growth, height, and cognitive alertness",
+   "Strengthens resistance against seasonal colds and infections",
+   "Delicious fruit-flavoured chewable tablet children love"
+  ],
+  "dosage": "1 chewable tablet daily after meals",
+  "tags": [
+   "children",
+   "vitamins",
+   "growth",
+   "immunity",
+   "chewable",
+   "kids"
+  ],
+  "image": "/static/products/IMG_3611.jpg",
+  "gallery": [
+   "/static/products/IMG_3611.jpg",
+   "/static/products/IMG_3612.jpg",
+   "/static/products/IMG_3613.jpg"
+  ]
+ },
+ {
+  "code": "W27",
+  "name": "Multi-Vitamin Tablet (Adults)",
+  "spec": "1g × 100 tablets",
+  "price": 449,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Daily Essential",
+  "description": "A high-potency daily foundational vitamin and mineral formulation providing 100% RDA of all essential micronutrients for active adult lifestyles. Contains Vitamins A, B-Complex, C, D3, E, Folic Acid, Iron, Zinc, Magnesium, and Selenium for comprehensive daily micronutrient coverage.",
+  "benefits": [
+   "Prevents daily micronutrient deficiencies and dietary gaps",
+   "Boosts metabolic energy conversion and reduces fatigue",
+   "Supports nerve function, mental clarity, and mood",
+   "Complete A, B-Complex, C, D3, E and mineral formula"
+  ],
+  "dosage": "1 tablet daily with breakfast",
+  "tags": [
+   "vitamins",
+   "minerals",
+   "daily",
+   "energy",
+   "wellness",
+   "multivitamin"
+  ],
+  "image": "/static/products/IMG_3614.jpg",
+  "gallery": [
+   "/static/products/IMG_3614.jpg",
+   "/static/products/IMG_3615.jpg"
+  ]
+ },
+ {
+  "code": "W28",
+  "name": "Chewable Calcium Tablet (Children)",
+  "spec": "1g × 30 tablets",
+  "price": 166,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Kids Bone Care",
+  "description": "A delicious chewable bioavailable calcium carbonate combined with Vitamin D3 and magnesium, specifically formulated for developing children's bones, teeth enamel hardening, and healthy muscle coordination during rapid growth phases.",
+  "benefits": [
+   "Supports rapid skeletal growth, height gain, and bone density",
+   "Fortifies developing teeth enamel against cavities",
+   "Prevents childhood calcium deficiency and growing pains",
+   "Pleasant fruity taste that children enjoy daily"
+  ],
+  "dosage": "1 tablet chewed daily after a meal",
+  "tags": [
+   "calcium",
+   "children",
+   "bones",
+   "teeth",
+   "growth",
+   "kids"
+  ],
+  "image": "/static/products/IMG_3616.jpg",
+  "gallery": [
+   "/static/products/IMG_3616.jpg",
+   "/static/products/IMG_3617.jpg",
+   "/static/products/IMG_3618.jpg"
+  ]
+ },
+ {
+  "code": "W29",
+  "name": "Compound Calcium Nutrient Powder",
+  "spec": "10g × 10 sachets",
+  "price": 429,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Blood Sugar Calcium",
+  "description": "A specialised enzymatic calcium formulation enriched with organic pumpkin extract, chromium, and bioactive minerals to support healthy pancreatic islet cell function, regulate blood glucose metabolism, and deliver safe calcium supplementation without blood sugar spiking.",
+  "benefits": [
+   "Bioactive calcium formulation safe for diabetic profiles",
+   "Assists pancreas in insulin production and efficiency",
+   "Replenishes minerals lost through metabolic and urinary stress",
+   "Strengthens bone density safely alongside diabetes management"
+  ],
+  "dosage": "1 sachet dissolved in 100ml warm water daily before a meal",
+  "tags": [
+   "calcium",
+   "diabetes",
+   "blood sugar",
+   "pancreas",
+   "bones",
+   "chromium"
+  ],
+  "image": "/static/products/IMG_3619.jpg",
+  "gallery": [
+   "/static/products/IMG_3619.jpg",
+   "/static/products/IMG_3620.jpg",
+   "/static/products/IMG_3621.jpg"
+  ]
+ },
+ {
+  "code": "W30",
+  "name": "Calcium Softgel (Adults)",
+  "spec": "1g × 100 capsules",
+  "price": 429,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Bone Support",
+  "description": "Liquid nano-calcium carbonate suspended in Vitamin D3-enriched oil within softgel capsules, engineered for maximum gastrointestinal absorption without the stomach upset or constipation often caused by chalk-based calcium tablets.",
+  "benefits": [
+   "Prevents osteoporosis, bone thinning, and fracture risk",
+   "Strengthens teeth enamel and structural bone mineral density",
+   "Prevents nocturnal leg cramps and muscle spasms",
+   "Enhanced liquid absorption — 3× better than regular calcium tablets"
+  ],
+  "dosage": "1–2 softgels daily with food and water",
+  "tags": [
+   "calcium",
+   "osteoporosis",
+   "bones",
+   "joints",
+   "vitamin d3",
+   "softgel"
+  ],
+  "image": "/static/products/IMG_3622.jpg",
+  "gallery": [
+   "/static/products/IMG_3622.jpg",
+   "/static/products/IMG_3623.jpg",
+   "/static/products/IMG_3624.jpg"
+  ]
+ },
+ {
+  "code": "W31",
+  "name": "Zinc Tablet (Children)",
+  "spec": "1g × 30 tablets",
+  "price": 176,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Kids Growth",
+  "description": "A chewable organic zinc gluconate tablet specially formulated for children to stimulate appetite, support physical growth, fuel DNA synthesis for cellular development, and strengthen immune responses against recurring infections.",
+  "benefits": [
+   "Stimulates healthy appetite and resolves picky eating",
+   "Crucial for DNA synthesis, cell division, and physical growth",
+   "Strengthens immune defences against infections and illness",
+   "Supports healthy taste, smell, and sensory development"
+  ],
+  "dosage": "1 tablet daily chewed after a meal",
+  "tags": [
+   "zinc",
+   "children",
+   "appetite",
+   "growth",
+   "immunity",
+   "kids"
+  ],
+  "image": "/static/products/IMG_3625.jpg",
+  "gallery": [
+   "/static/products/IMG_3625.jpg",
+   "/static/products/IMG_3626.jpg",
+   "/static/products/IMG_3627.jpg"
+  ]
+ },
+ {
+  "code": "W32",
+  "name": "Zinc Tablet (Adults)",
+  "spec": "1g × 60 tablets",
+  "price": 312,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Vital Mineral",
+  "description": "Essential trace mineral zinc gluconate that fuels over 300 enzymatic processes in the body, supports testosterone synthesis and male reproductive health, accelerates skin wound healing, and strengthens innate and adaptive immune cell function.",
+  "benefits": [
+   "Essential for male testosterone production and prostate wellness",
+   "Accelerates wound, scar, and skin tissue healing",
+   "Strengthens innate and adaptive immune cell function",
+   "Supports sharp vision, taste, and sensory function"
+  ],
+  "dosage": "1 tablet daily after food",
+  "tags": [
+   "zinc",
+   "immunity",
+   "testosterone",
+   "skin",
+   "prostate",
+   "wound healing"
+  ],
+  "image": "/static/products/IMG_3631.jpg",
+  "gallery": [
+   "/static/products/IMG_3631.jpg",
+   "/static/products/IMG_3632.jpg",
+   "/static/products/IMG_3633.jpg"
+  ]
+ },
+ {
+  "code": "W33",
+  "name": "Soybean Lecithin Softgel",
+  "spec": "1.2g × 100 capsules",
+  "price": 390,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Brain & Liver",
+  "description": "Natural soya-derived phospholipid complex (phosphatidylcholine and phosphatidylinositol) known as the 'blood vessel scavenger' that emulsifies arterial LDL fats, protects liver cells from fatty infiltration, and provides choline for memory neurotransmitter synthesis.",
+  "benefits": [
+   "Emulsifies blood lipids and reduces bad LDL cholesterol",
+   "Protects the liver against fatty accumulation and cirrhosis",
+   "Rich source of choline for memory, focus, and nerve transmission",
+   "Helps prevent gallstone formation and gallbladder sludge"
+  ],
+  "dosage": "1–2 softgels twice daily with meals",
+  "tags": [
+   "lecithin",
+   "cholesterol",
+   "liver",
+   "brain",
+   "arteries",
+   "memory",
+   "choline"
+  ],
+  "image": "/static/products/IMG_3634.jpg",
+  "gallery": [
+   "/static/products/IMG_3634.jpg",
+   "/static/products/IMG_3635.jpg",
+   "/static/products/IMG_3636.jpg"
+  ]
+ },
+ {
+  "code": "W34",
+  "name": "Deep Sea Fish Oil Softgel (Omega-3)",
+  "spec": "1g × 100 capsules",
+  "price": 488,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Heart & Joints",
+  "description": "Pure molecularly distilled deep-sea fish oil delivering a concentrated dose of EPA (eicosapentaenoic acid) and DHA (docosahexaenoic acid) Omega-3 fatty acids. EPA reduces systemic arterial inflammation and triglycerides, while DHA supports brain function, retinal health, and joint lubrication.",
+  "benefits": [
+   "Lowers triglycerides, arterial plaque risk, and cardiovascular events",
+   "Lubricates stiff arthritic joints and regenerates cartilage",
+   "Supports cognitive clarity, focus, mood, and eye retinal health",
+   "Reduces systemic vascular and joint inflammation naturally"
+  ],
+  "dosage": "1–2 softgels daily with a meal",
+  "tags": [
+   "omega 3",
+   "heart",
+   "joints",
+   "brain",
+   "cholesterol",
+   "eyes",
+   "fish oil"
+  ],
+  "image": "/static/products/IMG_3637.jpg",
+  "gallery": [
+   "/static/products/IMG_3637.jpg",
+   "/static/products/IMG_3638.jpg",
+   "/static/products/IMG_3639.jpg"
+  ]
+ },
+ {
+  "code": "W35",
+  "name": "Digestant Tablet / Gastric Health",
+  "spec": "800mg × 30 tablets",
+  "price": 312,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Gut Relief",
+  "description": "A herbal digestive enzyme and gastric protective formula combining Hawthorn berry, Malt, Medicated Leaven, and Chicken's Gizzard extract. This traditional formula soothes acid reflux, resolves food stagnation, eliminates post-meal bloating, and protects the gastric mucosal lining from ulcer damage.",
+  "benefits": [
+   "Relieves acid reflux, heartburn, and stomach burning pain",
+   "Eliminates gas, bloating, and uncomfortable post-meal fullness",
+   "Aids enzymatic breakdown of proteins, fats, and starches",
+   "Protects and heals the gastric mucosal lining"
+  ],
+  "dosage": "1–2 tablets chewed after meals or during digestive discomfort",
+  "tags": [
+   "digestion",
+   "stomach",
+   "heartburn",
+   "acid reflux",
+   "bloating",
+   "gut",
+   "gastric"
+  ],
+  "image": "/static/products/IMG_3640.jpg",
+  "gallery": [
+   "/static/products/IMG_3640.jpg",
+   "/static/products/IMG_3641.jpg",
+   "/static/products/IMG_3642.jpg",
+   "/static/products/IMG_3643.jpg"
+  ]
+ },
+ {
+  "code": "W36",
+  "name": "Garlic Oil Softgel",
+  "spec": "350mg × 60 capsules",
+  "price": 439,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Natural Defence",
+  "description": "Cold-extracted concentrated garlic oil delivering potent allicin and organic sulphur compounds — nature's most powerful natural antibiotic and blood pressure stabiliser. Allicin inhibits bacterial and fungal growth, reduces arterial plaque, and supports healthy cardiovascular parameters. Odourless softgel format.",
+  "benefits": [
+   "Natural broad-spectrum antimicrobial and antifungal defence",
+   "Helps regulate elevated blood pressure and arterial plaque",
+   "Clears upper respiratory congestion and sinus infections",
+   "Odourless enteric-coated softgel capsules"
+  ],
+  "dosage": "1–2 softgels, 2 times daily with meals",
+  "tags": [
+   "garlic",
+   "blood pressure",
+   "antimicrobial",
+   "immunity",
+   "heart",
+   "allicin"
+  ],
+  "image": "/static/products/IMG_3644.jpg",
+  "gallery": [
+   "/static/products/IMG_3644.jpg",
+   "/static/products/IMG_3645.jpg",
+   "/static/products/IMG_3646.jpg"
+  ]
+ },
+ {
+  "code": "W37",
+  "name": "Chitosan Capsule",
+  "spec": "400mg × 60 capsules",
+  "price": 468,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Detox & Slimming",
+  "description": "Marine-derived positively charged dietary fibre (de-acetylated chitin from crustacean shells) that electrostatically binds to negatively charged dietary fats, bile acids, heavy metals, and toxins in the digestive tract — physically preventing their absorption into the bloodstream before excretion.",
+  "benefits": [
+   "Binds and removes dietary fat to facilitate natural weight loss",
+   "Lowers LDL cholesterol and blood lipid levels",
+   "Absorbs and eliminates heavy metals and digestive toxins",
+   "Promotes healthy bowel regularity and colon health"
+  ],
+  "dosage": "2 capsules twice daily with plenty of water before fatty meals",
+  "tags": [
+   "chitosan",
+   "slimming",
+   "detox",
+   "cholesterol",
+   "weight loss",
+   "fat blocker"
+  ],
+  "image": "/static/products/IMG_3647.jpg",
+  "gallery": [
+   "/static/products/IMG_3647.jpg",
+   "/static/products/IMG_3648.jpg",
+   "/static/products/IMG_3649.jpg"
+  ]
+ },
+ {
+  "code": "W38",
+  "name": "Aloe Vera Plus Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 410,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Colon Cleanse",
+  "description": "Concentrated Aloe Barbadensis leaf extract containing anthraquinones, mucilaginous polysaccharides, and prebiotic fibres that gently stimulate colon peristalsis, relieve chronic constipation, soothe inflamed intestinal mucosa, and promote clear radiant skin from within.",
+  "benefits": [
+   "Provides gentle and effective relief from stubborn constipation",
+   "Soothes irritated stomach ulcers, gastritis, and colitis",
+   "Promotes radiant, blemish-free skin through internal cleansing",
+   "Natural internal body cleanser without harsh laxative effects"
+  ],
+  "dosage": "1–2 capsules daily before bedtime or with meals",
+  "tags": [
+   "aloe vera",
+   "constipation",
+   "colon",
+   "skin",
+   "digestion",
+   "detox"
+  ],
+  "image": "/static/products/IMG_3650.jpg",
+  "gallery": [
+   "/static/products/IMG_3650.jpg",
+   "/static/products/IMG_3651.jpg",
+   "/static/products/IMG_3652.jpg"
+  ]
+ },
+ {
+  "code": "W39",
+  "name": "Compound Marrow Powder",
+  "spec": "24 sachets per box",
+  "price": 507,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Marrow & Vitality",
+  "description": "Bioactive yak bone marrow extract combined with spinal marrow and brain-nourishing nutrients to deeply replenish bone marrow reserves, enhance haematopoiesis (blood cell production), support neurological function, and restore vitality in individuals suffering from chronic fatigue or anaemia.",
+  "benefits": [
+   "Nourishes bone marrow and promotes healthy red blood cell formation",
+   "Strengthens fragile bones, vertebrae, and spinal support structures",
+   "Slows brain ageing, memory decline, and neurological deterioration",
+   "Powerful tonic for recovery from chronic fatigue and anaemia"
+  ],
+  "dosage": "1 sachet dissolved in warm water or soup daily",
+  "tags": [
+   "marrow",
+   "bones",
+   "blood",
+   "energy",
+   "spine",
+   "brain",
+   "anaemia"
+  ],
+  "image": "/static/products/IMG_3653.jpg",
+  "gallery": [
+   "/static/products/IMG_3653.jpg",
+   "/static/products/IMG_3654.jpg",
+   "/static/products/IMG_3655.jpg",
+   "/static/products/IMG_3656.jpg"
+  ]
+ },
+ {
+  "code": "W40",
+  "name": "Ginkgo Biloba Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 439,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Memory & Focus",
+  "description": "Standardised Ginkgo biloba leaf flavone glycoside and terpene lactone extract that enhances cerebral and peripheral microcirculation, increases oxygen delivery to brain tissue, sharpens cognitive focus, and relieves tinnitus caused by poor inner ear circulation.",
+  "benefits": [
+   "Enhances memory recall, concentration, and mental processing speed",
+   "Improves blood flow to the brain, eyes, and extremities",
+   "Relieves dizziness, vertigo, and tinnitus (ringing in the ears)",
+   "Powerful neuroprotective antioxidant against cognitive decline"
+  ],
+  "dosage": "1–2 capsules, 2 times daily with warm water",
+  "tags": [
+   "ginkgo",
+   "brain",
+   "memory",
+   "tinnitus",
+   "circulation",
+   "dizziness",
+   "focus"
+  ],
+  "image": "/static/products/IMG_3657.jpg",
+  "gallery": [
+   "/static/products/IMG_3657.jpg",
+   "/static/products/IMG_3658.jpg",
+   "/static/products/IMG_3659.jpg"
+  ]
+ },
+ {
+  "code": "W41",
+  "name": "Hepatsure Capsule (Liver Support)",
+  "spec": "500mg × 60 capsules",
+  "price": 507,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Liver Guardian",
+  "description": "A specialised hepatic formula containing Milk Thistle (Silymarin), Astragalus, and Schisandra chinensis to detoxify liver cells, repair damage caused by alcohol, medications, or hepatitis, regenerate hepatocytes, and restore bile flow and fat metabolism.",
+  "benefits": [
+   "Detoxifies and regenerates damaged and fatty liver cells",
+   "Protects against fatty liver progression and cirrhosis",
+   "Normalises elevated liver enzymes (ALT and AST levels)",
+   "Supports healthy bile flow, gallbladder function, and fat metabolism"
+  ],
+  "dosage": "2 capsules twice daily after meals",
+  "tags": [
+   "liver",
+   "detox",
+   "fatty liver",
+   "hepatitis",
+   "alcohol recovery",
+   "enzymes"
+  ],
+  "image": "/static/products/IMG_3660.jpg",
+  "gallery": [
+   "/static/products/IMG_3660.jpg",
+   "/static/products/IMG_3661.jpg",
+   "/static/products/IMG_3662.jpg"
+  ]
+ },
+ {
+  "code": "W42",
+  "name": "Royal Jelly Softgel",
+  "spec": "600mg × 30 softgels",
+  "price": 361,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Youth Elixir",
+  "description": "Pure queen bee royal jelly rich in 10-hydroxy-2-decenoic acid (10-HDA), royalactin, complete B-vitamins, amino acids, and trace minerals. Royal jelly supports hormonal balance, collagen production, cellular anti-ageing, and deep daily vitality for men and women.",
+  "benefits": [
+   "Slows biological ageing and supports youthful cellular vitality",
+   "Boosts collagen production for glowing, supple skin",
+   "Regulates immune response and supports adrenal gland health",
+   "Increases physical stamina, libido, and mental sharpness"
+  ],
+  "dosage": "1–2 softgels daily in the morning before breakfast",
+  "tags": [
+   "royal jelly",
+   "anti aging",
+   "skin",
+   "vitality",
+   "hormones",
+   "energy"
+  ],
+  "image": "/static/products/IMG_3663.jpg",
+  "gallery": [
+   "/static/products/IMG_3663.jpg",
+   "/static/products/IMG_3664.jpg",
+   "/static/products/IMG_3665.jpg"
+  ]
+ },
+ {
+  "code": "W43",
+  "name": "Super Nutrition Blueberry Formula",
+  "spec": "20g × 15 bags",
+  "price": 897,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Premium Antioxidant",
+  "description": "Wild North American high-bush blueberry extract standardised to a very high anthocyanin content, combined with dietary fibre and micronutrients. This premium formula provides one of nature's highest ORAC antioxidant ratings to protect retinal micro-capillaries, cardiovascular walls, and mitochondrial cellular energy.",
+  "benefits": [
+   "Exceptional ORAC antioxidant rating combats cellular ageing",
+   "Protects retinal micro-capillaries and preserves sharp vision",
+   "Improves cardiovascular micro-vessel flexibility and blood flow",
+   "Energises the body at the cellular mitochondria level"
+  ],
+  "dosage": "1 bag mixed in 150ml cool or warm water daily",
+  "tags": [
+   "blueberry",
+   "antioxidant",
+   "eyes",
+   "heart",
+   "vitality",
+   "superfood"
+  ],
+  "image": "/static/products/IMG_3666.jpg",
+  "gallery": [
+   "/static/products/IMG_3666.jpg",
+   "/static/products/IMG_3667.jpg",
+   "/static/products/IMG_3668.jpg"
+  ]
+ },
+ {
+  "code": "W46",
+  "name": "Eye Care Softgel",
+  "spec": "800mg × 60 softgels",
+  "price": 546,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Vision Shield",
+  "description": "Clinically formulated with Lutein, Zeaxanthin, European Bilberry extract, and Eyebright to filter harmful blue-light wavelengths reaching the macula, prevent macular degeneration, relieve digital eye strain, restore night vision contrast sensitivity, and protect against cataract progression.",
+  "benefits": [
+   "Protects the macula and retina from degeneration and blue-light damage",
+   "Relieves eye strain, dryness, redness, and screen fatigue",
+   "Improves night vision and contrast sensitivity",
+   "Slows the progression of cataracts and floaters"
+  ],
+  "dosage": "1–2 softgels daily with a meal",
+  "tags": [
+   "eyes",
+   "vision",
+   "lutein",
+   "screens",
+   "cataracts",
+   "macular",
+   "night vision"
+  ],
+  "image": "/static/products/IMG_3669.jpg",
+  "gallery": [
+   "/static/products/IMG_3669.jpg",
+   "/static/products/IMG_3670.jpg",
+   "/static/products/IMG_3671.jpg"
+  ]
+ },
+ {
+  "code": "W47",
+  "name": "Super CoQ-10 Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 527,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Cardiac Energy",
+  "description": "Bioactive Coenzyme Q10 (ubiquinone) that drives ATP energy synthesis inside heart and muscle mitochondria, strengthens myocardium contraction force, neutralises lipid-phase free radicals in blood vessel walls, and counteracts energy depletion caused by statin medications.",
+  "benefits": [
+   "Fuels heart muscle mitochondrial energy and pumping strength",
+   "Counteracts statin-induced muscle pain, weakness, and fatigue",
+   "Potent lipid-soluble antioxidant for blood vessel wall protection",
+   "Promotes youthful cellular energy, longevity, and stamina"
+  ],
+  "dosage": "1 capsule daily with a fatty meal for optimal absorption",
+  "tags": [
+   "coq10",
+   "heart",
+   "energy",
+   "statin",
+   "blood vessels",
+   "stamina",
+   "mitochondria"
+  ],
+  "image": "/static/products/IMG_3675.jpg",
+  "gallery": [
+   "/static/products/IMG_3675.jpg",
+   "/static/products/IMG_3676.jpg",
+   "/static/products/IMG_3677.jpg",
+   "/static/products/IMG_3678.jpg",
+   "/static/products/IMG_3679.jpg",
+   "/static/products/IMG_3680.jpg"
+  ]
+ },
+ {
+  "code": "W48",
+  "name": "ProstaSure Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 644,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Prostate Health",
+  "description": "A targeted botanical synergy of Saw Palmetto berry extract, Pumpkin Seed oil, and Phytosterols that inhibits 5-alpha-reductase enzyme activity to relieve benign prostatic hyperplasia (BPH), improve urinary flow rate, reduce nighttime waking, and protect healthy prostate epithelial tissue.",
+  "benefits": [
+   "Reduces enlarged prostate swelling and BPH discomfort",
+   "Relieves weak urinary stream, dribbling, and painful urination",
+   "Eliminates urgent nighttime bathroom waking (nocturia)",
+   "Protects healthy prostate cellular structure from DHT damage"
+  ],
+  "dosage": "2 capsules twice daily with meals",
+  "tags": [
+   "prostate",
+   "men",
+   "urinary",
+   "bph",
+   "saw palmetto",
+   "nocturia"
+  ],
+  "image": "/static/products/IMG_3681.jpg",
+  "gallery": [
+   "/static/products/IMG_3681.jpg",
+   "/static/products/IMG_3682.jpg"
+  ]
+ },
+ {
+  "code": "W49",
+  "name": "Glucoblock / Diasure Capsule",
+  "spec": "500mg × 30 capsules",
+  "price": 351,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Sugar Balance",
+  "description": "A natural herbal glucose regulator containing Bitter Melon (Momordica charantia) charantin, Gymnema sylvestre (sugar destroyer), and Fenugreek seed to stabilise post-meal blood sugar spikes, reduce carbohydrate cravings, improve peripheral insulin sensitivity, and protect nerves from diabetic neuropathy.",
+  "benefits": [
+   "Assists in lowering fasting and post-meal blood glucose naturally",
+   "Blocks intestinal carbohydrate and sugar absorption",
+   "Supports pancreatic beta-cell regeneration and function",
+   "Protects peripheral nerves and kidneys from diabetic damage"
+  ],
+  "dosage": "1 capsule twice daily before main meals",
+  "tags": [
+   "diabetes",
+   "blood sugar",
+   "glucose",
+   "insulin",
+   "bitter melon",
+   "neuropathy"
+  ],
+  "image": "/static/products/IMG_3683.jpg",
+  "gallery": [
+   "/static/products/IMG_3683.jpg",
+   "/static/products/IMG_3684.jpg"
+  ]
+ },
+ {
+  "code": "W50",
+  "name": "Arthropower / Joint Health Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 546,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Joint & Mobility",
+  "description": "A comprehensive joint restoration formula combining Glucosamine sulphate, Chondroitin, Boswellia serrata, and Collagen Type II to rebuild worn articular cartilage, replenish synovial fluid, reduce inflammatory joint enzymes (COX-2 inhibition), and eliminate progressive joint stiffness and pain.",
+  "benefits": [
+   "Rebuilds damaged articular cartilage and joint cushioning",
+   "Relieves osteoarthritis pain, swelling, and cracking joints",
+   "Restores knee, hip, and spinal flexibility and mobility",
+   "Suppresses inflammatory prostaglandins and joint enzymes"
+  ],
+  "dosage": "2 capsules twice daily with meals",
+  "tags": [
+   "joints",
+   "arthritis",
+   "cartilage",
+   "knee pain",
+   "mobility",
+   "glucosamine"
+  ],
+  "image": "/static/products/IMG_3685.jpg",
+  "gallery": [
+   "/static/products/IMG_3685.jpg",
+   "/static/products/IMG_3686.jpg",
+   "/static/products/IMG_3687.jpg"
+  ]
+ },
+ {
+  "code": "W51",
+  "name": "Vitamin C Chewable Tablet",
+  "spec": "700mg × 60 tablets",
+  "price": 234,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Immunity Booster",
+  "description": "High-dose bioavailable Vitamin C (ascorbic acid) with natural rosehip bioflavonoids and hesperidin for synergistic antioxidant and immune-stimulating activity. Vitamin C is essential for collagen synthesis, white blood cell stimulation, iron absorption enhancement, and skin brightening.",
+  "benefits": [
+   "Activates and multiplies white blood cells against infections",
+   "Essential co-factor for collagen synthesis and skin radiance",
+   "Neutralises environmental pollutants, toxins, and free radicals",
+   "Enhances dietary iron absorption and prevents anaemia"
+  ],
+  "dosage": "1–2 tablets daily chewed or dissolved under the tongue",
+  "tags": [
+   "vitamin c",
+   "immunity",
+   "skin",
+   "collagen",
+   "antioxidant",
+   "iron"
+  ],
+  "image": "/static/products/IMG_3688.jpg",
+  "gallery": [
+   "/static/products/IMG_3688.jpg",
+   "/static/products/IMG_3689.jpg",
+   "/static/products/IMG_3690.jpg",
+   "/static/products/IMG_3691.jpg"
+  ]
+ },
+ {
+  "code": "W55",
+  "name": "Ovary Nutrition Capsule",
+  "spec": "300mg × 90 capsules",
+  "price": 468,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Feminine Care",
+  "description": "A precious herbal tonic combining Angelica sinensis, Deer Antler velvet, Pearl powder, and Pueraria to nourish ovarian tissue, regulate menstrual cycle regularity, support egg quality and fertility, delay premature ovarian ageing, and maintain optimal feminine hormonal balance.",
+  "benefits": [
+   "Supports healthy ovarian function and egg quality for fertility",
+   "Normalises irregular, painful, or absent menstrual periods",
+   "Maintains optimal feminine oestrogen and progesterone balance",
+   "Combats premature ovarian failure, dryness, and hormonal decline"
+  ],
+  "dosage": "2 capsules twice daily with warm water",
+  "tags": [
+   "women",
+   "ovary",
+   "fertility",
+   "periods",
+   "hormones",
+   "menstruation",
+   "pcos"
+  ],
+  "image": "/static/products/IMG_3692.jpg",
+  "gallery": [
+   "/static/products/IMG_3692.jpg",
+   "/static/products/IMG_3693.jpg",
+   "/static/products/IMG_3694.jpg"
+  ]
+ },
+ {
+  "code": "W56",
+  "name": "Anxiety & Stress Relief Capsule",
+  "spec": "0.5g × 60 capsules",
+  "price": 468,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Calm Mind",
+  "description": "A synergistic botanical calming blend of Passionflower extract, Valerian root, Ziziphus (Sour Jujube seed), and Magnesium, clinically designed to soothe overactive nervous systems, reduce cortisol and adrenaline surges, eliminate anxiety and panic, and induce deep, unbroken natural sleep.",
+  "benefits": [
+   "Relieves panic, anxiety, and mental tension without grogginess",
+   "Induces deep, restful, and unbroken nighttime sleep naturally",
+   "Regulates cortisol and adrenaline stress hormone response",
+   "Improves emotional resilience during high-pressure situations"
+  ],
+  "dosage": "1–2 capsules 1 hour before bed or during acute stress episodes",
+  "tags": [
+   "stress",
+   "anxiety",
+   "sleep",
+   "insomnia",
+   "calm",
+   "nervous system",
+   "cortisol"
+  ],
+  "image": "/static/products/IMG_3695.jpg",
+  "gallery": [
+   "/static/products/IMG_3695.jpg",
+   "/static/products/IMG_3696.jpg",
+   "/static/products/IMG_3697.jpg",
+   "/static/products/IMG_3698.jpg"
+  ]
+ },
+ {
+  "code": "W57",
+  "name": "Jinpure Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 429,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Lymph & Blood",
+  "description": "A traditional blood and lymphatic system purifier formulated with herbal extracts that cleanse metabolic waste products from the circulatory system, reduce skin breakouts, promote lymphatic drainage, and support the liver and kidney filtration pathways for systemic cleansing.",
+  "benefits": [
+   "Clears systemic internal toxins and metabolic impurities from blood",
+   "Supports clear, blemish-free and even skin complexion",
+   "Reduces fluid retention, puffiness, and lymphatic congestion",
+   "Aids liver and kidney filtration and detoxification pathways"
+  ],
+  "dosage": "1–2 capsules twice daily with warm water",
+  "tags": [
+   "detox",
+   "blood",
+   "lymphatic",
+   "skin",
+   "purification",
+   "cleanse"
+  ],
+  "image": "/static/products/IMG_3699.jpg",
+  "gallery": [
+   "/static/products/IMG_3699.jpg",
+   "/static/products/IMG_3700.jpg",
+   "/static/products/IMG_3701.jpg"
+  ]
+ },
+ {
+  "code": "W58",
+  "name": "Slimming Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 546,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Fat Burner",
+  "description": "A potent thermogenic herbal slimming formula containing Lotus Leaf (Nelumbo), Cassia seed, Garcinia Cambogia (HCA), and L-Carnitine. This formula accelerates basal metabolic rate, inhibits fatty acid synthesis, transports fat into mitochondria for combustion, and suppresses between-meal appetite.",
+  "benefits": [
+   "Accelerates natural metabolic fat burning and thermogenesis",
+   "Suppresses excessive hunger, cravings, and portion sizes",
+   "Targets stubborn belly, waist, thigh, and arm fat deposits",
+   "Non-stimulant, non-ephedrine, natural botanical formulation"
+  ],
+  "dosage": "2 capsules once daily in the morning before breakfast",
+  "tags": [
+   "slimming",
+   "weight loss",
+   "fat burner",
+   "appetite",
+   "metabolism",
+   "belly fat"
+  ],
+  "image": "/static/products/IMG_3702.jpg",
+  "gallery": [
+   "/static/products/IMG_3702.jpg",
+   "/static/products/IMG_3703.jpg",
+   "/static/products/IMG_3704.jpg"
+  ]
+ },
+ {
+  "code": "W59",
+  "name": "NMN Longevity Capsule",
+  "spec": "0.5g × 60 capsules",
+  "price": 3413,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Ultimate Anti-Aging",
+  "description": "Pharmaceutical-grade Nicotinamide Mononucleotide (NMN) — the direct biological precursor to NAD+ (Nicotinamide Adenine Dinucleotide) — which declines by over 50% with ageing. Restoring NAD+ via NMN activates Sirtuin longevity genes (SIRT1–SIRT7), repairs DNA damage, and reverses measurable biological ageing.",
+  "benefits": [
+   "Directly elevates cellular NAD+ levels for energy and DNA repair",
+   "Activates Sirtuin longevity genes for biological age reversal",
+   "Restores youthful mitochondrial energy production",
+   "Improves cognitive clarity, muscle vitality, stamina, and skin elasticity"
+  ],
+  "dosage": "1–2 capsules daily in the morning on an empty stomach",
+  "tags": [
+   "nmn",
+   "anti aging",
+   "longevity",
+   "dna repair",
+   "nad+",
+   "vitality",
+   "sirtuin"
+  ],
+  "image": "/static/products/IMG_3705.jpg",
+  "gallery": [
+   "/static/products/IMG_3705.jpg",
+   "/static/products/IMG_3706.jpg",
+   "/static/products/IMG_3707.jpg"
+  ]
+ },
+ {
+  "code": "W60",
+  "name": "Anti-Aging Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 624,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Youth Formula",
+  "description": "A proprietary antioxidant and phyto-nutrient complex combining Resveratrol, Grape Seed Proanthocyanidins (OPCs), Astaxanthin, and Lycopene to neutralise the free radicals driving premature cellular ageing, shield skin collagen fibres, and protect cardiovascular vessels and organs from oxidative wear.",
+  "benefits": [
+   "Neutralises free radicals causing wrinkles, spots, and ageing",
+   "Promotes firm, elastic, luminous, and even-toned skin structure",
+   "Protects cardiovascular vessels, eyes, and vital organ cells",
+   "Boosts overall energy, immune capacity, and youthful vigour"
+  ],
+  "dosage": "1–2 capsules daily after meals",
+  "tags": [
+   "anti aging",
+   "skin",
+   "wrinkles",
+   "resveratrol",
+   "antioxidant",
+   "glow"
+  ],
+  "image": "/static/products/IMG_3708.jpg",
+  "gallery": [
+   "/static/products/IMG_3708.jpg",
+   "/static/products/IMG_3709.jpg",
+   "/static/products/IMG_3710.jpg"
+  ]
+ },
+ {
+  "code": "W61",
+  "name": "Brain Care Capsule",
+  "spec": "0.35g × 30 capsules",
+  "price": 507,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Neuro Focus",
+  "description": "A specialised nootropic formula containing Bacopa monnieri, Huperzine A (acetylcholinesterase inhibitor), Phosphatidylserine, and Lion's Mane mushroom extract. This synergy protects brain neurons from oxidative damage, inhibits acetylcholine breakdown, enhances synaptic plasticity, and improves working memory and cognitive processing.",
+  "benefits": [
+   "Improves memory recall, learning speed, and sustained focus",
+   "Shields brain cells against oxidative stress and neurodegeneration",
+   "Supports mental clarity and cognitive performance under pressure",
+   "Assists in preventing and slowing age-related cognitive decline"
+  ],
+  "dosage": "1–2 capsules twice daily with warm water",
+  "tags": [
+   "brain",
+   "memory",
+   "focus",
+   "nootropic",
+   "concentration",
+   "alzheimer",
+   "dementia"
+  ],
+  "image": "/static/products/IMG_3711.jpg",
+  "gallery": [
+   "/static/products/IMG_3711.jpg",
+   "/static/products/IMG_3712.jpg",
+   "/static/products/IMG_3713.jpg"
+  ]
+ },
+ {
+  "code": "W62",
+  "name": "Vitamin E Softgel",
+  "spec": "500mg × 100 capsules",
+  "price": 449,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Skin & Heart",
+  "description": "Natural d-alpha-tocopherol Vitamin E — the body's primary lipid-soluble antioxidant — providing cellular membrane protection against oxidative degradation, supporting reproductive fertility, promoting skin scar healing and hydration, and maintaining healthy platelet aggregation function.",
+  "benefits": [
+   "Protects cellular membranes from lipid peroxidation and oxidative damage",
+   "Promotes smooth, hydrated skin elasticity and accelerates scar healing",
+   "Supports reproductive fertility in women and men",
+   "Maintains healthy blood platelet function and reduces clot risk"
+  ],
+  "dosage": "1 softgel daily with food containing healthy fats",
+  "tags": [
+   "vitamin e",
+   "skin",
+   "fertility",
+   "antioxidant",
+   "scars",
+   "tocopherol"
+  ],
+  "image": "/static/products/IMG_3714.jpg",
+  "gallery": [
+   "/static/products/IMG_3714.jpg",
+   "/static/products/IMG_3715.jpg",
+   "/static/products/IMG_3716.jpg"
+  ]
+ },
+ {
+  "code": "W63",
+  "name": "Anti-Addiction Capsule",
+  "spec": "500mg × 60 capsules",
+  "price": 683,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Habit Recovery",
+  "description": "A herbal formulation combining Kudzu root (Pueraria), Milk Thistle, and calming adaptogenic herbs engineered to calm dopamine reward pathways, reduce neurological cravings for tobacco, alcohol, or other substances, and accelerate organ detoxification during the recovery period.",
+  "benefits": [
+   "Dampens psychological and physical substance cravings effectively",
+   "Soothes withdrawal irritability, tremors, anxiety, and mood swings",
+   "Accelerates liver and organ detoxification from toxins",
+   "Restores neurotransmitter dopamine and serotonin harmony"
+  ],
+  "dosage": "2 capsules, 2–3 times daily during active craving periods",
+  "tags": [
+   "addiction",
+   "smoking",
+   "alcohol",
+   "cravings",
+   "detox",
+   "recovery",
+   "withdrawal"
+  ],
+  "image": "/static/products/IMG_3717.jpg",
+  "gallery": [
+   "/static/products/IMG_3717.jpg",
+   "/static/products/IMG_3718.jpg",
+   "/static/products/IMG_3719.jpg"
+  ]
+ },
+ {
+  "code": "W64",
+  "name": "Blueberry Slimming Body Beverage",
+  "spec": "15g × 20 bags",
+  "price": 819,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Body Sculpt Drink",
+  "description": "A functional blueberry and botanical slimming beverage blend formulated to accelerate lipolysis (fat cell breakdown), firm sagging body contours, eliminate excess water weight retention, and boost overall vitality. Contains anthocyanins, L-Carnitine, Coenzyme Q10, and dietary fibre.",
+  "benefits": [
+   "Helps sculpt waistline, hips, thighs, and arms",
+   "Flushes excess cellular water retention and reduces puffiness",
+   "Rich in wild blueberry anthocyanins for antioxidant protection",
+   "Delicious fruit beverage format — easy daily compliance"
+  ],
+  "dosage": "1 bag dissolved in warm water daily before lunch",
+  "tags": [
+   "slimming",
+   "blueberry",
+   "body sculpt",
+   "weight loss",
+   "detox",
+   "lipolysis"
+  ],
+  "image": "/static/products/IMG_3720.jpg",
+  "gallery": [
+   "/static/products/IMG_3720.jpg",
+   "/static/products/IMG_3721.jpg"
+  ]
+ },
+ {
+  "code": "W66",
+  "name": "Blood Cleanse Capsule",
+  "spec": "0.5g × 60 capsules",
+  "price": 351,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Vascular Detox",
+  "description": "An advanced vascular detoxification formula combining herbal extracts that reduce blood viscosity (thickness), cleanse circulating metabolic waste products, improve peripheral micro-vessel circulation, and support overall cardiovascular wellness by keeping blood thin, clean, and freely flowing.",
+  "benefits": [
+   "Helps reduce blood viscosity and prevents sludging",
+   "Aids in clearing metabolic waste from the circulatory system",
+   "Improves peripheral oxygenation and micro-circulation",
+   "Supports overall cardiovascular health and stroke prevention"
+  ],
+  "dosage": "1–2 capsules twice daily with water",
+  "tags": [
+   "blood",
+   "cleanse",
+   "circulation",
+   "viscosity",
+   "cardiovascular",
+   "stroke prevention"
+  ],
+  "image": "/static/products/IMG_3722.jpg",
+  "gallery": [
+   "/static/products/IMG_3722.jpg",
+   "/static/products/IMG_3723.jpg",
+   "/static/products/IMG_3724.jpg"
+  ]
+ },
+ {
+  "code": "W67",
+  "name": "Balsam Pear (Bitter Melon) Tablet",
+  "spec": "600mg × 60 tablets",
+  "price": 429,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Blood Sugar Control",
+  "description": "Concentrated Momordica charantia (bitter melon) charantin — a plant compound structurally similar to insulin — in convenient tablet form for daily maintenance of balanced blood glucose. Charantin activates glucose transporter proteins to enhance cellular glucose uptake without triggering hypoglycaemia.",
+  "benefits": [
+   "Plant-based charantin insulin support for diabetic patients",
+   "Enhances peripheral muscle glucose absorption after meals",
+   "Protects kidneys and retinas from sugar-related damage",
+   "Convenient once-daily tablet format for easy compliance"
+  ],
+  "dosage": "1–2 tablets twice daily before meals",
+  "tags": [
+   "blood sugar",
+   "diabetes",
+   "balsam pear",
+   "glucose",
+   "insulin",
+   "bitter melon"
+  ],
+  "image": "/static/products/IMG_3725.jpg",
+  "gallery": [
+   "/static/products/IMG_3725.jpg",
+   "/static/products/IMG_3726.jpg",
+   "/static/products/IMG_3727.jpg"
+  ]
+ },
+ {
+  "code": "W68",
+  "name": "Pine Pollen Tablet",
+  "spec": "0.5g × 90 tablets",
+  "price": 546,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Superfood Tablet",
+  "description": "Cell-wall broken natural Scots pine pollen containing over 200 bio-nutrients including natural phyto-androgens (brassinolide and castasterone), all essential amino acids, vitamins, coenzymes, and antioxidant enzymes. Pine pollen tonifies both male and female endocrine systems and provides exceptional full-spectrum nutritional density.",
+  "benefits": [
+   "Boosts male and female vitality, stamina, and physical energy",
+   "Natural source of over 200 active vitamins, minerals, and enzymes",
+   "Strengthens immunity and general resistance to illness",
+   "Supports endocrine balance and hormonal wellbeing"
+  ],
+  "dosage": "2–3 tablets twice daily, chewed or swallowed with water",
+  "tags": [
+   "pine pollen",
+   "energy",
+   "vitality",
+   "immunity",
+   "hormones",
+   "superfood"
+  ],
+  "image": "/static/products/IMG_3728.jpg",
+  "gallery": [
+   "/static/products/IMG_3728.jpg",
+   "/static/products/IMG_3729.jpg",
+   "/static/products/IMG_3730.jpg"
+  ]
+ },
+ {
+  "code": "W69",
+  "name": "Blueberry Enzymes Tablet",
+  "spec": "1g × 100 tablets",
+  "price": 449,
+  "category": "supplements",
+  "categoryName": "Nutritional Supplements",
+  "badge": "Enzyme Boost",
+  "description": "A fermented blueberry enzyme complex combining naturally fermented fruit enzymes, probiotic cultures, and inulin prebiotic fibre to restore a healthy gut microbiome, optimise nutrient assimilation efficiency, accelerate metabolic waste clearance, and support colon antioxidant health.",
+  "benefits": [
+   "Restores balanced digestive flora, enzymes, and microbiome diversity",
+   "Optimises nutrient absorption and assimilation from food",
+   "Combats post-meal sluggishness, bloating, and indigestion",
+   "High anthocyanin antioxidant support for colon health"
+  ],
+  "dosage": "1–2 tablets chewed after meals for best enzyme contact",
+  "tags": [
+   "enzymes",
+   "blueberry",
+   "digestion",
+   "gut",
+   "metabolism",
+   "probiotics"
+  ],
+  "image": "/static/products/IMG_3731.jpg",
+  "gallery": [
+   "/static/products/IMG_3731.jpg",
+   "/static/products/IMG_3732.jpg",
+   "/static/products/IMG_3733.jpg"
+  ]
+ },
+ {
+  "code": "W10",
+  "name": "Pro-Slim Tea",
+  "spec": "4g × 16 sachets",
+  "price": 234,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Bestseller Tea",
+  "description": "A natural herbal slimming tea blending Lotus Leaf (Folium Nelumbinis), Cassia Seed, Spirulina, Ginger, and Green Tea to accelerate fat burning, gently cleanse the colon of accumulated waste, reduce bloating, and suppress appetite between meals. Smooth, refreshing, earthy-green flavour.",
+  "benefits": [
+   "Accelerates daily calorie and fat metabolism",
+   "Prevents fat accumulation in the abdomen and hips",
+   "Gentle colon cleansing without harsh cramping",
+   "Refreshing smooth herbal taste enjoyed hot or iced"
+  ],
+  "dosage": "1–2 sachets steeped in boiling water for 5 minutes; drink after main meals",
+  "tags": [
+   "slimming tea",
+   "weight loss",
+   "detox",
+   "tea",
+   "belly fat",
+   "colon"
+  ],
+  "image": "/static/products/IMG_3527.jpg",
+  "gallery": [
+   "/static/products/IMG_3527.jpg",
+   "/static/products/IMG_3528.jpg",
+   "/static/products/IMG_3529.jpg"
+  ]
+ },
+ {
+  "code": "W11",
+  "name": "Kuding Plus Tea",
+  "spec": "2.5g × 20 sachets",
+  "price": 234,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Detox Master",
+  "description": "Traditional wild Kuding (Ligustrum lucidum) leaf tea renowned in Chinese medicine for cooling internal heat inflammation, clearing sore throats and red eyes, regulating blood pressure, detoxifying the liver and gallbladder, and providing potent antibacterial and antiviral protection.",
+  "benefits": [
+   "Cools internal body heat and reduces systemic inflammation",
+   "Soothes sore throats, headaches, and blood-shot eyes",
+   "Assists in lowering elevated blood pressure and blood lipids",
+   "Potent antibacterial, antiviral, and liver-clearing herbal brew"
+  ],
+  "dosage": "1 sachet in hot water, can be re-steeped 2–3 times",
+  "tags": [
+   "kuding tea",
+   "blood pressure",
+   "detox",
+   "sore throat",
+   "inflammation",
+   "liver"
+  ],
+  "image": "/static/products/IMG_3530.jpg",
+  "gallery": [
+   "/static/products/IMG_3530.jpg",
+   "/static/products/IMG_3531.jpg",
+   "/static/products/IMG_3532.jpg",
+   "/static/products/IMG_3533.jpg"
+  ]
+ },
+ {
+  "code": "W12",
+  "name": "Pine Pollen Tea",
+  "spec": "2g × 20 sachets",
+  "price": 273,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Vitality Tea",
+  "description": "Golden Scots pine pollen blended with premium green tea leaves to create a nutrient-dense daily wellness beverage providing vitamins, minerals, phyto-androgens, and antioxidants. This functional tea energises the body, protects skin collagen, and strengthens immune defences with a delightful forest-floral flavour.",
+  "benefits": [
+   "Replenishes daily vitamins, minerals, and phyto-enzymes",
+   "Combats chronic fatigue, physical exhaustion, and brain fog",
+   "Enhances skin radiance, collagen production, and slows ageing",
+   "Pleasant fragrant, slightly sweet forest tea flavour"
+  ],
+  "dosage": "1–2 sachets steeped in 85°C water daily",
+  "tags": [
+   "pine pollen",
+   "tea",
+   "energy",
+   "immunity",
+   "vitality",
+   "skin"
+  ],
+  "image": "/static/products/IMG_3538.jpg",
+  "gallery": [
+   "/static/products/IMG_3538.jpg",
+   "/static/products/IMG_3539.jpg",
+   "/static/products/IMG_3540.jpg",
+   "/static/products/IMG_3541.jpg"
+  ]
+ },
+ {
+  "code": "W13",
+  "name": "In-Cleansing Tea",
+  "spec": "4g × 16 sachets",
+  "price": 254,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Intestinal Health",
+  "description": "A gentle herbal intestinal cleansing tea formulated with Spirulina, Cassia Tora seed, and Green Tea to clear accumulated faecal impaction from intestinal folds, eliminate halitosis (bad breath) caused by fermenting gut toxins, and restore healthy colon motility without cramping.",
+  "benefits": [
+   "Clears impacted faecal matter from intestinal folds effectively",
+   "Relieves stubborn constipation and persistent flatulence",
+   "Eliminates halitosis (bad breath) caused by gut fermentation",
+   "Supports healthy microbiome balance and bowel regularity"
+  ],
+  "dosage": "1 sachet steeped in boiling water before bedtime",
+  "tags": [
+   "cleansing tea",
+   "constipation",
+   "gut",
+   "colon",
+   "bad breath",
+   "halitosis"
+  ],
+  "image": "/static/products/IMG_3566.jpg",
+  "gallery": [
+   "/static/products/IMG_3566.jpg",
+   "/static/products/IMG_3567.jpg"
+  ]
+ },
+ {
+  "code": "W14",
+  "name": "Balsam Pear Tea",
+  "spec": "2g × 20 sachets",
+  "price": 254,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Sugar Control Tea",
+  "description": "Dehydrated organic Momordica charantia (bitter melon) slices in tea sachet format, specifically tailored for individuals with pre-diabetes, Type 2 diabetes, or metabolic syndrome to maintain steady blood glucose naturally throughout the day with a refreshing slightly bitter taste.",
+  "benefits": [
+   "Naturally steadies blood sugar levels after meals",
+   "Alleviates diabetic thirst, polyuria, and glucose highs",
+   "Supports pancreatic health and natural insulin sensitivity",
+   "Clean, slightly bitter and refreshing wellness brew"
+  ],
+  "dosage": "1 sachet steeped in boiling water after main meals",
+  "tags": [
+   "balsam pear tea",
+   "diabetes",
+   "blood sugar",
+   "glucose",
+   "tea",
+   "bitter melon"
+  ],
+  "image": "/static/products/IMG_3573.jpg",
+  "gallery": [
+   "/static/products/IMG_3573.jpg",
+   "/static/products/IMG_3574.jpg",
+   "/static/products/IMG_3575.jpg",
+   "/static/products/IMG_3576.jpg"
+  ]
+ },
+ {
+  "code": "W15",
+  "name": "Lipid Care Tea",
+  "spec": "2g × 20 sachets",
+  "price": 273,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Cholesterol Care",
+  "description": "A cardioprotective functional tea combining Gynostemma pentaphyllum (jiaogulan), Hawthorn berry, and Cassia Seed to help dissolve arterial fat deposits, reduce LDL cholesterol and triglycerides, improve blood flow viscosity, and gently calm mild hypertension. Smooth mellow flavour.",
+  "benefits": [
+   "Helps dissolve and clear arterial cholesterol deposits",
+   "Reduces blood viscosity and improves peripheral circulation",
+   "Supports healthy total cholesterol and triglyceride levels",
+   "Gently calms mild to moderate hypertension"
+  ],
+  "dosage": "1 sachet steeped in hot water; sip throughout the day",
+  "tags": [
+   "lipid tea",
+   "cholesterol",
+   "arteries",
+   "heart",
+   "blood pressure",
+   "triglycerides"
+  ],
+  "image": "/static/products/IMG_3577.jpg",
+  "gallery": [
+   "/static/products/IMG_3577.jpg",
+   "/static/products/IMG_3578.jpg",
+   "/static/products/IMG_3579.jpg"
+  ]
+ },
+ {
+  "code": "W16",
+  "name": "Breast Care Tea",
+  "spec": "4g × 16 sachets",
+  "price": 293,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Feminine Tea",
+  "description": "A specialised botanical tea blended for women to improve lymphatic drainage within breast tissue, soothe premenstrual breast swelling and tenderness, help soften benign fibrocystic breast nodules, and support the female endocrine balance. Contains Dandelion, Motherwort, and Violet leaf.",
+  "benefits": [
+   "Relieves premenstrual breast swelling, pain, and tenderness",
+   "Promotes healthy mammary lymphatic drainage and circulation",
+   "Helps soften benign breast lumps and fibrocystic nodules",
+   "Supports female endocrine and oestrogen balance"
+  ],
+  "dosage": "1 sachet steeped in hot water 1–2 times daily",
+  "tags": [
+   "breast care",
+   "women",
+   "lymphatic",
+   "hormones",
+   "tea",
+   "fibrocystic"
+  ],
+  "image": "/static/products/IMG_3568.jpg",
+  "gallery": [
+   "/static/products/IMG_3568.jpg",
+   "/static/products/IMG_3569.jpg"
+  ]
+ },
+ {
+  "code": "W17",
+  "name": "Clear Lung Tea",
+  "spec": "4g × 16 sachets",
+  "price": 273,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Respiratory Tea",
+  "description": "A lung-cleansing and respiratory-soothing tea blend combining Chrysanthemum flowers, Lily bulb, Ophiopogon, and Licorice root. This formula dissolves bronchial phlegm, soothes smoker's irritated airways, moistens dry throat membranes, and protects lung mucosa against pollution and dust.",
+  "benefits": [
+   "Expels accumulated mucus and bronchial phlegm effectively",
+   "Soothes smoker's cough, wheezing, and chest tightness",
+   "Protects respiratory tract against dust, smoke, and pollution",
+   "Moistens dry throat and clears congested airway passages"
+  ],
+  "dosage": "1 sachet steeped in hot water; sip warm 1–2 times daily",
+  "tags": [
+   "clear lung",
+   "cough",
+   "smokers",
+   "phlegm",
+   "respiratory",
+   "tea",
+   "bronchitis"
+  ],
+  "image": "/static/products/IMG_3580.jpg",
+  "gallery": [
+   "/static/products/IMG_3580.jpg",
+   "/static/products/IMG_3581.jpg"
+  ]
+ },
+ {
+  "code": "W18",
+  "name": "Jinpure Tea",
+  "spec": "3.5g × 16 sachets",
+  "price": 254,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Purifying Brew",
+  "description": "A whole-body herbal detoxifying infusion that purifies the bloodstream of metabolic acids, assists kidney tubular filtration of uric acid crystals and nitrogenous wastes, and supports skin clarity by eliminating the internal toxins that cause acne, blemishes, and dull skin tone.",
+  "benefits": [
+   "Flushes metabolic acids and uric acid crystals from kidneys",
+   "Helps clear skin blemishes caused by internal blood toxins",
+   "Supports daily kidney and liver detoxification gently",
+   "Light, refreshing botanical taste suitable for daily use"
+  ],
+  "dosage": "1–2 sachets steeped in boiling water daily",
+  "tags": [
+   "jinpure tea",
+   "detox",
+   "kidneys",
+   "uric acid",
+   "skin",
+   "tea",
+   "gout"
+  ],
+  "image": "/static/products/IMG_3582.jpg",
+  "gallery": [
+   "/static/products/IMG_3582.jpg",
+   "/static/products/IMG_3583.jpg"
+  ]
+ },
+ {
+  "code": "W19",
+  "name": "Bitter Buckwheat Tea",
+  "spec": "4g × 20 sachets",
+  "price": 234,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Rutin Rich Tea",
+  "description": "Roasted Tartary buckwheat grain tea naturally rich in bioflavonoid Rutin (quercetin-3-rutinoside), which strengthens fragile capillary walls, improves micro-vessel elasticity, regulates blood sugar, and supports digestive motility. Caffeine-free with a soothing warm roasted grain aroma.",
+  "benefits": [
+   "High natural Rutin content strengthens capillary blood vessels",
+   "Regulates blood sugar and prevents post-meal glucose spikes",
+   "Caffeine-free with a soothing warm roasted grain aroma",
+   "Supports gastric comfort, weight balance, and cardiovascular health"
+  ],
+  "dosage": "1 sachet steeped in boiling water; grains can be consumed too",
+  "tags": [
+   "buckwheat tea",
+   "rutin",
+   "blood pressure",
+   "diabetes",
+   "caffeine free",
+   "capillaries"
+  ],
+  "image": "/static/products/IMG_3584.jpg",
+  "gallery": [
+   "/static/products/IMG_3584.jpg",
+   "/static/products/IMG_3585.jpg"
+  ]
+ },
+ {
+  "code": "W20",
+  "name": "Clear Drink CJJ",
+  "spec": "3.5g × 6 packets",
+  "price": 195,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Instant Herbal Drink",
+  "description": "A fast-dissolving instant herbal functional beverage sachet designed to clear internal body heat, soothe throat dryness and vocal fatigue, and restore rapid cellular hydration during hot weather, illness recovery, or after extended speaking. Contains Chrysanthemum and Honeysuckle extract.",
+  "benefits": [
+   "Fast relief for parched throat, vocal fatigue, and dryness",
+   "Cools internal feverish body heat and restores rapid hydration",
+   "Convenient on-the-go instant sachet format",
+   "Natural herbal Chrysanthemum and Honeysuckle formula"
+  ],
+  "dosage": "1 packet dissolved in 150ml water as needed; drink immediately",
+  "tags": [
+   "clear drink",
+   "throat",
+   "hydration",
+   "fever",
+   "beverage",
+   "honeysuckle"
+  ],
+  "image": "/static/products/IMG_3586.jpg",
+  "gallery": [
+   "/static/products/IMG_3586.jpg"
+  ]
+ },
+ {
+  "code": "W21",
+  "name": "Wake Drink JQQ",
+  "spec": "3.5g × 6 packets",
+  "price": 195,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Awaken & Alert",
+  "description": "An instant botanical revitalising functional drink that relieves mental sluggishness, dispels brain fog, supports liver recovery after late nights or alcohol, and recharges physical stamina naturally without the jitters, crashes, or palpitations of caffeine-based energy drinks.",
+  "benefits": [
+   "Instant mental alertness and focus without caffeine crashes",
+   "Banishes mid-day fatigue, drowsiness, and mental fog",
+   "Supports liver recovery after late nights and overindulgence",
+   "Quick-dissolving refreshing botanical drink format"
+  ],
+  "dosage": "1 packet mixed in cool or warm water when needing alertness",
+  "tags": [
+   "wake drink",
+   "energy",
+   "focus",
+   "hangover",
+   "brain fog",
+   "liver"
+  ],
+  "image": "/static/products/IMG_3566.jpg",
+  "gallery": [
+   "/static/products/IMG_3566.jpg",
+   "/static/products/IMG_3567.jpg"
+  ]
+ },
+ {
+  "code": "W22",
+  "name": "Natural Energy Drink",
+  "spec": "3.5g × 6 packets",
+  "price": 195,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Natural Stamina",
+  "description": "A wholesome botanical performance powder rich in adaptogenic herbal extracts, essential amino acids, electrolyte minerals, and B-vitamins to sustain athletic endurance, accelerate muscle oxygen recovery, and replenish electrolytes lost during intense physical activity — without synthetic stimulants.",
+  "benefits": [
+   "Sustained physical stamina and muscular endurance",
+   "Replenishes lost electrolytes without synthetic chemicals or sugar",
+   "Accelerates muscle oxygen recovery after physical exertion",
+   "Zero artificial colours, flavours, or harmful stimulants"
+  ],
+  "dosage": "1 packet dissolved in 200ml water before or during physical activity",
+  "tags": [
+   "energy drink",
+   "stamina",
+   "workout",
+   "electrolytes",
+   "vitality",
+   "sport"
+  ],
+  "image": "/static/products/IMG_3567.jpg",
+  "gallery": [
+   "/static/products/IMG_3567.jpg"
+  ]
+ },
+ {
+  "code": "W45B",
+  "name": "Ashwagandha Herbal Coffee",
+  "spec": "15g × 12 bags",
+  "price": 351,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Adaptogen Coffee",
+  "description": "A premium gourmet coffee blend infused with concentrated organic Ashwagandha (Withania somnifera) root extract. Formulated to deliver smooth mental focus, reduce cortisol stress hormones, relieve anxiety, and sustain physical vitality without regular coffee crashes or stomach acidity.",
+  "benefits": [
+   "Adaptogenic stress relief and anxiety reduction",
+   "Smooth mental focus and steady morning energy without crashes",
+   "Protects nervous system and improves sleep quality",
+   "Alkalises coffee acidity for gentle stomach digestion"
+  ],
+  "dosage": "1 sachet dissolved in 150ml hot water daily",
+  "tags": [
+   "ashwagandha coffee",
+   "coffee",
+   "ashwaganda",
+   "stress relief",
+   "energy",
+   "adaptogen",
+   "focus"
+  ],
+  "image": "/static/products/logo.jpg",
+  "gallery": [
+   "/static/products/logo.jpg"
+  ]
+ },
+ {
+  "code": "W45",
+  "name": "Ganoderma Herbal Coffee",
+  "spec": "15g × 12 bags",
+  "price": 351,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Reishi Coffee",
+  "description": "A premium gourmet coffee blend enriched with concentrated organic Red Reishi (Ganoderma lucidum) mushroom extract. This unique combination delivers rich coffee aroma and alertness while the Ganoderma alkalises acidity, eliminates jitters and palpitations, protects the stomach, and boosts immune vitality simultaneously.",
+  "benefits": [
+   "Smooth morning alertness without jitters or heart palpitations",
+   "Reishi alkalises regular coffee acidity to protect the stomach",
+   "Ganoderma boosts immune T-cell and NK-cell activity",
+   "Rich, creamy premium gourmet coffee flavour and aroma"
+  ],
+  "dosage": "1 bag dissolved in 150ml hot water; add milk or creamer to taste",
+  "tags": [
+   "ganoderma coffee",
+   "reishi",
+   "coffee",
+   "energy",
+   "immunity",
+   "stomach"
+  ],
+  "image": "/static/products/IMG_3570.jpg",
+  "gallery": [
+   "/static/products/IMG_3570.jpg",
+   "/static/products/IMG_3571.jpg",
+   "/static/products/IMG_3572.jpg"
+  ]
+ },
+ {
+  "code": "W53",
+  "name": "Blueberry Juice Granules",
+  "spec": "30 bags per box",
+  "price": 429,
+  "category": "teas",
+  "categoryName": "Teas & Functional Drinks",
+  "badge": "Antioxidant Drink",
+  "description": "Instant soluble pure blueberry crystals packed with anthocyanins, natural Vitamin C, and bioflavonoids for comprehensive eye protection against blue-light damage, glowing skin promotion, capillary strengthening, and whole-family daily antioxidant wellness. Enjoyed hot or iced by children and adults alike.",
+  "benefits": [
+   "Protects eyes from digital screen fatigue and blue-light damage",
+   "Strengthens immune defences suitable for kids and adults",
+   "Delightful antioxidant beverage enjoyed hot or iced",
+   "Improves micro-capillary elasticity and skin radiance"
+  ],
+  "dosage": "1 bag dissolved in warm or chilled water daily",
+  "tags": [
+   "blueberry juice",
+   "antioxidant",
+   "eyes",
+   "kids",
+   "drink",
+   "capillaries"
+  ],
+  "image": "/static/products/IMG_3672.jpg",
+  "gallery": [
+   "/static/products/IMG_3672.jpg",
+   "/static/products/IMG_3673.jpg",
+   "/static/products/IMG_3674.jpg"
+  ]
+ },
+ {
+  "code": "W54",
+  "name": "Smile Life Herbal Toothpaste",
+  "spec": "120g per tube",
+  "price": 147,
+  "category": "personal_care",
+  "categoryName": "Personal Care & Hygiene",
+  "badge": "Herbal Oral Care",
+  "description": "Enriched with natural botanical tea extracts, mint, and anti-bacterial herbal active ingredients to prevent tooth decay, soothe bleeding gums, eliminate bad breath, and maintain long-lasting fresh breath without harsh synthetic chemicals.",
+  "benefits": [
+   "Prevents dental cavities and tartar accumulation",
+   "Soothes bleeding and sensitive gums",
+   "Eliminates bad breath for 24-hour oral freshness",
+   "Fluoride-balanced natural botanical formula"
+  ],
+  "dosage": "Brush thoroughly twice daily or after meals",
+  "tags": [
+   "toothpaste",
+   "oral care",
+   "hygiene",
+   "teeth",
+   "gums",
+   "personal care"
+  ],
+  "image": "/static/products/IMG_3549.jpg",
+  "gallery": [
+   "/static/products/IMG_3549.jpg",
+   "/static/products/IMG_3550.jpg",
+   "/static/products/IMG_3551.jpg"
+  ]
+ },
+ {
+  "code": "W54B",
+  "name": "Green World Herbal Toothpaste",
+  "spec": "120g per tube",
+  "price": 147,
+  "category": "personal_care",
+  "categoryName": "Personal Care & Hygiene",
+  "badge": "Gum Protection",
+  "description": "A specialized herbal tooth care formula containing honeysuckle and green tea extracts to protect tooth enamel, strengthen gum tissues, and counteract oral inflammation.",
+  "benefits": [
+   "Strengthens tooth enamel and sensitive gums",
+   "Anti-inflammatory protection against mouth sores",
+   "Fresh minty taste for natural clean feeling",
+   "Suitable for daily family oral care"
+  ],
+  "dosage": "Brush teeth morning and evening",
+  "tags": [
+   "toothpaste",
+   "herbal toothpaste",
+   "oral care",
+   "hygiene",
+   "personal care"
+  ],
+  "image": "/static/products/IMG_3555.jpg",
+  "gallery": [
+   "/static/products/IMG_3555.jpg",
+   "/static/products/IMG_3556.jpg",
+   "/static/products/IMG_3557.jpg"
+  ]
+ },
+ {
+  "code": "W72",
+  "name": "Anion Enjoyable Sanitary Pad (Day Use - 245mm)",
+  "spec": "10 pads per pack",
+  "price": 1365,
+  "category": "personal_care",
+  "categoryName": "Personal Care & Hygiene",
+  "badge": "Anion Bio-Tech",
+  "description": "Ultra-absorbent breathable daytime sanitary pads featuring an active negative ion (anion) chip, far-infrared emission, and nano-silver anti-bacterial layer to prevent odour, alleviate menstrual cramping, and maintain optimal intimate hygiene.",
+  "benefits": [
+   "Anion chip neutralises bacteria and unpleasant odours",
+   "Super absorbent core prevents side leakage",
+   "Breathable bottom layer prevents heat and humidity build-up",
+   "Alleviates menstrual discomfort and itching"
+  ],
+  "dosage": "Use during daytime period flow",
+  "tags": [
+   "sanitary pad",
+   "panty liner",
+   "day use",
+   "feminine hygiene",
+   "anion",
+   "personal care"
+  ],
+  "image": "/static/products/IMG_3750.jpg",
+  "gallery": [
+   "/static/products/IMG_3750.jpg",
+   "/static/products/IMG_3751.jpg",
+   "/static/products/IMG_3752.jpg"
+  ]
+ },
+ {
+  "code": "W72B",
+  "name": "Anion Enjoyable Sanitary Pad (Night Use - 290mm)",
+  "spec": "8 pads per pack",
+  "price": 195,
+  "category": "personal_care",
+  "categoryName": "Personal Care & Hygiene",
+  "badge": "Overnight Shield",
+  "description": "Extra-long 290mm overnight sanitary pads with dual leak-guards, anion chip technology, and high-capacity absorption core for worry-free 10-hour sleep protection.",
+  "benefits": [
+   "Extended 290mm rear coverage for complete night protection",
+   "Anion chip prevents bacterial growth while sleeping",
+   "Ultra-soft cotton surface for delicate skin",
+   "Zero chemical bleaching or synthetic fragrance"
+  ],
+  "dosage": "Use overnight during menstrual flow",
+  "tags": [
+   "sanitary pad",
+   "night use",
+   "overnight pad",
+   "feminine hygiene",
+   "anion",
+   "personal care"
+  ],
+  "image": "/static/products/IMG_3747.jpg",
+  "gallery": [
+   "/static/products/IMG_3747.jpg",
+   "/static/products/IMG_3748.jpg",
+   "/static/products/IMG_3749.jpg"
+  ]
+ },
+ {
+  "code": "W72C",
+  "name": "Anion Enjoyable Panty Liners (155mm)",
+  "spec": "30 pieces per pack",
+  "price": 165,
+  "category": "personal_care",
+  "categoryName": "Personal Care & Hygiene",
+  "badge": "Daily Freshness",
+  "description": "Ultra-thin breathable daily panty liners with integrated anion strip for everyday freshness, moisture absorption, vaginal discharge balance, and anti-bacterial confidence.",
+  "benefits": [
+   "Daily freshness and discharge absorption",
+   "Anion chip counteracts intimate infections",
+   "Ultra-thin 155mm design for invisible comfort",
+   "100% breathable organic cotton feel"
+  ],
+  "dosage": "Use daily for non-period intimate hygiene",
+  "tags": [
+   "panty liner",
+   "daily liner",
+   "feminine care",
+   "hygiene",
+   "anion",
+   "personal care"
+  ],
+  "image": "/static/products/IMG_3750.jpg",
+  "gallery": [
+   "/static/products/IMG_3750.jpg"
+  ]
+ },
+ {
+  "code": "W71B",
+  "name": "Olive Herbal Body Soap",
+  "spec": "135g bar",
+  "price": 150,
+  "category": "personal_care",
+  "categoryName": "Personal Care & Hygiene",
+  "badge": "Botanical Soap",
+  "description": "Pure extra virgin olive oil soap enriched with botanical skin-cleansing extracts. Gently purifies pores, locks in skin moisture, and leaves skin silky smooth without drying.",
+  "benefits": [
+   "Rich in olive oil Vitamin E for deep skin hydration",
+   "Gently cleanses face and body without stripping skin barrier",
+   "Soothes sensitive, dry, or irritated skin conditions",
+   "Chemical-free natural botanical cleansing bar"
+  ],
+  "dosage": "Lather with water for daily bath or facial wash",
+  "tags": [
+   "olive soap",
+   "soap",
+   "body care",
+   "skincare",
+   "personal care",
+   "hygiene"
+  ],
+  "image": "/static/products/IMG_3744.jpg",
+  "gallery": [
+   "/static/products/IMG_3744.jpg",
+   "/static/products/IMG_3745.jpg",
+   "/static/products/IMG_3746.jpg"
+  ]
+ },
+ {
+  "code": "W54_OLD",
+  "name": "Green World Herbal Toothpaste",
+  "spec": "120g tube",
+  "price": 147,
+  "category": "oral_care",
+  "categoryName": "Oral Care & Hygiene",
+  "badge": "Top Seller",
+  "description": "A therapeutic botanical toothpaste enriched with Honeysuckle flower extract (natural antimicrobial), Green Tea catechins (antioxidant and antibacterial), and bioactive spearmint oil. This herbal formula eliminates gum bleeding, resolves periodontitis, provides 12-hour fresh breath protection, and strengthens enamel without harsh chemical abrasives.",
+  "benefits": [
+   "Stops gum bleeding and relieves periodontitis and gum inflammation",
+   "Provides long-lasting fresh breath and oral odour protection",
+   "Strengthens tooth enamel without abrasive chemical damage",
+   "Natural antibacterial and antiviral protection for the entire oral cavity"
+  ],
+  "dosage": "Brush teeth thoroughly twice daily for 2–3 minutes; do not swallow",
+  "tags": [
+   "toothpaste",
+   "oral care",
+   "gum bleeding",
+   "bad breath",
+   "teeth",
+   "periodontitis"
+  ],
+  "image": "/static/products/IMG_3549.jpg",
+  "gallery": [
+   "/static/products/IMG_3549.jpg",
+   "/static/products/IMG_3550.jpg",
+   "/static/products/IMG_3551.jpg"
+  ]
+ },
+ {
+  "code": "W52",
+  "name": "Detoxin Foot Pad",
+  "spec": "10 pieces per bag",
+  "price": 390,
+  "category": "plasters",
+  "categoryName": "Topical Plasters & Wellness Wear",
+  "badge": "Overnight Detox",
+  "description": "Bamboo vinegar concentrate and tourmaline crystal overnight foot patches applied to sole reflexology acupressure points. Tourmaline emits far-infrared rays and negative ions that stimulate reflex zones, draw out metabolic toxins via osmosis through the foot sole, reduce leg fatigue, and promote deep sleep quality.",
+  "benefits": [
+   "Draws out metabolic impurities through foot reflexology points",
+   "Relieves leg fatigue, joint stiffness, and lower limb heaviness",
+   "Improves peripheral micro-circulation and reduces swelling",
+   "Promotes deep, relaxing overnight rest and recovery"
+  ],
+  "dosage": "Apply 2 patches to clean dry soles of feet before sleep; remove in the morning",
+  "tags": [
+   "detox pad",
+   "foot pad",
+   "reflexology",
+   "sleep",
+   "swelling",
+   "circulation",
+   "tourmaline"
+  ],
+  "image": "/static/products/IMG_3558.jpg",
+  "gallery": [
+   "/static/products/IMG_3558.jpg",
+   "/static/products/IMG_3559.jpg",
+   "/static/products/IMG_3560.jpg",
+   "/static/products/IMG_3564.jpg",
+   "/static/products/IMG_3565.jpg"
+  ]
+ },
+ {
+  "code": "W70",
+  "name": "Cellphone Radiation Protection Plaster",
+  "spec": "1 piece per box",
+  "price": 195,
+  "category": "plasters",
+  "categoryName": "Topical Plasters & Wellness Wear",
+  "badge": "EMF Shield",
+  "description": "A high-technology bio-ceramic EMF shielding patch designed to adhere permanently to the back of smartphones, tablets, or laptops. The nano-bio-ceramic matrix neutralises and disperses electromagnetic radiation (EMF) without degrading signal reception, reception quality, or battery performance.",
+  "benefits": [
+   "Neutralises harmful electromagnetic radiation (EMF/RF) from phones",
+   "Reduces phone heat generation and ear fatigue during long calls",
+   "Protects brain tissue and nervous system from long-term EMF stress",
+   "Ultra-thin, durable, and permanent adhesive application"
+  ],
+  "dosage": "Peel and stick directly to the back of phone or inside phone case permanently",
+  "tags": [
+   "radiation",
+   "emf protection",
+   "phone",
+   "shield",
+   "health",
+   "5g protection"
+  ],
+  "image": "/static/products/IMG_3744.jpg",
+  "gallery": [
+   "/static/products/IMG_3744.jpg",
+   "/static/products/IMG_3745.jpg",
+   "/static/products/IMG_3746.jpg"
+  ]
+ },
+ {
+  "code": "W71",
+  "name": "Tourmaline Thermal Knee Protector",
+  "spec": "1 pair per bag",
+  "price": 878,
+  "category": "plasters",
+  "categoryName": "Topical Plasters & Wellness Wear",
+  "badge": "Thermal Therapy",
+  "description": "Ergonomic self-heating tourmaline nano-ceramic fibre knee sleeves that emit continuous far-infrared thermal rays and negative ions when worn against the body. The far-infrared deeply penetrates knee joint tissue to relieve chronic osteoarthritis pain, eliminate stiffness, improve synovial fluid circulation, and promote cartilage healing — without electricity.",
+  "benefits": [
+   "Self-heating far-infrared therapy for deep knee joint penetration",
+   "Relieves osteoarthritis knee pain, inflammation, and morning stiffness",
+   "Improves synovial fluid circulation and joint mobility during activity",
+   "Durable, breathable, washable, and indefinitely reusable design"
+  ],
+  "dosage": "Wear over knees for 20–30 minutes daily until warmth is felt; can be worn longer",
+  "tags": [
+   "knee protector",
+   "tourmaline",
+   "arthritis",
+   "joint pain",
+   "thermal",
+   "far infrared"
+  ],
+  "image": "/static/products/IMG_3747.jpg",
+  "gallery": [
+   "/static/products/IMG_3747.jpg",
+   "/static/products/IMG_3748.jpg",
+   "/static/products/IMG_3749.jpg"
+  ]
+ },
+ {
+  "code": "W72",
+  "name": "Tourmaline Thermal Waist Protector",
+  "spec": "1 piece per box",
+  "price": 1365,
+  "category": "plasters",
+  "categoryName": "Topical Plasters & Wellness Wear",
+  "badge": "Spine & Lumbar",
+  "description": "An ergonomic lumbar support belt embedded with high-density tourmaline self-heating magnets and nano-ceramic far-infrared emitters. The far-infrared rays penetrate 5–7cm deep into lumbar vertebrae and intervertebral discs to relieve herniated disc pain, relax spasmed paraspinal muscles, correct posture, and warm cold kidney meridian energy.",
+  "benefits": [
+   "Deep penetrating far-infrared heat for lumbar spine and disc relief",
+   "Relieves sciatica, herniated disc pain, and lumbar muscle spasms",
+   "Supports correct upright posture during sitting and lifting",
+   "Nourishes kidney warmth, vital Yang energy, and lower back strength"
+  ],
+  "dosage": "Fasten snugly around waist area for 20–40 minutes daily; remove if discomfort occurs",
+  "tags": [
+   "waist protector",
+   "lumbar",
+   "back pain",
+   "sciatica",
+   "tourmaline",
+   "far infrared"
+  ],
+  "image": "/static/products/IMG_3750.jpg",
+  "gallery": [
+   "/static/products/IMG_3750.jpg",
+   "/static/products/IMG_3751.jpg",
+   "/static/products/IMG_3752.jpg"
+  ]
+ },
+ {
+  "code": "W44",
+  "name": "Uterus Cleansing Pill / Guifeibao",
+  "spec": "1g × 6 bottles",
+  "price": 624,
+  "category": "skin_care",
+  "categoryName": "Skin, Body & Feminine Care",
+  "badge": "Feminine Detox",
+  "description": "Traditional herbal vaginal detox pearls containing Safflower, Borneol, Angelica, Cnidium Monnieri, and Rhizoma Smilacis Glabrae. These vaginal botanicals discharge accumulated uterine toxins, old blood clots, and pathogenic discharge while resolving cervical inflammation, restoring feminine pH, and improving intimate muscular elasticity.",
+  "benefits": [
+   "Discharges accumulated uterine impurities, old blood, and toxins",
+   "Relieves chronic vaginal discharge, odour, itching, and irritation",
+   "Assists in shrinking cervical erosion and easing fibroid discomfort",
+   "Restores feminine intimate muscular elasticity and tightness"
+  ],
+  "dosage": "Use 1 pearl vaginally for 48–72 hours as directed; rest 24 hours between pearls. Consult practitioner first.",
+  "tags": [
+   "uterus cleanse",
+   "guifeibao",
+   "feminine",
+   "detox",
+   "women health",
+   "vaginal health"
+  ],
+  "image": "/static/products/IMG_3534.jpg",
+  "gallery": [
+   "/static/products/IMG_3534.jpg",
+   "/static/products/IMG_3535.jpg",
+   "/static/products/IMG_3536.jpg",
+   "/static/products/IMG_3537.jpg"
+  ]
+ },
+ {
+  "code": "W65",
+  "name": "Women Care Antibacterial Gel",
+  "spec": "3g × 5 tubes",
+  "price": 312,
+  "category": "skin_care",
+  "categoryName": "Skin, Body & Feminine Care",
+  "badge": "Intimate Care",
+  "description": "A soothing natural botanical intimate gel combining Sophora flavescens (Ku Shen), Phellodendron bark, and natural plant acids to eliminate yeast (Candida albicans) infections, resolve bacterial vaginosis, relieve intimate itching and burning, and maintain the protective acidic vaginal pH balance.",
+  "benefits": [
+   "Rapidly relieves intimate itching, burning, and swelling",
+   "Eliminates recurrent yeast (Candida) and bacterial vaginosis infections",
+   "Maintains optimal protective acidic pH and vaginal flora balance",
+   "Individually packaged sterile pre-filled applicator tubes"
+  ],
+  "dosage": "Apply 1 tube into intimate area before bedtime for 5 consecutive days; repeat if needed",
+  "tags": [
+   "women care gel",
+   "candida",
+   "itching",
+   "intimate",
+   "feminine",
+   "ph balance",
+   "vaginosis"
+  ],
+  "image": "/static/products/IMG_3542.jpg",
+  "gallery": [
+   "/static/products/IMG_3542.jpg",
+   "/static/products/IMG_3543.jpg",
+   "/static/products/IMG_3544.jpg",
+   "/static/products/IMG_3545.jpg"
+  ]
+ }
+]

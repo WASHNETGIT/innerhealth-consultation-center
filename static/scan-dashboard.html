@@ -4,6 +4,85 @@
 <title>Scan Command Center | Inner Health</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>
 :root{--navy:#101a2d;--green:#0d805a}body{background:#f3f6f8}.led{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}.led-green{background:#10b981;box-shadow:0 0 10px #10b98199}.led-orange{background:#f59e0b;box-shadow:0 0 12px #f59e0baa;animation:pulse 1.3s infinite}.led-blue{background:#0ea5e9;box-shadow:0 0 10px #0ea5e999}.led-grey{background:#94a3b8;box-shadow:0 0 5px #94a3b855}.led-red{background:#e11d48;box-shadow:0 0 12px #e11d4899;animation:pulse .8s infinite}@keyframes pulse{50%{opacity:.42;transform:scale(.82)}}.nav{background:var(--navy)}.metric{min-height:118px}.mobile-card{display:none}@media(max-width:760px){.desktop-table{display:none}.mobile-card{display:block}.metric{min-height:96px}.mobile-action{min-height:42px}.mobile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wide-mobile{grid-column:span 2}.charts{grid-template-columns:1fr!important}.header-label{display:none}}
 
+
+
+/* ---- Clock: own row on mobile, never overlapping nav ---- */
+#clock-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 4.2rem);
+  z-index:25;pointer-events:none}
+#clock-bar .neon-digital-display{box-shadow:0 0 8px rgba(16,185,129,.28),inset 0 0 8px rgba(0,0,0,.85)}
+@media(min-width:761px){#clock-bar{top:auto;bottom:1rem;left:1rem;transform:none}}
+@media(max-width:760px){
+  #agent-fab{right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:52px;height:52px;font-size:23px}
+  #agent-win{right:8px;left:8px;width:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);max-height:70vh}
+  main{padding-bottom:6.5rem}
+}
+
+/* ---- Floating AI agent window (neon) ---- */
+#agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;width:58px;height:58px;border-radius:50%;
+  background:radial-gradient(circle at 30% 25%,#22d3ee,#0ea5e9 45%,#0369a1);color:#fff;font-size:26px;
+  border:2px solid #67e8f9;box-shadow:0 0 14px #22d3ee,0 0 34px #0ea5e9aa,inset 0 0 12px #ffffff55;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s ease}
+#agent-fab:hover{transform:scale(1.07)}
+#agent-fab .agent-dot{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;
+  background:#34d399;box-shadow:0 0 10px #34d399;border:2px solid #0b1220}
+#agent-win{position:fixed;right:20px;bottom:90px;z-index:61;width:min(94vw,25rem);max-height:min(78vh,34rem);
+  display:none;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,#0b1220,#101a2d 60%,#0b1220);
+  border:2px solid #22d3ee;
+  box-shadow:0 0 12px #22d3ee,0 0 30px #0ea5e955,0 0 60px #0ea5e933,inset 0 0 22px #0ea5e91a;
+  color:#e2e8f0;overflow:hidden;animation:agentPop .22s ease-out}
+#agent-win.open{display:flex}
+#agent-win.min{max-height:3.2rem}
+#agent-win.min .agent-body,#agent-win.min .agent-chips{display:none}
+@keyframes agentPop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+#agent-win header{display:flex;align-items:center;gap:.5rem;padding:.6rem .8rem;cursor:move;
+  background:linear-gradient(90deg,#0f2c3f,#0b1220);border-bottom:1px solid #164e63;
+  box-shadow:0 1px 0 #22d3ee55,0 0 14px #22d3ee33 inset;user-select:none}
+#agent-win header .ttl{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a5f3fc;
+  text-shadow:0 0 8px #22d3ee99}
+#agent-win header .live{margin-left:auto;display:flex;align-items:center;gap:.3rem;font-size:.62rem;color:#67e8f9}
+#agent-win header .live i{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399;display:inline-block}
+#agent-win header button{background:transparent;border:0;color:#7dd3fc;font-size:1rem;line-height:1;padding:.15rem .35rem;
+  border-radius:6px;cursor:pointer}
+#agent-win header button:hover{background:#0ea5e933;color:#e0f2fe}
+.agent-body{padding:.7rem .8rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:.55rem;min-height:9rem}
+.agent-msg{font-size:.82rem;line-height:1.45;padding:.55rem .7rem;border-radius:12px;max-width:92%;white-space:pre-wrap}
+.agent-msg.bot{background:#0f2333;border:1px solid #164e63;box-shadow:0 0 10px #0ea5e922;align-self:flex-start}
+.agent-msg.me{background:#0e7490;border:1px solid #22d3ee;box-shadow:0 0 10px #22d3ee44;align-self:flex-end;color:#ecfeff}
+.agent-chips{display:flex;flex-wrap:wrap;gap:.35rem;padding:.5rem .8rem 0}
+.agent-chip{font-size:.66rem;padding:.25rem .55rem;border-radius:999px;background:#0b1220;color:#67e8f9;
+  border:1px solid #164e63;cursor:pointer}
+.agent-chip:hover{background:#0e7490;color:#ecfeff;box-shadow:0 0 10px #22d3ee66}
+.agent-input{display:flex;gap:.4rem;padding:.6rem .8rem .75rem}
+.agent-input input{flex:1;background:#0b1220;border:1px solid #164e63;color:#e2e8f0;border-radius:10px;
+  padding:.5rem .65rem;font-size:.8rem;outline:none}
+.agent-input input:focus{border-color:#22d3ee;box-shadow:0 0 10px #22d3ee55}
+.agent-input button{background:linear-gradient(180deg,#22d3ee,#0891b2);border:0;color:#04212b;font-weight:700;
+  border-radius:10px;padding:.5rem .8rem;font-size:.78rem;cursor:pointer;box-shadow:0 0 12px #22d3ee77}
+.agent-input button:hover{filter:brightness(1.1)}
+.agent-product{display:flex;gap:.55rem;background:#0b1220;border:1px solid #22d3ee55;border-radius:12px;
+  padding:.45rem;box-shadow:0 0 12px #0ea5e933;cursor:pointer;align-self:stretch}
+.agent-product img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid #164e63;flex:none}
+.agent-product b{font-size:.75rem;color:#a5f3fc;display:block;line-height:1.2}
+.agent-product span{font-size:.68rem;color:#94a3b8}
+#product-pop{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+  background:rgba(2,6,23,.72);backdrop-filter:blur(3px);padding:1rem}
+#product-pop.open{display:flex}
+#product-pop .card{width:min(94vw,32rem);max-height:88vh;overflow-y:auto;border-radius:18px;
+  background:linear-gradient(165deg,#0b1220,#101a2d 70%,#0b1220);border:2px solid #22d3ee;color:#e2e8f0;
+  box-shadow:0 0 14px #22d3ee,0 0 40px #0ea5e966,inset 0 0 26px #0ea5e91a;animation:agentPop .2s ease-out}
+#product-pop .card img.hero{width:100%;height:190px;object-fit:cover;border-bottom:1px solid #164e63}
+#product-pop .card .pad{padding:.9rem 1rem 1.1rem}
+#product-pop h3{margin:0;font-size:1.05rem;color:#a5f3fc;text-shadow:0 0 10px #22d3ee77}
+#product-pop .price{color:#34d399;font-weight:700;font-size:1.05rem;text-shadow:0 0 10px #34d39966}
+#product-pop .desc{font-size:.8rem;color:#cbd5e1;line-height:1.5;margin:.5rem 0}
+#product-pop ul{margin:.3rem 0 .6rem 1rem;padding:0;font-size:.76rem;color:#cbd5e1}
+#product-pop ul li{margin:.15rem 0}
+#product-pop .thumbs{display:flex;gap:.35rem;margin-top:.5rem;flex-wrap:wrap}
+#product-pop .thumbs img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid #164e63;cursor:pointer}
+#product-pop .thumbs img:hover{border-color:#22d3ee;box-shadow:0 0 10px #22d3ee66}
+#product-pop .close{position:sticky;top:.4rem;float:right;margin:.4rem;background:#0b1220cc;border:1px solid #164e63;
+  color:#7dd3fc;border-radius:8px;width:30px;height:30px;cursor:pointer}
+
 /* Clean Professional Clinical Styling */
 button, .btn-action { transition: all 0.15s ease-in-out; }
 .leaf, button.leaf, .btn-primary {
@@ -46,21 +125,43 @@ button, .btn-action { transition: all 0.15s ease-in-out; }
 }
 
 </style></head><body class="text-slate-800"><header class="nav text-white sticky top-0 z-30 shadow-lg"><div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 flex items-center gap-3"><img src="/static/logo.jpg" class="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover bg-white" alt="Inner Health logo"><div class="min-w-0"><div class="font-semibold tracking-wide text-sm sm:text-base">INNER HEALTH <span class="text-emerald-300">SCAN CENTER</span></div><div class="text-slate-400 text-xs header-label">Full-body scan command center</div></div><div class="ml-auto flex items-center gap-2">
-  <div class="neon-digital-display mr-1">
-    <div id="digital-clock-time" class="neon-time">00:00:00</div>
-    <div id="digital-clock-date" class="neon-date">---, -- --- ----</div>
-  </div>
-  <nav class="flex gap-2"><a href="/book" class="bg-emerald-700 hover:bg-emerald-600 rounded-lg px-3 py-2 text-xs sm:text-sm">Booking page</a><button id="password-open" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Change password</button><a href="/" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Business hub</a><button id="refresh" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">↻</button></nav></div></header>
+  <nav class="flex gap-2"><a href="/book" class="bg-emerald-700 hover:bg-emerald-600 rounded-lg px-3 py-2 text-xs sm:text-sm">Booking page</a><button id="password-open" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Change password</button><button id="refresh" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">↻</button></nav></div></header>
 <dialog id="password-dialog" class="rounded-2xl p-0 w-[min(92vw,28rem)] shadow-2xl"><form id="password-form" class="p-6 space-y-4"><div><h2 class="text-xl font-semibold">Change admin password</h2><p class="text-sm text-slate-500 mt-1">Use at least 12 characters. Your new password takes effect immediately.</p></div><label class="block text-sm">New password<input id="new-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><label class="block text-sm">Confirm new password<input id="confirm-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><p id="password-error" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" id="password-close" class="border rounded-lg px-4 py-2">Cancel</button><button class="bg-emerald-800 text-white rounded-lg px-4 py-2">Save password</button></div></form></dialog>
+<div id="clock-bar"><div class="neon-digital-display"><div id="digital-clock-time" class="neon-time">00:00:00</div><div id="digital-clock-date" class="neon-date">---, -- --- ----</div></div></div>
 <main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-5">
 <section class="rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-3"><div class="flex flex-col sm:flex-row sm:items-center gap-3"><div class="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-emerald-800"><span class="led led-green"></span> Live floor</div><div id="ticker" class="flex-1 text-sm text-slate-700">Connecting to live bookings…</div><span id="ai-agent-status" class="text-xs text-slate-500 whitespace-nowrap">M4 AI · waiting</span><button id="legend-toggle" class="text-xs text-slate-500 underline self-start sm:self-auto">LED legend</button></div><div id="legend" class="hidden border-t mt-3 pt-3 grid grid-cols-2 lg:grid-cols-5 gap-2 text-xs"><span><i class="led led-green mr-2"></i>Confirmed · deposit paid</span><span><i class="led led-orange mr-2"></i>Incoming · within 2 hours</span><span><i class="led led-blue mr-2"></i>In scan</span><span><i class="led led-grey mr-2"></i>Completed</span><span><i class="led led-red mr-2"></i>Deposit / attention alert</span></div></section>
-<section class="grid mobile-grid md:grid-cols-2 xl:grid-cols-4 gap-3"><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="flex justify-between text-xs uppercase tracking-wide text-slate-500"><span>Collected revenue</span><select id="revenue-period" class="bg-transparent text-emerald-800 font-semibold"><option value="today">Today</option><option value="month">This month</option></select></div><div id="revenue-kpi" class="text-3xl font-semibold mt-4">R0</div><div class="text-xs text-slate-400 mt-1">Deposits + settled balances + sales</div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Deposits secured</div><div id="deposit-kpi" class="text-3xl font-semibold mt-4 text-emerald-700">R0</div><div class="text-xs text-slate-400 mt-1">Balance due <b id="balance-kpi" class="text-amber-700">R0</b></div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Scan volume</div><div class="mt-3 flex gap-5"><div><b id="completed-kpi" class="text-2xl">0</b><div class="text-xs text-slate-400">Completed today</div></div><div><b id="upcoming-kpi" class="text-2xl text-sky-700">0</b><div class="text-xs text-slate-400">Upcoming</div></div></div><div class="text-xs text-slate-500 mt-2">Avg revenue/client <b id="avg-kpi">R0</b></div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Quick actions</div><div class="flex flex-col gap-2 mt-3"><button id="new-booking" class="mobile-action bg-emerald-800 hover:bg-emerald-700 text-white rounded-lg py-2 text-sm">＋ New walk-in / manual booking</button><button id="new-sale" class="mobile-action bg-slate-100 hover:bg-slate-200 rounded-lg py-2 text-sm">＋ Log quick sale</button></div></article></section>
+<section class="grid mobile-grid md:grid-cols-2 xl:grid-cols-4 gap-3"><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="flex justify-between text-xs uppercase tracking-wide text-slate-500"><span>Collected revenue</span><select id="revenue-period" class="bg-transparent text-emerald-800 font-semibold"><option value="today">Today</option><option value="month">This month</option></select></div><div id="revenue-kpi" class="text-3xl font-semibold mt-4">R0</div><div class="text-xs text-slate-400 mt-1">Deposits + settled balances + sales</div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Deposits secured</div><div id="deposit-kpi" class="text-3xl font-semibold mt-4 text-emerald-700">R0</div><div class="text-xs text-slate-400 mt-1">Balance due <b id="balance-kpi" class="text-amber-700">R0</b></div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Scan volume</div><div class="mt-3 flex gap-5"><div><b id="completed-kpi" class="text-2xl">0</b><div class="text-xs text-slate-400">Completed today</div></div><div><b id="upcoming-kpi" class="text-2xl text-sky-700">0</b><div class="text-xs text-slate-400">Upcoming</div></div></div><div class="text-xs text-slate-500 mt-2">Avg revenue/client <b id="avg-kpi">R0</b></div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Quick actions</div><div class="flex flex-col gap-2 mt-3"><button id="new-sale" class="mobile-action bg-emerald-800 hover:bg-emerald-700 text-white rounded-lg py-2 text-sm">＋ Log quick sale</button><a href="/book" target="_blank" rel="noopener" class="mobile-action text-center bg-slate-100 hover:bg-slate-200 rounded-lg py-2 text-sm">Open client booking page ↗</a></div></article></section>
 <section class="grid charts xl:grid-cols-[1.5fr_1fr] gap-4"><article class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-wrap justify-between items-center gap-2"><div><h2 class="font-semibold">Booking & revenue trends</h2><p class="text-xs text-slate-400">Rolling 12 months</p></div><div id="peak-badges" class="flex flex-wrap gap-2 text-xs"></div></div><div class="h-64 mt-4"><canvas id="trend-chart"></canvas></div></article><article class="bg-white border rounded-xl p-4 shadow-sm"><h2 class="font-semibold">Collected revenue breakdown</h2><p class="text-xs text-slate-400">Deposits · on-site balances · add-on sales</p><div class="h-56 mt-4"><canvas id="revenue-chart"></canvas></div><div id="revenue-legend" class="flex flex-wrap justify-center gap-3 text-xs mt-2"></div></article></section>
 <section class="grid xl:grid-cols-[1fr_2fr] gap-4"><article class="bg-white border rounded-xl p-4 shadow-sm"><h2 class="font-semibold">Peak hours & days</h2><p class="text-xs text-slate-400">Booking volume heatmap</p><div id="heatmap" class="mt-4 space-y-3"></div></article><article class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row justify-between gap-3"><div><h2 class="font-semibold">Smart scan schedule</h2><p class="text-xs text-slate-400">One tap to check in, collect, and track AI reports.</p></div><div class="flex gap-2"><input id="schedule-date" type="date" class="border rounded-lg px-2 py-2 text-sm"><input id="client-search" placeholder="Find client / phone / ref" class="border rounded-lg px-3 py-2 text-sm w-full sm:w-56"></div></div><div id="filters" class="flex gap-2 overflow-x-auto py-3"><button data-filter="all" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">All Today</button><button data-filter="incoming" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🟠 Incoming</button><button data-filter="confirmed" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🟢 Confirmed</button><button data-filter="in_scan" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🔵 In Scan</button><button data-filter="past" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">⚪ Past</button><button data-filter="alerts" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🔴 Alerts</button></div><div class="desktop-table overflow-x-auto"><table class="w-full text-sm"><thead class="text-left text-slate-400 border-b"><tr><th class="py-2">Status</th><th>Time / Ref</th><th>Client</th><th>Payment</th><th>Local AI queue</th><th>Actions</th></tr></thead><tbody id="schedule-rows"></tbody></table></div><div id="mobile-schedule" class="mobile-card space-y-3"></div><div id="empty" class="hidden text-sm text-slate-400 py-8 text-center">No bookings for this day and filter.</div></article></section>
 <section class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><h2 class="font-semibold">Client loyalty & retention</h2><p class="text-xs text-slate-400">Spend, visits and at-risk follow-ups</p></div><input id="directory-search" placeholder="Search name, WhatsApp or booking ref" class="border rounded-lg px-3 py-2 text-sm w-full sm:w-80"></div><div id="client-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4"></div></section>
 <section class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><h2 class="font-semibold">Quick Ask — Admin Agent</h2><p class="text-xs text-slate-400">Query revenue, deposits, clients, diary or follow-ups</p></div></div><div class="mt-3 space-y-3"><div class="flex gap-2 flex-wrap"><button id="ask-money" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Revenue today</button><button id="ask-deposits" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Deposits pending</button><button id="ask-diary" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Diary today</button><button id="ask-clients" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Lapsed clients</button><button id="ask-report" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Month report</button></div><div class="flex gap-2"><input id="ask-input" type="text" placeholder="Ask anything… e.g. Who owes a deposit? Next 3 days? Top clients?" class="flex-1 border rounded-lg px-3 py-2 text-sm"><button id="ask-submit" class="bg-emerald-800 hover:bg-emerald-700 text-white rounded-lg px-4 py-2 text-sm">Ask</button></div><div id="ask-answer" class="bg-slate-50 border rounded-lg p-4 min-h-[80px] text-sm text-slate-700 whitespace-pre-wrap"></div></section>
 </main>
-<dialog id="booking-dialog" class="rounded-2xl p-0 w-[min(94vw,36rem)] shadow-2xl"><form id="booking-form" class="p-5 sm:p-6 space-y-3"><div class="flex justify-between"><h2 class="text-xl font-semibold">New walk-in / manual booking</h2><button type="button" data-close="booking-dialog" class="text-slate-400">✕</button></div><input name="full_name" required placeholder="Client full name" class="w-full border rounded-lg p-3"><div class="grid grid-cols-2 gap-2"><input name="phone_whatsapp" placeholder="WhatsApp number" class="border rounded-lg p-3"><input name="email" type="email" placeholder="Email" class="border rounded-lg p-3"></div><select name="service_id" id="service-select" required class="w-full border rounded-lg p-3"></select><div class="grid grid-cols-2 gap-2"><input name="date" type="date" required class="border rounded-lg p-3"><input name="start_time" type="time" required class="border rounded-lg p-3"></div><label class="flex gap-2 text-sm items-center"><input name="deposit_received" type="checkbox" value="true"> R150 deposit received</label><textarea name="medical_notes" placeholder="Pre-scan intake / health notes" class="w-full border rounded-lg p-3"></textarea><textarea name="ai_scan_input" placeholder="Optional structured scan data from scanner" class="w-full border rounded-lg p-3"></textarea><textarea name="notes" placeholder="Booking notes" class="w-full border rounded-lg p-3"></textarea><button class="w-full bg-emerald-800 text-white rounded-lg p-3">Save booking</button><p class="form-error text-sm text-rose-600"></p></form></dialog>
+
+<button id="agent-fab" title="Ask the Inner Health agent"><span class="agent-dot"></span>✦</button>
+<div id="agent-win" role="dialog" aria-label="Inner Health admin agent">
+  <header id="agent-drag">
+    <span class="ttl">Inner Health Agent</span>
+    <span class="live"><i></i><span id="agent-live">live</span></span>
+    <button id="agent-min" title="Minimise">–</button>
+    <button id="agent-close" title="Close">✕</button>
+  </header>
+  <div class="agent-chips">
+    <button class="agent-chip" data-q="How much did we take today and this month?">Revenue</button>
+    <button class="agent-chip" data-q="What is on the diary today?">Diary</button>
+    <button class="agent-chip" data-q="Which bookings still owe a deposit?">Deposits</button>
+    <button class="agent-chip" data-q="Which products do you recommend for low energy?">Products</button>
+    <button class="agent-chip" data-q="Who has not been in for 60 days?">Lapsed clients</button>
+  </div>
+  <div class="agent-body" id="agent-body"></div>
+  <div class="agent-input">
+    <input id="agent-q" type="text" placeholder="Ask about bookings, sales or products…" autocomplete="off">
+    <button id="agent-send">Ask</button>
+  </div>
+</div>
+<div id="product-pop" role="dialog" aria-label="Product details">
+  <div class="card"><button class="close" id="product-pop-close">✕</button><div id="product-pop-body"></div></div>
+</div>
+
 <dialog id="sale-dialog" class="rounded-2xl p-0 w-[min(94vw,30rem)] shadow-2xl"><form id="sale-form" class="p-5 sm:p-6 space-y-3"><div class="flex justify-between"><h2 class="text-xl font-semibold">Log quick sale</h2><button type="button" data-close="sale-dialog" class="text-slate-400">✕</button></div><input name="item_name" required placeholder="Supplement, printout or service" class="w-full border rounded-lg p-3"><select name="client_id" id="sale-client" class="w-full border rounded-lg p-3"><option value="">Walk-in sale · no client</option></select><div class="grid grid-cols-2 gap-2"><input name="amount_zar" type="number" step="0.01" min="1" required placeholder="Amount (R)" class="border rounded-lg p-3"><select name="payment_method" class="border rounded-lg p-3"><option>cash</option><option>card</option><option>eft</option></select></div><button class="w-full bg-emerald-800 text-white rounded-lg p-3">Save sale</button><p class="form-error text-sm text-rose-600"></p></form></dialog>
 <aside id="drawer" class="hidden fixed inset-0 z-50 bg-slate-950/40"><section class="absolute right-0 top-0 h-full w-full sm:max-w-md bg-white shadow-2xl p-5 overflow-y-auto"><div class="flex justify-between"><h2 class="text-xl font-semibold">Client profile</h2><button id="drawer-close" class="text-2xl text-slate-400">×</button></div><div id="drawer-body" class="mt-5"></div></section></aside>
 <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden rounded-lg bg-slate-900 text-white px-4 py-3 text-sm shadow-xl"></div>
@@ -78,7 +179,7 @@ async function openClient(id){let c=(data?.clients||[]).find(c=>c.id==id);if(!c)
 function charts(){if(trendChart)trendChart.destroy();if(revenueChart)revenueChart.destroy();let a=data.analytics||[];trendChart=new Chart($('#trend-chart'),{type:'bar',data:{labels:a.map(x=>x.month),datasets:[{label:'Bookings',data:a.map(x=>x.bookings),backgroundColor:'#10b981',borderRadius:5,yAxisID:'y'},{label:'Revenue (R)',data:a.map(x=>x.revenue),type:'line',borderColor:'#334155',backgroundColor:'#334155',tension:.35,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,position:'left',title:{display:true,text:'Bookings'}},y1:{beginAtZero:true,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'ZAR'}}}}});let totals=[data.monthly_deposits,data.monthly_balances,data.addons_month];revenueChart=new Chart($('#revenue-chart'),{type:'doughnut',data:{labels:['Deposits','Balances','Add-on sales'],datasets:[{data:totals,backgroundColor:['#10b981','#f59e0b','#0ea5e9'],borderWidth:0}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}},cutout:'68%'}});$('#revenue-legend').innerHTML=['Deposits','Balances','Add-on sales'].map((x,i)=>`<span><i class="inline-block w-2 h-2 rounded-full mr-1" style="background:${['#10b981','#f59e0b','#0ea5e9'][i]}"></i>${x}: ${money(totals[i])}</span>`).join('');let peak=data.peak_month,pr=data.peak_revenue_month;$('#peak-badges').innerHTML=`${peak?`<span class="bg-amber-50 text-amber-900 rounded-full px-3 py-1">♛ Peak bookings: ${peak.month} · ${peak.bookings}</span>`:''}${pr?`<span class="bg-yellow-50 text-yellow-900 rounded-full px-3 py-1">★ Peak revenue: ${pr.month} · ${money(pr.revenue)}</span>`:''}`;$('#heatmap').innerHTML=`<div><div class="text-xs font-medium mb-2">Busiest days</div><div class="grid grid-cols-7 gap-1">${data.peak_days.map(x=>`<div class="text-center rounded-lg p-2" style="background:rgba(16,185,129,${Math.min(.9,.12+x.count/Math.max(1,...data.peak_days.map(y=>y.count))*.75)})"><div class="text-[10px]">${x.day}</div><b class="text-xs">${x.count}</b></div>`).join('')}</div></div><div><div class="text-xs font-medium mb-2">Popular start times</div><div class="grid grid-cols-4 gap-1">${data.peak_hours.map(x=>`<div class="text-center rounded-lg p-2" style="background:rgba(14,165,233,${Math.min(.85,.1+x.count/Math.max(1,...data.peak_hours.map(y=>y.count))*.7)})"><div class="text-[10px]">${x.hour}</div><b class="text-xs">${x.count}</b></div>`).join('')}</div></div>`}
 function render(){let ai=$('#ai-agent-status');ai.innerHTML=`<i class="led ${data.ai_agent_online?'led-green':'led-grey'} mr-1"></i>M4 AI · ${data.ai_agent_online?data.ai_agent_model+' online':'offline'}`;let period=$('#revenue-period').value;$('#revenue-kpi').textContent=money(period==='today'?data.today_revenue:data.month_revenue);$('#deposit-kpi').textContent=money(period==='today'?data.today_deposits:data.monthly_deposits);$('#balance-kpi').textContent=money(period==='today'?data.today_pending_balances:data.monthly_pending_balances);$('#completed-kpi').textContent=data.completed_scans;$('#upcoming-kpi').textContent=data.upcoming_confirmed;$('#avg-kpi').textContent=money(data.avg_revenue_per_client);let n=data.next_incoming;$('#ticker').innerHTML=`${n?`<span class="mr-4">🟠 <b>Next incoming:</b> ${esc(n.name)} in ${n.minutes} min · Balance ${money(n.balance_due)}</span>`:'<span class="mr-4 text-slate-400">No more arrivals scheduled today</span>'}<span class="mr-4">🟢 Confirmed today: ${data.confirmed_today} · ${money(data.today_deposits)}</span><span class="text-rose-700">🔴 Attention needed: ${data.attention_count}</span>`;renderSchedule();renderClients();charts()}
 async function load(){try{let day=$('#schedule-date').value;data=await api('/api/admin/scan-dashboard?'+new URLSearchParams({...(day?{day}:{})}));if(!$('#schedule-date').value)$('#schedule-date').value=data.date;render()}catch(e){toast(e.message)}}
-$('#password-open').onclick=()=>{$('#password-error').textContent='';$('#password-form').reset();$('#password-dialog').showModal()};$('#password-close').onclick=()=>$('#password-dialog').close();$('#password-form').onsubmit=async e=>{e.preventDefault();let password=$('#new-password').value,confirmation=$('#confirm-password').value;if(password!==confirmation){$('#password-error').textContent='The passwords do not match.';return}try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({new_password:password})});let decoded=decodeURIComponent(escape(atob(auth))),username=decoded.slice(0,decoded.indexOf(':'));auth=basicEncode(username+':'+password);sessionStorage.setItem('ihcc_auth',auth);$('#password-dialog').close();toast('Admin password changed. Use the new password next time you sign in.')}catch(err){$('#password-error').textContent=err.message}};$('#refresh').onclick=load;$('#legend-toggle').onclick=()=>$('#legend').classList.toggle('hidden');document.querySelectorAll('.filter-btn').forEach(x=>x.onclick=()=>{filter=x.dataset.filter;document.querySelectorAll('.filter-btn').forEach(y=>y.className='filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs '+(y===x?'bg-emerald-800 text-white':''));renderSchedule()});$('#client-search').oninput=renderSchedule;$('#directory-search').oninput=renderClients;$('#schedule-date').onchange=load;$('#revenue-period').onchange=render;$('#drawer-close').onclick=()=>$('#drawer').classList.add('hidden');$('#drawer').onclick=e=>{if(e.target.id==='drawer')$('#drawer').classList.add('hidden')};$('#new-booking').onclick=async()=>{try{services=await api('/api/public/services');$('#service-select').innerHTML=services.map(s=>`<option value="${s.id}">${s.name} · ${money(s.price)} (R${s.deposit} deposit)</option>`).join('');$('#booking-dialog').showModal()}catch(e){toast(e.message)}};$('#new-sale').onclick=()=>{ $('#sale-client').innerHTML='<option value="">Walk-in sale · no client</option>'+((data?.clients||[]).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''));$('#sale-dialog').showModal()};document.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>$('#'+x.dataset.close).close());$('#booking-form').onsubmit=async e=>{e.preventDefault();let b=Object.fromEntries(new FormData(e.target));b.service_id=Number(b.service_id);b.deposit_received=e.target.deposit_received.checked;try{await api('/api/admin/bookings/manual',{method:'POST',body:JSON.stringify(b)});e.target.closest('dialog').close();e.target.reset();toast('Booking saved');load()}catch(err){e.target.querySelector('.form-error').textContent=err.message}};$('#sale-form').onsubmit=async e=>{e.preventDefault();let b=Object.fromEntries(new FormData(e.target));b.amount_zar=Number(b.amount_zar);b.client_id=b.client_id?Number(b.client_id):null;try{await api('/api/admin/walk-in-sales',{method:'POST',body:JSON.stringify(b)});e.target.closest('dialog').close();e.target.reset();toast('Sale recorded');load()}catch(err){e.target.querySelector('.form-error').textContent=err.message}};async function doAsk(q,kind){$('#ask-answer').textContent='Thinking…';try{const r=await api('/api/admin/ask',{method:'POST',body:JSON.stringify({question:q,kind:kind||'auto'})});$('#ask-answer').textContent=r.answer;document.querySelectorAll('.ask-chip').forEach(b=>b.classList.remove('bg-emerald-800','text-white'));toast(r.mode==='model'?'Answered by AI':'Answered by rules');}catch(e){$('#ask-answer').textContent='Error: '+e.message}};document.querySelectorAll('.ask-chip').forEach(b=>b.onclick=()=>{const map={'ask-money':['How much did we take today and this month?','money'],'ask-deposits':['Which bookings still owe a deposit?','deposits'],'ask-diary':['What is on the diary today and the next few days?','auto'],'ask-clients':['Who has not been in for 60 days?','clients'],'ask-report':['Give me the month-to-date report.','auto']};const [q,k]=map[b.id]||[b.textContent.trim(),'auto'];doAsk(q,k);});$('#ask-submit').onclick=()=>{const v=$('#ask-input').value.trim();if(v)doAsk(v,'auto')};$('#ask-input').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=$('#ask-input').value.trim();if(v)doAsk(v,'auto')}});
+$('#password-open').onclick=()=>{$('#password-error').textContent='';$('#password-form').reset();$('#password-dialog').showModal()};$('#password-close').onclick=()=>$('#password-dialog').close();$('#password-form').onsubmit=async e=>{e.preventDefault();let password=$('#new-password').value,confirmation=$('#confirm-password').value;if(password!==confirmation){$('#password-error').textContent='The passwords do not match.';return}try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({new_password:password})});let decoded=decodeURIComponent(escape(atob(auth))),username=decoded.slice(0,decoded.indexOf(':'));auth=basicEncode(username+':'+password);sessionStorage.setItem('ihcc_auth',auth);$('#password-dialog').close();toast('Admin password changed. Use the new password next time you sign in.')}catch(err){$('#password-error').textContent=err.message}};$('#refresh').onclick=load;$('#legend-toggle').onclick=()=>$('#legend').classList.toggle('hidden');document.querySelectorAll('.filter-btn').forEach(x=>x.onclick=()=>{filter=x.dataset.filter;document.querySelectorAll('.filter-btn').forEach(y=>y.className='filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs '+(y===x?'bg-emerald-800 text-white':''));renderSchedule()});$('#client-search').oninput=renderSchedule;$('#directory-search').oninput=renderClients;$('#schedule-date').onchange=load;$('#revenue-period').onchange=render;$('#drawer-close').onclick=()=>$('#drawer').classList.add('hidden');$('#drawer').onclick=e=>{if(e.target.id==='drawer')$('#drawer').classList.add('hidden')};$('#new-sale').onclick=()=>{ $('#sale-client').innerHTML='<option value="">Walk-in sale · no client</option>'+((data?.clients||[]).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''));$('#sale-dialog').showModal()};document.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>$('#'+x.dataset.close).close());$('#sale-form').onsubmit=async e=>{e.preventDefault();let b=Object.fromEntries(new FormData(e.target));b.amount_zar=Number(b.amount_zar);b.client_id=b.client_id?Number(b.client_id):null;try{await api('/api/admin/walk-in-sales',{method:'POST',body:JSON.stringify(b)});e.target.closest('dialog').close();e.target.reset();toast('Sale recorded');load()}catch(err){e.target.querySelector('.form-error').textContent=err.message}};async function doAsk(q,kind){$('#ask-answer').textContent='Thinking…';try{const r=await api('/api/admin/ask',{method:'POST',body:JSON.stringify({question:q,kind:kind||'auto'})});$('#ask-answer').textContent=r.answer;document.querySelectorAll('.ask-chip').forEach(b=>b.classList.remove('bg-emerald-800','text-white'));toast(r.mode==='model'?'Answered by AI':'Answered by rules');}catch(e){$('#ask-answer').textContent='Error: '+e.message}};document.querySelectorAll('.ask-chip').forEach(b=>b.onclick=()=>{const map={'ask-money':['How much did we take today and this month?','money'],'ask-deposits':['Which bookings still owe a deposit?','deposits'],'ask-diary':['What is on the diary today and the next few days?','auto'],'ask-clients':['Who has not been in for 60 days?','clients'],'ask-report':['Give me the month-to-date report.','auto']};const [q,k]=map[b.id]||[b.textContent.trim(),'auto'];doAsk(q,k);});$('#ask-submit').onclick=()=>{const v=$('#ask-input').value.trim();if(v)doAsk(v,'auto')};$('#ask-input').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=$('#ask-input').value.trim();if(v)doAsk(v,'auto')}});
 load();
 </script>
 <script>
@@ -102,4 +203,110 @@ load();
 })();
 </script>
 
+<script>
+/* ---- Floating agent window ---- */
+(function(){
+  const win = document.getElementById('agent-win');
+  const fab = document.getElementById('agent-fab');
+  const body = document.getElementById('agent-body');
+  const input = document.getElementById('agent-q');
+  const live = document.getElementById('agent-live');
+
+  function bubble(text, who){
+    const el = document.createElement('div');
+    el.className = 'agent-msg ' + (who === 'me' ? 'me' : 'bot');
+    el.textContent = text;
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+    return el;
+  }
+
+  function productCard(p){
+    const el = document.createElement('div');
+    el.className = 'agent-product';
+    el.innerHTML = '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy">'
+      + '<div><b>' + esc(p.name) + '</b><span>' + esc(p.spec || '') + ' · R' + esc(String(p.price)) + '</span></div>';
+    el.onclick = () => showProduct(p);
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function showProduct(p){
+    const pop = document.getElementById('product-pop');
+    const thumbs = (p.gallery || [p.image]).filter(Boolean);
+    document.getElementById('product-pop-body').innerHTML =
+      '<img class="hero" src="' + esc(p.image) + '" alt="' + esc(p.name) + '">'
+      + '<div class="pad">'
+      + '<h3>' + esc(p.name) + '</h3>'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:.25rem">'
+      +   '<span class="price">R' + esc(String(p.price)) + '</span>'
+      +   '<span style="font-size:.7rem;color:#67e8f9">' + esc(p.categoryName || '') + '</span>'
+      + '</div>'
+      + '<div style="font-size:.72rem;color:#94a3b8;margin-top:.15rem">' + esc(p.spec || '') + (p.badge ? ' · ' + esc(p.badge) : '') + '</div>'
+      + '<p class="desc">' + esc(p.description || '') + '</p>'
+      + ((p.benefits || []).length ? '<ul>' + p.benefits.map(b => '<li>' + esc(b) + '</li>').join('') + '</ul>' : '')
+      + (p.dosage ? '<div style="font-size:.74rem;color:#a5f3fc">Dosage: ' + esc(p.dosage) + '</div>' : '')
+      + (thumbs.length > 1 ? '<div class="thumbs">' + thumbs.map(t => '<img src="' + esc(t) + '" alt="" loading="lazy">').join('') + '</div>' : '')
+      + '</div>';
+    pop.querySelectorAll('.thumbs img').forEach(img => img.onclick = () => { pop.querySelector('img.hero').src = img.src; });
+    pop.classList.add('open');
+  }
+
+  document.getElementById('product-pop-close').onclick = () => document.getElementById('product-pop').classList.remove('open');
+  document.getElementById('product-pop').onclick = e => { if (e.target.id === 'product-pop') e.currentTarget.classList.remove('open'); };
+
+  async function ask(q){
+    if (!q) return;
+    bubble(q, 'me');
+    const thinking = bubble('Thinking…', 'bot');
+    try {
+      const r = await api('/api/admin/ask', { method: 'POST', body: JSON.stringify({ question: q, kind: 'auto' }) });
+      thinking.textContent = r.answer || 'No answer.';
+      (r.products || []).forEach(productCard);
+    } catch (e) {
+      thinking.textContent = 'Could not reach the agent: ' + e.message;
+    }
+  }
+
+  document.getElementById('agent-send').onclick = () => { const v = input.value.trim(); input.value = ''; ask(v); };
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { const v = input.value.trim(); input.value = ''; ask(v); } });
+  document.querySelectorAll('.agent-chip').forEach(c => c.onclick = () => ask(c.dataset.q));
+
+  function openWin(){ win.classList.add('open'); win.classList.remove('min'); if (!body.children.length) bubble('Hi. Ask me about today\u2019s diary, revenue, deposits, lapsed clients or any product in store.', 'bot'); }
+  function closeWin(){ win.classList.remove('open'); }
+  fab.onclick = () => win.classList.contains('open') ? closeWin() : openWin();
+  document.getElementById('agent-close').onclick = closeWin;
+  document.getElementById('agent-min').onclick = () => win.classList.toggle('min');
+
+  // Drag by the header
+  const hdr = document.getElementById('agent-drag');
+  let drag = null;
+  hdr.addEventListener('pointerdown', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    const r = win.getBoundingClientRect();
+    drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    win.style.right = 'auto'; win.style.bottom = 'auto';
+    win.style.left = r.left + 'px'; win.style.top = r.top + 'px';
+    hdr.setPointerCapture(e.pointerId);
+  });
+  hdr.addEventListener('pointermove', e => {
+    if (!drag) return;
+    win.style.left = Math.max(0, Math.min(window.innerWidth - win.offsetWidth, e.clientX - drag.dx)) + 'px';
+    win.style.top = Math.max(0, Math.min(window.innerHeight - 60, e.clientY - drag.dy)) + 'px';
+  });
+  hdr.addEventListener('pointerup', () => { drag = null; });
+
+  // Live link: state changes arrive over SSE and wake the agent's badge
+  const src = new EventSource('/api/events');
+  src.addEventListener('ready', () => { live.textContent = 'live'; });
+  src.addEventListener('state', ev => {
+    let d = {}; try { d = JSON.parse(ev.data); } catch (_) {}
+    if (d.type && d.type !== 'ping' && d.type !== 'boot') {
+      live.textContent = d.type;
+      setTimeout(() => { live.textContent = 'live'; }, 4000);
+    }
+  });
+  src.onerror = () => { live.textContent = 'offline'; };
+})();
+</script>
 </body></html>
