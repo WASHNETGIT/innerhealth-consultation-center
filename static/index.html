@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <title>Inner Health Consultation Center — Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -22,65 +25,80 @@
     .fade-in { animation: fade 0.25s ease-in; }
     @keyframes fade { from { opacity: 0; transform: translateY(4px);} to {opacity:1; transform:none;} }
   
-/* === LIQUID GLASS BUTTON SYSTEM === */
-button, .btn-glass, [data-service], [data-time], [data-day]:not(:disabled), .filter-btn {
-  position: relative;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+/* Clean Professional Clinical Admin Styling */
+button, .btn-action {
+  transition: all 0.15s ease-in-out;
 }
-button:active:not(:disabled), .btn-glass:active, [data-service]:active, [data-time]:active, [data-day]:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98) !important;
+button:active:not(:disabled) {
+  transform: scale(0.99);
 }
 
-/* Liquid Emerald Glass (Primary CTAs) */
 .leaf, button.leaf, .btn-primary, [type="submit"]:not(.btn-cancel), #new-booking, #new-sale {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(5, 150, 105, 0.88) 50%, rgba(4, 120, 87, 0.94) 100%) !important;
-  backdrop-filter: blur(14px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(190%) !important;
-  border: 1px solid rgba(167, 243, 208, 0.6) !important;
-  border-top-color: rgba(255, 255, 255, 0.75) !important;
-  border-bottom-color: rgba(4, 120, 87, 0.6) !important;
-  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.42), 0 3px 8px -2px rgba(5, 150, 105, 0.25), inset 0 1px 2px 0 rgba(255, 255, 255, 0.75), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.22) !important;
+  background: #059669 !important;
   color: #ffffff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid #047857 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 .leaf:hover, button.leaf:hover, .btn-primary:hover, [type="submit"]:hover:not(.btn-cancel), #new-booking:hover, #new-sale:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.96) 0%, rgba(16, 185, 129, 0.92) 50%, rgba(5, 150, 105, 0.96) 100%) !important;
-  box-shadow: 0 14px 30px -4px rgba(16, 185, 129, 0.55), 0 6px 14px -2px rgba(5, 150, 105, 0.35), inset 0 1px 2.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.25) !important;
+  background: #047857 !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08) !important;
+  transform: none !important;
 }
 
-/* Frosted Liquid Glass (Secondary / Light buttons & service cards) */
-[data-service], [data-time], [data-day]:not(:disabled), .border.bg-white:not(input):not(textarea), #prev, #next, #back, #password-close, #booking-close, #sale-close {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(248, 250, 252, 0.45) 100%) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  border-top-color: rgba(255, 255, 255, 0.95) !important;
-  border-bottom-color: rgba(203, 213, 225, 0.5) !important;
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04) !important;
+[data-service], [data-time], [data-day]:not(:disabled), #prev, #next, #back, #password-close, #booking-close, #sale-close {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 [data-service]:hover, [data-time]:hover, [data-day]:hover:not(:disabled), #prev:hover, #next:hover, #back:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(220, 252, 231, 0.6) 100%) !important;
-  border-color: rgba(110, 231, 183, 0.8) !important;
-  box-shadow: 0 10px 22px -3px rgba(16, 185, 129, 0.18), 0 4px 8px -2px rgba(16, 185, 129, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  transform: none !important;
 }
 
-/* Nav / Dark Liquid Glass Buttons */
 header nav button, header nav a, #password-open, #refresh {
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  border-top-color: rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25) !important;
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hover {
-  transform: translateY(-1.5px) !important;
-  background: linear-gradient(135deg, rgba(71, 85, 105, 0.85) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 10px 22px -2px rgba(0, 0, 0, 0.35), inset 0 1px 2px 0 rgba(255, 255, 255, 0.5) !important;
+  background: #334155 !important;
+  transform: none !important;
 }
+
+    /* Neon Digital Clock */
+    .neon-digital-display {
+      font-family: 'Share Tech Mono', 'Orbitron', monospace;
+      background: #020617;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.2), inset 0 0 8px rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      padding: 4px 10px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.1;
+    }
+    .neon-time {
+      color: #10b981;
+      text-shadow: 0 0 5px rgba(16, 185, 129, 0.8), 0 0 10px rgba(16, 185, 129, 0.5);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .neon-date {
+      color: #34d399;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+    }
 
 </style>
 </head>
@@ -103,6 +121,11 @@ header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hove
         </template>
       </nav>
       <div class="ml-auto flex items-center gap-3 text-sm">
+        <!-- Digital Neon Clock & Date -->
+        <div class="neon-digital-display">
+          <div id="digital-clock-time" class="neon-time">00:00:00</div>
+          <div id="digital-clock-date" class="neon-date">---, -- --- ----</div>
+        </div>
         <span class="hidden md:inline text-slate-400" x-text="'Clients: ' + (dashboard?.total_clients||0)"></span>
         <a href="/book" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg">Book online</a><a href="/admin/bookings" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg">Booking admin</a><button @click="refreshAll()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg">↻ Refresh</button>
       </div>
@@ -601,229 +624,32 @@ header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hove
   </div>
 
   <footer class="text-center text-xs text-slate-400 py-6">
-    Inner Health Consultation Center · Appointments, clients & service management
+    Inner Health Consultation Center · 202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002
   </footer>
 
-  <aside class="fixed bottom-4 right-4 z-40 w-[min(24rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl border border-emerald-100 overflow-hidden">
-    <button id="ai-toggle" class="w-full bg-emerald-950 text-white text-left px-4 py-3 font-medium flex justify-between"><span>Ask Inner Health assistant</span><span id="ai-state" class="text-emerald-200 text-xs">Ollama</span></button>
-    <div id="ai-panel" class="hidden">
-      <div id="ai-messages" class="h-64 overflow-auto p-3 space-y-3 text-sm"><div class="bg-emerald-50 rounded-lg p-3">Hello! I can answer general questions and help you find a consultation. To book, visit <a class="underline" href="/book">online booking</a>.</div></div>
-      <form id="ai-form" class="border-t p-2 flex gap-2"><input id="ai-input" class="flex-1 border rounded-lg px-3 py-2 text-sm" placeholder="Ask a question…" required><button class="bg-emerald-800 text-white rounded-lg px-3">Send</button></form>
-    </div>
-  </aside>
-  <script>
-    const aiHistory=[];document.querySelector('#ai-toggle').onclick=()=>document.querySelector('#ai-panel').classList.toggle('hidden');
-    fetch('/api/assistant/health').then(r=>r.json()).then(s=>{let a=document.querySelector('#ai-state');a.textContent=s.primary?.connected?'M4 Ollama · '+s.primary.model:s.fallback?.connected?'Local fallback · '+s.fallback.model:'AI offline'}).catch(()=>{});
-    document.querySelector('#ai-form').onsubmit=async e=>{e.preventDefault();let input=document.querySelector('#ai-input'),msg=input.value.trim();if(!msg)return;input.value='';const box=document.querySelector('#ai-messages');box.insertAdjacentHTML('beforeend',`<div class="bg-slate-100 rounded-lg p-3 ml-8"></div>`);box.lastElementChild.textContent=msg;let pending=document.createElement('div');pending.className='bg-emerald-50 rounded-lg p-3 mr-8';pending.textContent='Thinking…';box.appendChild(pending);box.scrollTop=box.scrollHeight;try{let r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,history:aiHistory})}),d=await r.json();if(!r.ok)throw Error(d.detail||'Assistant unavailable');pending.textContent=d.reply;aiHistory.push({role:'user',content:msg},{role:'assistant',content:d.reply})}catch(err){pending.textContent=err.message}box.scrollTop=box.scrollHeight};
-    function hub() {
-      return {
-        // state
-        pillars: [], tabs: [], active: 'hub',
-        dashboard: null,
-        configs: {}, dayNames: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
-        clients: [], clientSearch: '',
-        inventory: [], lowOnly: false,
-        appointments: [], weekStart: '', hours: Array.from({length:12}, (_,i)=>i+8), // 8..19
-        reminders: [],
-        servicesByClient: {}, serviceClientId: '', serviceDesc: '', serviceAmount: '',
-        // command
-        command: '', cmdMsg: '', cmdError: false,
-        // modals
-        apptModal: false, clientModal: false, itemModal: false, detailModal: false,
-        apptConflicts: [],
-        subtab: {},
+  
 
-        apptForm: { id:null, title:'', pillar:'', client_id:'', date:'', start_time:'09:00', end_time:'10:00', notes:'' },
-        clientForm: { name:'', phone:'', email:'', pillar:'', notes:'' },
-        itemForm: { id:null, pillar:'', name:'', category:'', sku:'', quantity:0, reorder_level:5, unit_price:null, supplier:'' },
-        detail: null, contactMsg: '', contactChannel: 'whatsapp',
-
-        async init() {
-          await this.loadMeta();
-          await this.refreshAll();
-          // default sub-tabs
-          this.pillars.forEach(p => this.subtab[p.id] = 'schedule');
-          this.tabs = [{id:'hub', name:'Hub'}];
-          this.pillars.forEach(p => this.tabs.push({id:p.id, name:p.name}));
-          this.tabs.push({id:'settings', name:'Settings'});
-          // default week start = Monday of current week
-          const d = new Date(); const day = (d.getDay()+6)%7;
-          const mon = new Date(d); mon.setDate(d.getDate()-day);
-          this.weekStart = mon.toISOString().slice(0,10);
-        },
-
-        async refreshAll() {
-          await Promise.all([this.loadDashboard(), this.loadClients(), this.loadInventory(),
-                             this.loadAppointments(), this.loadReminders(), this.loadConfigs()]);
-        },
-
-        async api(url, opts={}) {
-          const res = await fetch(url, Object.assign({headers:{'Content-Type':'application/json'}}, opts));
-          if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.detail||res.statusText); }
-          return res.json();
-        },
-
-        async loadMeta() {
-          const m = await this.api('/api/pillars');
-          this.pillars = m.pillars;
-        },
-        pillarById(id){ return this.pillars.find(p=>p.id===id); },
-
-        async loadDashboard(){ this.dashboard = await this.api('/api/dashboard'); },
-        async loadConfigs(){
-          const c = await this.api('/api/pillar-configs');
-          this.configs = c;
-        },
-        async saveConfig(pid){
-          const cfg = this.configs[pid];
-          await this.api('/api/pillar-configs/'+pid, {method:'PUT', body:JSON.stringify(cfg)});
-        },
-
-        async loadClients(pillar){
-          const url = '/api/clients?pillar=' + (pillar||'') + '&search=' + encodeURIComponent(this.clientSearch);
-          this.clients = await this.api(url);
-          await this.loadServices(pillar);
-        },
-        async openClientDetail(id){
-          this.detail = await this.api('/api/clients/'+id);
-          this.detailModal = true;
-        },
-        async saveClient(){
-          await this.api('/api/clients', {method:'POST', body:JSON.stringify(this.clientForm)});
-          this.clientModal = false;
-          this.clientForm = { name:'', phone:'', email:'', pillar:'', notes:'' };
-          await this.loadClients(this.active); await this.loadDashboard();
-        },
-        async addContactLog(){
-          if(!this.contactMsg.trim()) return;
-          await this.api('/api/contact-logs', {method:'POST', body:JSON.stringify({
-            client_id:this.detail.id, pillar:this.detail.pillar||null,
-            channel:this.contactChannel, message:this.contactMsg
-          })});
-          this.contactMsg='';
-          this.detail = await this.api('/api/clients/'+this.detail.id);
-        },
-
-        async loadInventory(pillar){
-          const url = '/api/inventory?pillar=' + (pillar||'') + (this.lowOnly?'&low_stock=true':'');
-          this.inventory = await this.api(url);
-        },
-        async adjustStock(item, delta){
-          const r = await this.api('/api/inventory/'+item.id+'/adjust?delta='+delta, {method:'PATCH'});
-          item.quantity = r.quantity; item.low = r.low;
-          await this.loadDashboard();
-        },
-        async saveItem(){
-          if(this.itemForm.id){
-            await this.api('/api/inventory/'+this.itemForm.id, {method:'PUT', body:JSON.stringify(this.itemForm)});
-          } else {
-            await this.api('/api/inventory', {method:'POST', body:JSON.stringify(this.itemForm)});
-          }
-          this.itemModal=false;
-          await this.loadInventory(this.active); await this.loadDashboard();
-        },
-        async deleteItem(){
-          await this.api('/api/inventory/'+this.itemForm.id, {method:'DELETE'});
-          this.itemModal=false; await this.loadInventory(this.active);
-        },
-        editItem(i){ this.itemForm = Object.assign({}, i); this.itemModal=true; },
-
-        async loadAppointments(){
-          const url = '/api/appointments?week_start=' + this.weekStart + (this.active!=='hub' ? '&pillar='+this.active : '');
-          this.appointments = await this.api(url);
-        },
-        apptsFor(dayIdx, hr){
-          // dayIdx 0..6, hr 8..19. We map date to weekday of weekStart.
-          const ws = new Date(this.weekStart); ws.setDate(ws.getDate()+dayIdx);
-          const iso = ws.toISOString().slice(0,10);
-          return this.appointments.filter(a => a.date===iso && parseInt(a.start.split(':')[0])===hr);
-        },
-        dayLabel(idx){ const d=new Date(this.weekStart); d.setDate(d.getDate()+idx); return this.dayNames[idx]+' '+(d.getMonth()+1)+'/'+d.getDate(); },
-
-        async saveAppt(){
-          const body = Object.assign({}, this.apptForm);
-          body.client_id = body.client_id ? parseInt(body.client_id) : null;
-          let r;
-          if(body.id){
-            r = await this.api('/api/appointments/'+body.id, {method:'PUT', body:JSON.stringify(body)});
-          } else {
-            r = await this.api('/api/appointments', {method:'POST', body:JSON.stringify(body)});
-          }
-          this.apptConflicts = r.conflicts||[];
-          if(this.apptConflicts.length){ return; } // show conflicts, keep modal
-          this.apptModal=false; this.apptConflicts=[];
-          await this.loadAppointments(); await this.loadDashboard();
-        },
-        async deleteAppt(){
-          await this.api('/api/appointments/'+this.apptForm.id, {method:'DELETE'});
-          this.apptModal=false; await this.loadAppointments(); await this.loadDashboard();
-        },
-        editAppt(a){
-          this.apptForm = { id:a.id, title:a.title, pillar:a.pillar, client_id:a.client_id||'',
-            date:a.date, start_time:a.start, end_time:a.end||'10:00', notes:a.notes||'' };
-          this.apptConflicts=[]; this.apptModal=true;
-        },
-        openApptModal(pillar){
-          this.apptForm = { id:null, title:'', pillar:pillar||'it', client_id:'',
-            date:this.weekStart, start_time:'09:00', end_time:'10:00', notes:'' };
-          this.apptConflicts=[]; this.apptModal=true;
-        },
-
-        async loadReminders(){ this.reminders = await this.api('/api/reminders'); },
-        async generateReminders(){ const r = await this.api('/api/reminders/generate', {method:'POST'}); await this.loadReminders(); this.toast(r.created+' reminder(s) generated'); },
-        async sendAllReminders(){ await this.api('/api/reminders/send-all', {method:'POST'}); await this.loadReminders(); },
-        async sendReminder(r){ await this.api('/api/reminders/'+r.id+'/send', {method:'POST'}); await this.loadReminders(); },
-
-        async loadServices(pillar){
-          // load service records via clients detail is heavy; use per-client if needed.
-          // Simpler: we only show services in the services tab using client detail on demand.
-          this.servicesByClient = {};
-          for(const c of this.clients){
-            try {
-              const det = await this.api('/api/clients/'+c.id);
-              this.servicesByClient[c.id] = det.services.filter(s => !pillar || s.pillar===pillar);
-            } catch(e){}
-          }
-        },
-        async addService(pillar){
-          if(!this.serviceClientId || !this.serviceDesc.trim()) return;
-          const body = { client_id: parseInt(this.serviceClientId), pillar, description:this.serviceDesc,
-            amount: this.serviceAmount ? parseFloat(this.serviceAmount) : null,
-            performed_on: this.weekStart };
-          await this.api('/api/service-records', {method:'POST', body:JSON.stringify(body)});
-          this.serviceDesc=''; this.serviceAmount='';
-          await this.loadServices(pillar);
-        },
-
-        async runCommand(){
-          if(!this.command.trim()) return;
-          try {
-            const r = await this.api('/api/command', {method:'POST', body:JSON.stringify({command:this.command})});
-            this.cmdError = !r.intent;
-            this.cmdMsg = r.message;
-            this.command='';
-            await this.refreshAll();
-            setTimeout(()=>this.cmdMsg='', 6000);
-          } catch(e){
-            this.cmdError=true; this.cmdMsg='Error: '+e.message;
-          }
-        },
-
-        // helpers
-        shiftWeek(days){
-          const d = new Date(this.weekStart); d.setDate(d.getDate()+days);
-          this.weekStart = d.toISOString().slice(0,10);
-          this.loadAppointments();
-        },
-        openClientModal(){ this.clientForm={name:'',phone:'',email:'',pillar:'',notes:''}; this.clientModal=true; },
-        openItemModal(pillar){ this.itemForm={id:null,pillar:pillar,name:'',category:'',sku:'',quantity:0,reorder_level:5,unit_price:null,supplier:''}; this.itemModal=true; },
-        fmtDate(iso){ const d=new Date(iso); return this.dayNames[(d.getDay()+6)%7].slice(0,3)+' '+d.getDate(); },
-        fmtHour(h){ return (h<10?'0':'')+h+':00'; },
-        fmtTs(ts){ return new Date(ts).toLocaleString(); },
-        dayName(idx){ return idx!=null ? this.dayNames[idx] : '-'; },
-        toast(msg){ this.cmdError=false; this.cmdMsg=msg; setTimeout(()=>this.cmdMsg='',4000); },
-      }
+<script>
+function initNeonClock() {
+  function update() {
+    const now = new Date();
+    const tEl = document.getElementById('digital-clock-time');
+    const dEl = document.getElementById('digital-clock-date');
+    if (tEl) {
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      tEl.textContent = `${h}:${m}:${s}`;
     }
-  </script>
+    if (dEl) {
+      dEl.textContent = now.toLocaleDateString('en-ZA', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+    }
+  }
+  update();
+  setInterval(update, 1000);
+}
+initNeonClock();
+</script>
+
 </body>
 </html>

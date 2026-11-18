@@ -1,65 +1,24 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Book | Inner Health Consultation Center</title><script src="https://cdn.tailwindcss.com"></script><style>body{background:#f7f8f4}.leaf{background:linear-gradient(135deg,#173b32,#28644e)}
-/* === LIQUID GLASS BUTTON SYSTEM === */
-button, .btn-glass, [data-service], [data-time], [data-day]:not(:disabled), .filter-btn {
-  position: relative;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-button:active:not(:disabled), .btn-glass:active, [data-service]:active, [data-time]:active, [data-day]:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98) !important;
-}
-
-/* Liquid Emerald Glass (Primary CTAs) */
-.leaf, button.leaf, .btn-primary, [type="submit"]:not(.btn-cancel), #new-booking, #new-sale {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(5, 150, 105, 0.88) 50%, rgba(4, 120, 87, 0.94) 100%) !important;
-  backdrop-filter: blur(14px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(190%) !important;
-  border: 1px solid rgba(167, 243, 208, 0.6) !important;
-  border-top-color: rgba(255, 255, 255, 0.75) !important;
-  border-bottom-color: rgba(4, 120, 87, 0.6) !important;
-  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.42), 0 3px 8px -2px rgba(5, 150, 105, 0.25), inset 0 1px 2px 0 rgba(255, 255, 255, 0.75), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.22) !important;
+/* Clean Professional Clinical Styling */
+button, .btn-action { transition: all 0.15s ease-in-out; }
+.leaf, button.leaf, .btn-primary {
+  background: #059669 !important;
   color: #ffffff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid #047857 !important;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
-.leaf:hover, button.leaf:hover, .btn-primary:hover, [type="submit"]:hover:not(.btn-cancel), #new-booking:hover, #new-sale:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.96) 0%, rgba(16, 185, 129, 0.92) 50%, rgba(5, 150, 105, 0.96) 100%) !important;
-  box-shadow: 0 14px 30px -4px rgba(16, 185, 129, 0.55), 0 6px 14px -2px rgba(5, 150, 105, 0.35), inset 0 1px 2.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.25) !important;
+.leaf:hover, button.leaf:hover, .btn-primary:hover {
+  background: #047857 !important;
 }
-
-/* Frosted Liquid Glass (Secondary / Light buttons & service cards) */
-[data-service], [data-time], [data-day]:not(:disabled), .border.bg-white:not(input):not(textarea), #prev, #next, #back, #password-close, #booking-close, #sale-close {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(248, 250, 252, 0.45) 100%) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  border-top-color: rgba(255, 255, 255, 0.95) !important;
-  border-bottom-color: rgba(203, 213, 225, 0.5) !important;
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04) !important;
-}
-[data-service]:hover, [data-time]:hover, [data-day]:hover:not(:disabled), #prev:hover, #next:hover, #back:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(220, 252, 231, 0.6) 100%) !important;
-  border-color: rgba(110, 231, 183, 0.8) !important;
-  box-shadow: 0 10px 22px -3px rgba(16, 185, 129, 0.18), 0 4px 8px -2px rgba(16, 185, 129, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
-}
-
-/* Nav / Dark Liquid Glass Buttons */
-header nav button, header nav a, #password-open, #refresh {
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  border-top-color: rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25) !important;
-}
-header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hover {
-  transform: translateY(-1.5px) !important;
-  background: linear-gradient(135deg, rgba(71, 85, 105, 0.85) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 10px 22px -2px rgba(0, 0, 0, 0.35), inset 0 1px 2px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-</style></head><body class="text-slate-800"><header class="leaf text-white"><div class="max-w-5xl mx-auto px-5 py-5 flex justify-between items-center"><a href="/book" class="flex items-center gap-3"><img src="/static/logo.jpg" alt="Inner Health Consultation Hub" class="h-12 w-12 rounded-lg object-cover"><span class="font-semibold tracking-tight">INNER HEALTH <span class="text-emerald-200">CONSULTATION CENTER</span></span></a><a href="/admin/bookings" class="text-sm text-emerald-100">Staff sign in</a></div></header><main class="max-w-5xl mx-auto px-5 py-10"><div class="grid md:grid-cols-[1fr_360px] gap-10 items-start"><section><p class="uppercase tracking-[.2em] text-emerald-800 text-xs font-bold">A little time for your wellbeing</p><h1 class="text-4xl md:text-5xl font-semibold mt-3 leading-tight">Book your consultation</h1><p class="mt-4 text-slate-600 max-w-xl">Choose a service and a time that works for you. We’ll send your appointment details straight to your inbox.</p><div class="flex items-center gap-3 mt-8 text-xs font-medium"><span class="step bg-emerald-800 text-white rounded-full w-7 h-7 grid place-items-center">1</span><span>Service</span><span class="h-px w-8 bg-slate-300"></span><span class="step bg-slate-200 rounded-full w-7 h-7 grid place-items-center">2</span><span>Date & time</span><span class="h-px w-8 bg-slate-300"></span><span class="step bg-slate-200 rounded-full w-7 h-7 grid place-items-center">3</span><span>Your details</span></div><div id="content" class="mt-7"></div></section><aside class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"><h2 class="font-semibold">Your appointment</h2><div id="summary" class="mt-4 text-sm text-slate-500">Select a service to get started.</div><div class="mt-6 pt-5 border-t text-xs text-slate-500">Questions? Contact us and we’ll be happy to help.</div></aside></div></main><footer class="max-w-5xl mx-auto px-5 pb-10 text-center"><div id="social-links" class="flex justify-center gap-3 flex-wrap"></div><p class="text-xs text-slate-400 mt-4">Follow Inner Health Consultation Center or share our booking page.</p></footer><script>
+</style></head><body class="text-slate-800"><header class="leaf text-white"><div class="max-w-5xl mx-auto px-5 py-5 flex justify-between items-center"><a href="/book" class="flex items-center gap-3"><img src="/static/logo.jpg" alt="Inner Health Consultation Hub" class="h-12 w-12 rounded-lg object-cover"><span class="font-semibold tracking-tight">INNER HEALTH <span class="text-emerald-200">CONSULTATION CENTER</span></span></a><a href="/admin/bookings" class="text-sm text-emerald-100">Staff sign in</a></div></header><main class="max-w-5xl mx-auto px-5 py-10"><div class="grid md:grid-cols-[1fr_360px] gap-10 items-start"><section><p class="uppercase tracking-[.2em] text-emerald-800 text-xs font-bold">A little time for your wellbeing</p><h1 class="text-4xl md:text-5xl font-semibold mt-3 leading-tight">Book your consultation</h1><p class="mt-4 text-slate-600 max-w-xl">Choose a service and a time that works for you. We’ll send your appointment details straight to your inbox.</p><div class="flex items-center gap-3 mt-8 text-xs font-medium"><span class="step bg-emerald-800 text-white rounded-full w-7 h-7 grid place-items-center">1</span><span>Service</span><span class="h-px w-8 bg-slate-300"></span><span class="step bg-slate-200 rounded-full w-7 h-7 grid place-items-center">2</span><span>Date & time</span><span class="h-px w-8 bg-slate-300"></span><span class="step bg-slate-200 rounded-full w-7 h-7 grid place-items-center">3</span><span>Your details</span></div><div id="content" class="mt-7"></div></section><aside class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"><h2 class="font-semibold">Your appointment</h2><div id="summary" class="mt-4 text-sm text-slate-500">Select a service to get started.</div><div class="mt-6 pt-5 border-t text-xs text-slate-600 space-y-2">
+  <div class="font-medium text-slate-700 flex items-start gap-1.5">
+    <svg class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <span><b>Clinic Location:</b><br>202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002</span>
+  </div>
+  <p class="text-slate-400 text-[11px]">Consultations are strictly in-person at our Sunnyside center.</p>
+</div></aside></div></main><footer class="max-w-5xl mx-auto px-5 pb-10 text-center"><div id="social-links" class="flex justify-center gap-3 flex-wrap"></div><p class="text-xs text-slate-500 mt-4 font-medium">📍 202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002</p><p class="text-xs text-slate-400 mt-1">Inner Health Consultation Center · Full-Body Quantum Resonance & Health Analysis</p></footer><script>
 const $=s=>document.querySelector(s); let services=[], service=null, month=new Date(), selectedDate='', selectedTime='', step=1;
 const money=n=>new Intl.NumberFormat('en-ZA',{style:'currency',currency:'ZAR'}).format(n);
 async function api(url,opt){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opt});let d=await r.json();if(!r.ok)throw Error(d.detail||'Something went wrong');return d}

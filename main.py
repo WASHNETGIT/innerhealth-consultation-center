@@ -846,6 +846,7 @@ def public_config():
         "tiktok": os.getenv("TIKTOK_URL", ""),
         "whatsapp": os.getenv("WHATSAPP_NUMBER", "2785771853"),
         "business_name": "Inner Health Consultation Center",
+        "address": os.getenv("CLINIC_ADDRESS", "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002"),
     }
 
 @app.get("/api/public/services")
@@ -982,6 +983,7 @@ def manage_booking_info(token: str, db: Session = Depends(get_db)):
         "start_time": b.start_time.strftime("%H:%M"), "status": b.status, "deposit_paid": b.deposit_paid,
         "deposit_required": b.service.deposit, "balance_due": b.balance_due,
         "payment_url": _deposit_checkout_url(b, token),
+        "address": os.getenv("CLINIC_ADDRESS", "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002"),
         "bank_transfer": _bank_transfer_details(b.booking_ref or f"SCN-{1000+b.id}", b.service.deposit)
     }
 

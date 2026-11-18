@@ -1,67 +1,56 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scan Command Center | Inner Health</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<title>Scan Command Center | Inner Health</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>
 :root{--navy:#101a2d;--green:#0d805a}body{background:#f3f6f8}.led{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}.led-green{background:#10b981;box-shadow:0 0 10px #10b98199}.led-orange{background:#f59e0b;box-shadow:0 0 12px #f59e0baa;animation:pulse 1.3s infinite}.led-blue{background:#0ea5e9;box-shadow:0 0 10px #0ea5e999}.led-grey{background:#94a3b8;box-shadow:0 0 5px #94a3b855}.led-red{background:#e11d48;box-shadow:0 0 12px #e11d4899;animation:pulse .8s infinite}@keyframes pulse{50%{opacity:.42;transform:scale(.82)}}.nav{background:var(--navy)}.metric{min-height:118px}.mobile-card{display:none}@media(max-width:760px){.desktop-table{display:none}.mobile-card{display:block}.metric{min-height:96px}.mobile-action{min-height:42px}.mobile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wide-mobile{grid-column:span 2}.charts{grid-template-columns:1fr!important}.header-label{display:none}}
 
-/* === LIQUID GLASS BUTTON SYSTEM === */
-button, .btn-glass, [data-service], [data-time], [data-day]:not(:disabled), .filter-btn {
-  position: relative;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-button:active:not(:disabled), .btn-glass:active, [data-service]:active, [data-time]:active, [data-day]:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98) !important;
-}
-
-/* Liquid Emerald Glass (Primary CTAs) */
-.leaf, button.leaf, .btn-primary, [type="submit"]:not(.btn-cancel), #new-booking, #new-sale {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.92) 0%, rgba(5, 150, 105, 0.88) 50%, rgba(4, 120, 87, 0.94) 100%) !important;
-  backdrop-filter: blur(14px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(190%) !important;
-  border: 1px solid rgba(167, 243, 208, 0.6) !important;
-  border-top-color: rgba(255, 255, 255, 0.75) !important;
-  border-bottom-color: rgba(4, 120, 87, 0.6) !important;
-  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.42), 0 3px 8px -2px rgba(5, 150, 105, 0.25), inset 0 1px 2px 0 rgba(255, 255, 255, 0.75), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.22) !important;
+/* Clean Professional Clinical Styling */
+button, .btn-action { transition: all 0.15s ease-in-out; }
+.leaf, button.leaf, .btn-primary {
+  background: #059669 !important;
   color: #ffffff !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid #047857 !important;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
-.leaf:hover, button.leaf:hover, .btn-primary:hover, [type="submit"]:hover:not(.btn-cancel), #new-booking:hover, #new-sale:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.96) 0%, rgba(16, 185, 129, 0.92) 50%, rgba(5, 150, 105, 0.96) 100%) !important;
-  box-shadow: 0 14px 30px -4px rgba(16, 185, 129, 0.55), 0 6px 14px -2px rgba(5, 150, 105, 0.35), inset 0 1px 2.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.25) !important;
-}
-
-/* Frosted Liquid Glass (Secondary / Light buttons & service cards) */
-[data-service], [data-time], [data-day]:not(:disabled), .border.bg-white:not(input):not(textarea), #prev, #next, #back, #password-close, #booking-close, #sale-close {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(248, 250, 252, 0.45) 100%) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  border-top-color: rgba(255, 255, 255, 0.95) !important;
-  border-bottom-color: rgba(203, 213, 225, 0.5) !important;
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.04) !important;
-}
-[data-service]:hover, [data-time]:hover, [data-day]:hover:not(:disabled), #prev:hover, #next:hover, #back:hover {
-  transform: translateY(-2px) !important;
-  background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(220, 252, 231, 0.6) 100%) !important;
-  border-color: rgba(110, 231, 183, 0.8) !important;
-  box-shadow: 0 10px 22px -3px rgba(16, 185, 129, 0.18), 0 4px 8px -2px rgba(16, 185, 129, 0.1), inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
+.leaf:hover, button.leaf:hover, .btn-primary:hover {
+  background: #047857 !important;
 }
 
-/* Nav / Dark Liquid Glass Buttons */
-header nav button, header nav a, #password-open, #refresh {
-  background: linear-gradient(135deg, rgba(51, 65, 85, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  border-top-color: rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.25), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25) !important;
+.neon-digital-display {
+  font-family: 'Share Tech Mono', 'Orbitron', monospace;
+  background: #020617;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2), inset 0 0 8px rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  padding: 3px 8px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
 }
-header nav button:hover, header nav a:hover, #password-open:hover, #refresh:hover {
-  transform: translateY(-1.5px) !important;
-  background: linear-gradient(135deg, rgba(71, 85, 105, 0.85) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 10px 22px -2px rgba(0, 0, 0, 0.35), inset 0 1px 2px 0 rgba(255, 255, 255, 0.5) !important;
+.neon-time {
+  color: #10b981;
+  text-shadow: 0 0 5px rgba(16, 185, 129, 0.8), 0 0 10px rgba(16, 185, 129, 0.5);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.neon-date {
+  color: #34d399;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
 }
 
-</style></head><body class="text-slate-800"><header class="nav text-white sticky top-0 z-30 shadow-lg"><div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 flex items-center gap-3"><img src="/static/logo.jpg" class="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover bg-white" alt="Inner Health logo"><div class="min-w-0"><div class="font-semibold tracking-wide text-sm sm:text-base">INNER HEALTH <span class="text-emerald-300">SCAN CENTER</span></div><div class="text-slate-400 text-xs header-label">Full-body scan command center</div></div><nav class="ml-auto flex gap-2"><a href="/book" class="bg-emerald-700 hover:bg-emerald-600 rounded-lg px-3 py-2 text-xs sm:text-sm">Booking page</a><button id="password-open" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Change password</button><a href="/" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Business hub</a><button id="refresh" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">↻</button></nav></div></header>
+</style></head><body class="text-slate-800"><header class="nav text-white sticky top-0 z-30 shadow-lg"><div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 flex items-center gap-3"><img src="/static/logo.jpg" class="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover bg-white" alt="Inner Health logo"><div class="min-w-0"><div class="font-semibold tracking-wide text-sm sm:text-base">INNER HEALTH <span class="text-emerald-300">SCAN CENTER</span></div><div class="text-slate-400 text-xs header-label">Full-body scan command center</div></div><div class="ml-auto flex items-center gap-2">
+  <div class="neon-digital-display mr-1">
+    <div id="digital-clock-time" class="neon-time">00:00:00</div>
+    <div id="digital-clock-date" class="neon-date">---, -- --- ----</div>
+  </div>
+  <nav class="flex gap-2"><a href="/book" class="bg-emerald-700 hover:bg-emerald-600 rounded-lg px-3 py-2 text-xs sm:text-sm">Booking page</a><button id="password-open" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Change password</button><a href="/" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Business hub</a><button id="refresh" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">↻</button></nav></div></header>
 <dialog id="password-dialog" class="rounded-2xl p-0 w-[min(92vw,28rem)] shadow-2xl"><form id="password-form" class="p-6 space-y-4"><div><h2 class="text-xl font-semibold">Change admin password</h2><p class="text-sm text-slate-500 mt-1">Use at least 12 characters. Your new password takes effect immediately.</p></div><label class="block text-sm">New password<input id="new-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><label class="block text-sm">Confirm new password<input id="confirm-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><p id="password-error" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" id="password-close" class="border rounded-lg px-4 py-2">Cancel</button><button class="bg-emerald-800 text-white rounded-lg px-4 py-2">Save password</button></div></form></dialog>
 <main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-5">
 <section class="rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-3"><div class="flex flex-col sm:flex-row sm:items-center gap-3"><div class="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-emerald-800"><span class="led led-green"></span> Live floor</div><div id="ticker" class="flex-1 text-sm text-slate-700">Connecting to live bookings…</div><span id="ai-agent-status" class="text-xs text-slate-500 whitespace-nowrap">M4 AI · waiting</span><button id="legend-toggle" class="text-xs text-slate-500 underline self-start sm:self-auto">LED legend</button></div><div id="legend" class="hidden border-t mt-3 pt-3 grid grid-cols-2 lg:grid-cols-5 gap-2 text-xs"><span><i class="led led-green mr-2"></i>Confirmed · deposit paid</span><span><i class="led led-orange mr-2"></i>Incoming · within 2 hours</span><span><i class="led led-blue mr-2"></i>In scan</span><span><i class="led led-grey mr-2"></i>Completed</span><span><i class="led led-red mr-2"></i>Deposit / attention alert</span></div></section>
@@ -89,4 +78,26 @@ function charts(){if(trendChart)trendChart.destroy();if(revenueChart)revenueChar
 function render(){let ai=$('#ai-agent-status');ai.innerHTML=`<i class="led ${data.ai_agent_online?'led-green':'led-grey'} mr-1"></i>M4 AI · ${data.ai_agent_online?data.ai_agent_model+' online':'offline'}`;let period=$('#revenue-period').value;$('#revenue-kpi').textContent=money(period==='today'?data.today_revenue:data.month_revenue);$('#deposit-kpi').textContent=money(period==='today'?data.today_deposits:data.monthly_deposits);$('#balance-kpi').textContent=money(period==='today'?data.today_pending_balances:data.monthly_pending_balances);$('#completed-kpi').textContent=data.completed_scans;$('#upcoming-kpi').textContent=data.upcoming_confirmed;$('#avg-kpi').textContent=money(data.avg_revenue_per_client);let n=data.next_incoming;$('#ticker').innerHTML=`${n?`<span class="mr-4">🟠 <b>Next incoming:</b> ${esc(n.name)} in ${n.minutes} min · Balance ${money(n.balance_due)}</span>`:'<span class="mr-4 text-slate-400">No more arrivals scheduled today</span>'}<span class="mr-4">🟢 Confirmed today: ${data.confirmed_today} · ${money(data.today_deposits)}</span><span class="text-rose-700">🔴 Attention needed: ${data.attention_count}</span>`;renderSchedule();renderClients();charts()}
 async function load(){try{let day=$('#schedule-date').value;data=await api('/api/admin/scan-dashboard?'+new URLSearchParams({...(day?{day}:{})}));if(!$('#schedule-date').value)$('#schedule-date').value=data.date;render()}catch(e){toast(e.message)}}
 $('#password-open').onclick=()=>{$('#password-error').textContent='';$('#password-form').reset();$('#password-dialog').showModal()};$('#password-close').onclick=()=>$('#password-dialog').close();$('#password-form').onsubmit=async e=>{e.preventDefault();let password=$('#new-password').value,confirmation=$('#confirm-password').value;if(password!==confirmation){$('#password-error').textContent='The passwords do not match.';return}try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({new_password:password})});let decoded=decodeURIComponent(escape(atob(auth))),username=decoded.slice(0,decoded.indexOf(':'));auth=basicEncode(username+':'+password);sessionStorage.setItem('ihcc_auth',auth);$('#password-dialog').close();toast('Admin password changed. Use the new password next time you sign in.')}catch(err){$('#password-error').textContent=err.message}};$('#refresh').onclick=load;$('#legend-toggle').onclick=()=>$('#legend').classList.toggle('hidden');document.querySelectorAll('.filter-btn').forEach(x=>x.onclick=()=>{filter=x.dataset.filter;document.querySelectorAll('.filter-btn').forEach(y=>y.className='filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs '+(y===x?'bg-emerald-800 text-white':''));renderSchedule()});$('#client-search').oninput=renderSchedule;$('#directory-search').oninput=renderClients;$('#schedule-date').onchange=load;$('#revenue-period').onchange=render;$('#drawer-close').onclick=()=>$('#drawer').classList.add('hidden');$('#drawer').onclick=e=>{if(e.target.id==='drawer')$('#drawer').classList.add('hidden')};$('#new-booking').onclick=async()=>{try{services=await api('/api/public/services');$('#service-select').innerHTML=services.map(s=>`<option value="${s.id}">${s.name} · ${money(s.price)} (R${s.deposit} deposit)</option>`).join('');$('#booking-dialog').showModal()}catch(e){toast(e.message)}};$('#new-sale').onclick=()=>{ $('#sale-client').innerHTML='<option value="">Walk-in sale · no client</option>'+((data?.clients||[]).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''));$('#sale-dialog').showModal()};document.querySelectorAll('[data-close]').forEach(x=>x.onclick=()=>$('#'+x.dataset.close).close());$('#booking-form').onsubmit=async e=>{e.preventDefault();let b=Object.fromEntries(new FormData(e.target));b.service_id=Number(b.service_id);b.deposit_received=e.target.deposit_received.checked;try{await api('/api/admin/bookings/manual',{method:'POST',body:JSON.stringify(b)});e.target.closest('dialog').close();e.target.reset();toast('Booking saved');load()}catch(err){e.target.querySelector('.form-error').textContent=err.message}};$('#sale-form').onsubmit=async e=>{e.preventDefault();let b=Object.fromEntries(new FormData(e.target));b.amount_zar=Number(b.amount_zar);b.client_id=b.client_id?Number(b.client_id):null;try{await api('/api/admin/walk-in-sales',{method:'POST',body:JSON.stringify(b)});e.target.closest('dialog').close();e.target.reset();toast('Sale recorded');load()}catch(err){e.target.querySelector('.form-error').textContent=err.message}};load();
-</script></body></html>
+</script>
+<script>
+(function() {
+  function update() {
+    const now = new Date();
+    const t = document.getElementById('digital-clock-time');
+    const d = document.getElementById('digital-clock-date');
+    if (t) {
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      t.textContent = `${h}:${m}:${s}`;
+    }
+    if (d) {
+      d.textContent = now.toLocaleDateString('en-ZA', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+    }
+  }
+  update();
+  setInterval(update, 1000);
+})();
+</script>
+
+</body></html>
