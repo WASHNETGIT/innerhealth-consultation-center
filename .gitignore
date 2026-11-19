@@ -7,3 +7,9 @@ business_hub.db
 .dockerignore
 EOF
 uploads/
+
+# Backups and local artefacts (never commit these)
+*.bak-*
+models/
+ollama/
+.env

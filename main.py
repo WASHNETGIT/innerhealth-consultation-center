@@ -312,6 +312,9 @@ class PublicBooking(Base):
     token_hash = Column(String(64), nullable=False, unique=True)
     reminder_24h_sent = Column(Boolean, nullable=False, default=False)
     reminder_2h_sent = Column(Boolean, nullable=False, default=False)
+    # Proof of payment the guest attached after booking (filename in uploads/proofs)
+    payment_proof = Column(String(160), nullable=True)
+    proof_uploaded_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=app_now)
 
     client = relationship("Client")
@@ -1278,6 +1281,7 @@ def _assistant_system_prompt(db: Session) -> tuple:
         "Deposits are paid by EFT: FNB, account name Ntombikayise N Mkhaliphi, account 62804835835, branch 250655, cheque account. Reply with the reference we give them.",
     ]
     lines.append("We also stock the Green World natural health range in store: " + _product_summary_line() + ".")
+    lines += _product_knowledge_lines()
     if slots:
         lines.append("Next open scan slots: " + "; ".join(f"{d} at {', '.join(v)}" for d, v in slots.items()) + ".")
     lines += [
@@ -1348,12 +1352,48 @@ who how much cost costs price prices do does have has can could would should ple
 something good best help need want looking about from as by if not no yes thanks thank hi hello""".split())
 
 
+def _product_knowledge_lines() -> List[str]:
+    """The store range in a form the agent can quote without inventing anything.
+
+    Names, sizes and prices come straight from the catalog file. Descriptions and
+    benefits are trimmed to one clause each so the brief stays readable.
+    """
+    items = _products()
+    if not items:
+        return []
+    lines = ["Store range, exact names, sizes and prices (never change a price):"]
+    for p in sorted(items, key=lambda x: (x.get("categoryName") or "", str(x.get("code") or ""))):
+        name = p.get("name") or ""
+        spec = p.get("spec") or ""
+        price = p.get("price")
+        code = p.get("code") or ""
+        bit = f"{code} {name}"
+        if spec:
+            bit += f" ({spec})"
+        if price is not None:
+            bit += f" R{price:g}" if isinstance(price, (int, float)) else f" R{price}"
+        lines.append(bit)
+    lines.append(
+        "When a guest asks about a product, quote its name, size and price exactly as above. "
+        "Describe what it supports using its benefits; never invent a benefit, a price, a "
+        "dosage or a cure. Supplements support wellbeing, they do not treat disease."
+    )
+    return lines
+
+
 def _product_search(query: str, limit: int = 5) -> List[Dict[str, Any]]:
     """Rank products against a free-text query using tags, name, description and benefits."""
     items = _products()
     if not items:
         return []
     raw = (query or "").lower()
+
+    # A product code is an exact identifier: answer it exactly, never by fuzzy match.
+    for token in re.findall(r"\b[a-z]\d{1,3}[a-z]?\b", raw):
+        for p in items:
+            if str(p.get("code", "")).lower() == token:
+                return [p]
+
     tokens = [t for t in re.findall(r"[a-z0-9]+", raw) if len(t) > 2 and t not in _STOPWORDS]
     if not tokens:
         return []
@@ -1622,7 +1662,10 @@ def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
     hits = _product_search(question, limit=3)
     product_words = ("product", "recommend", "supplement", "capsule", "tea", "tablet", "drink",
                      "plaster", "cream", "soap", "price of", "how much is", "cost of", "in store",
-                     "stock", "range", "which one", "that one", "first one", "second one", "third one")
+                     "stock", "range", "which one", "that one", "first one", "second one", "third one",
+                     "blood sugar", "sleep", "energy", "immune", "detox", "joints", "skin",
+                     "have you got", "do you sell", "what do you have for", "anything for")
+    # A store question is a store question even when the caller sent kind="auto".
     if hits and (kind == "products" or any(w in q for w in product_words)):
         listing = "; ".join(f"{h['name']} ({h['spec']}) R{h['price']}" for h in hits)
         return f"From the store range: {listing}."
@@ -1690,6 +1733,22 @@ def _agent_history(db: Session, session_id: str, limit: int = MEMORY_WINDOW) -> 
             .order_by(AgentMessage.id.desc())
             .limit(limit).all())
     return [{"role": r.role, "content": r.content} for r in reversed(rows)]
+
+
+def _agent_recent(db: Session, session_id: str, limit: int = 6) -> List[str]:
+    """The last few things said in this conversation, oldest first.
+
+    Used so a short follow-up ("and the tea?", "how much?") is read in the light of
+    what came before instead of being answered cold.
+    """
+    try:
+        rows = (db.query(AgentMessage)
+                .filter_by(session_id=(session_id or "")[:64])
+                .order_by(AgentMessage.id.desc())
+                .limit(limit).all())
+        return [r.content for r in reversed(rows) if r.content]
+    except Exception:
+        return []
 
 
 def _agent_remember(db: Session, session_id: str, role: str, content: str, mode: str = "model") -> None:
@@ -2371,13 +2430,33 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
                     "document": {"doc_id": doc.doc_id, "title": doc.title,
                                  "download_url": f"/api/admin/documents/{doc.doc_id}/download"}}
     answer = _admin_answer(snapshot, question, kind)
+
+    # Conversation: if the guest is following on ("and the tea?", "how much?"), the
+    # previous turns tell us what they mean. Short follow-ups inherit the topic.
+    try:
+        recent = _agent_recent(db, session_id, limit=6)
+    except Exception:
+        recent = []
+    follow_up = bool(question) and len(question.strip().split()) <= 6 and not _product_search(question, limit=1)
+    if follow_up and recent:
+        topic = " ".join(r for r in recent if r and len(r) > 3)[-300:]
+        carried = _product_search(topic, limit=3)
+        if carried and "From the store range" not in answer:
+            listing = "; ".join(f"{p['name']} ({p['spec']}) R{p['price']}" for p in carried)
+            answer = f"Following on from what we just discussed: {listing}."
     product_words = ("product", "recommend", "supplement", "capsule", "tea", "tablet", "drink",
                      "plaster", "cream", "soap", "in store", "stock", "range", "which one",
-                     "that one", "first one", "second one", "third one", "how much is the")
-    product_hits = _product_search(question, limit=3) if question and any(w in question.lower() for w in product_words) else []
+                     "that one", "first one", "second one", "third one", "how much is the",
+                     "how much is", "price of", "cost of", "have you got", "do you sell")
+    is_product_q = bool(question) and any(w in question.lower() for w in product_words)
+    product_hits = _product_search(question, limit=3) if is_product_q else []
     if product_hits and "From the store range" not in answer:
-        answer = answer.rstrip() + "\n\nIn store: " + "; ".join(
-            f"{p['name']} ({p['spec']}) R{p['price']}" for p in product_hits) + "."
+        listing = "; ".join(f"{p['name']} ({p['spec']}) R{p['price']}" for p in product_hits)
+        if is_product_q:
+            # A store question must be answered with the store, not with clinic takings.
+            answer = f"From the store range: {listing}."
+        else:
+            answer = answer.rstrip() + "\n\nIn store: " + listing + "."
     mode = "rules"
 
     # Rephrasing is optional polish. It is skipped unless a model is explicitly
@@ -3058,6 +3137,46 @@ def public_slots(day: date, service_id: int, db: Session = Depends(get_db)):
     if not service:
         raise HTTPException(404, "service not found")
     return {"day": day.isoformat(), "slots": _slots(db, day, service)}
+
+PROOF_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads", "proofs")
+
+
+@app.post("/api/public/bookings/{reference}/proof")
+async def upload_payment_proof(reference: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """Store a guest's proof of payment against their booking reference.
+
+    Kept small and strict: images and PDFs only, 8 MB at most, and the reference must
+    exist so a stray upload cannot create a file with no booking behind it.
+    """
+    ref = (reference or "").strip().upper()[:32]
+    booking = db.query(PublicBooking).filter(PublicBooking.booking_ref == ref).first()
+    if not booking:
+        raise HTTPException(404, "That booking reference was not found")
+
+    data = await file.read()
+    if not data:
+        raise HTTPException(422, "The file was empty")
+    if len(data) > 8 * 1024 * 1024:
+        raise HTTPException(413, "Please send a file smaller than 8 MB")
+
+    ctype = (file.content_type or "").lower()
+    ext = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp",
+           "application/pdf": ".pdf"}.get(ctype)
+    if not ext:
+        raise HTTPException(415, "Send a photo (JPG or PNG) or a PDF of your payment")
+
+    os.makedirs(PROOF_DIR, exist_ok=True)
+    safe = re.sub(r"[^A-Z0-9_-]", "", ref)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    name = f"{safe}-{stamp}{ext}"
+    with open(os.path.join(PROOF_DIR, name), "wb") as fh:
+        fh.write(data)
+
+    booking.payment_proof = name
+    booking.proof_uploaded_at = app_now()
+    db.commit()
+    return {"received": True, "reference": ref, "stored_as": name}
+
 
 @app.post("/api/public/bookings", status_code=201)
 def create_public_booking(payload: dict, db: Session = Depends(get_db)):

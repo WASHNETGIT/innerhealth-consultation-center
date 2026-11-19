@@ -2239,37 +2239,6 @@
   ]
  },
  {
-  "code": "W54_OLD",
-  "name": "Green World Herbal Toothpaste",
-  "spec": "120g tube",
-  "price": 147,
-  "category": "oral_care",
-  "categoryName": "Oral Care & Hygiene",
-  "badge": "Top Seller",
-  "description": "A therapeutic botanical toothpaste enriched with Honeysuckle flower extract (natural antimicrobial), Green Tea catechins (antioxidant and antibacterial), and bioactive spearmint oil. This herbal formula eliminates gum bleeding, resolves periodontitis, provides 12-hour fresh breath protection, and strengthens enamel without harsh chemical abrasives.",
-  "benefits": [
-   "Stops gum bleeding and relieves periodontitis and gum inflammation",
-   "Provides long-lasting fresh breath and oral odour protection",
-   "Strengthens tooth enamel without abrasive chemical damage",
-   "Natural antibacterial and antiviral protection for the entire oral cavity"
-  ],
-  "dosage": "Brush teeth thoroughly twice daily for 2–3 minutes; do not swallow",
-  "tags": [
-   "toothpaste",
-   "oral care",
-   "gum bleeding",
-   "bad breath",
-   "teeth",
-   "periodontitis"
-  ],
-  "image": "/static/products/IMG_3549.jpg",
-  "gallery": [
-   "/static/products/IMG_3549.jpg",
-   "/static/products/IMG_3550.jpg",
-   "/static/products/IMG_3551.jpg"
-  ]
- },
- {
   "code": "W52",
   "name": "Detoxin Foot Pad",
   "spec": "10 pieces per bag",
@@ -2366,7 +2335,7 @@
   ]
  },
  {
-  "code": "W72",
+  "code": "W73",
   "name": "Tourmaline Thermal Waist Protector",
   "spec": "1 piece per box",
   "price": 1365,

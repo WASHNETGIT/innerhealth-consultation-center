@@ -151,6 +151,20 @@
     <a id="manageLink" class="btn mt-6">View or change my booking</a>
     <a id="payLink" class="mt-3 w-full flex items-center justify-center rounded-2xl border-2 border-emerald-600 text-emerald-700 font-semibold px-5 py-4 hide">
       Pay my R150 deposit</a>
+    <div id="payBox" class="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left">
+      <p class="font-semibold text-slate-800">Pay the R150 deposit by EFT</p>
+      <p class="text-sm text-slate-700 mt-1">FNB · Ntombikayise N Mkhaliphi · account 62804835835 · branch 250655 · cheque account</p>
+      <p class="text-sm text-slate-600 mt-1">Use your reference above. Then send the proof of payment below.</p>
+    </div>
+    <div id="proofBox" class="mt-4 rounded-2xl border-2 border-dashed border-slate-300 p-4 text-left">
+      <p class="font-semibold text-slate-800">Send proof of payment</p>
+      <p class="text-sm text-slate-600 mt-1">Pay the deposit by EFT, then attach the screenshot or PDF here so we can confirm your slot.</p>
+      <input id="proofFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"
+             class="mt-3 block w-full text-sm text-slate-700">
+      <button id="proofBtn" type="button"
+              class="mt-3 w-full rounded-xl bg-emerald-600 text-white font-semibold px-5 py-3">Submit proof of payment</button>
+      <p id="proofMsg" class="text-sm mt-2"></p>
+    </div>
     <a id="doneWhats" href="https://wa.me/2785771853" target="_blank" rel="noopener"
        class="mt-3 w-full flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-300 text-slate-700 font-semibold px-5 py-4">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18a8 8 0 01-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1112 20z"/></svg>
@@ -400,6 +414,28 @@ $('#form').onsubmit = async e => {
     $('#error').textContent = err.message;
     btn.disabled = false; btn.textContent = 'Confirm booking';
     if(/just booked|another slot|filled/i.test(err.message)) { slotsByDay = {}; show('picker'); loadDays(); }
+  }
+};
+
+$('#proofBtn').onclick = async () => {
+  const f = $('#proofFile').files[0];
+  const msg = $('#proofMsg'), btn = $('#proofBtn');
+  if(!f){ msg.className = 'text-sm mt-2 text-red-700'; msg.textContent = 'Choose the screenshot or PDF first.'; return; }
+  const ref = ($('#doneRef').textContent.match(/\b[A-Z]{2,}-?[A-Z0-9]{4,}\b/) || [])[0];
+  if(!ref){ msg.className = 'text-sm mt-2 text-red-700'; msg.textContent = 'We could not read your reference. Send it to us on WhatsApp instead.'; return; }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    const fd = new FormData(); fd.append('file', f);
+    const r = await fetch('/api/public/bookings/' + encodeURIComponent(ref) + '/proof', {method:'POST', body: fd});
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.detail || 'That did not go through');
+    msg.className = 'text-sm mt-2 text-emerald-700 font-semibold';
+    msg.textContent = 'Thank you — your proof of payment is with the clinic. We will confirm your slot shortly.';
+    btn.classList.add('hide');
+  }catch(err){
+    msg.className = 'text-sm mt-2 text-red-700';
+    msg.textContent = err.message + ' — you can also send it on WhatsApp.';
+    btn.disabled = false; btn.textContent = 'Submit proof of payment';
   }
 };
 
