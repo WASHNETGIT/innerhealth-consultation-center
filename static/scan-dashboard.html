@@ -77,6 +77,103 @@ body{background:radial-gradient(1200px 600px at 100% -10%,#e6f7f1 0%,transparent
 .logo-clock .lc-pin{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
   background:#34d399;border:1.5px solid #04120d;box-shadow:0 0 8px rgba(52,211,153,.95)}
 @media(max-width:760px){.logo-clock{width:50px;height:50px}}
+
+/* ================= Floating AI window ================= */
+#agent-fab{position:fixed;right:18px;bottom:18px;z-index:2147483647;display:inline-flex;align-items:center;gap:.45rem;
+  padding:.72rem 1rem .72rem .9rem;border:0;border-radius:999px;cursor:pointer;font-weight:700;font-size:.86rem;
+  color:#03110c;background:linear-gradient(135deg,#34d399,#22d3ee 55%,#a7f3d0);
+  box-shadow:0 0 0 1px rgba(255,255,255,.35) inset,0 10px 26px -8px rgba(16,185,129,.85),0 0 22px rgba(34,211,238,.55);
+  transition:transform .15s,box-shadow .15s}
+#agent-fab:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,.5) inset,0 14px 30px -8px rgba(16,185,129,.95),0 0 30px rgba(34,211,238,.75)}
+#agent-fab.win-open{opacity:0;pointer-events:none;transform:scale(.85)}
+#agent-fab .agent-dot{width:9px;height:9px;border-radius:50%;background:#052e22;box-shadow:0 0 8px #052e22}
+#agent-fab .fab-label{letter-spacing:.02em}
+@media(max-width:760px){#agent-fab{right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);font-size:.8rem;padding:.65rem .85rem}}
+
+#agent-win{position:fixed;right:18px;bottom:82px;z-index:2147483646;width:min(94vw,25rem);height:min(72vh,34rem);
+  display:none;flex-direction:column;border-radius:18px;overflow:hidden;background:#07131b;
+  border:1px solid rgba(52,211,153,.35);color:#e2f7ee;
+  box-shadow:0 0 0 1px rgba(255,255,255,.05) inset,0 24px 60px -20px rgba(0,0,0,.75),0 0 34px rgba(16,185,129,.28)}
+#agent-win.open{display:flex;animation:agentIn .18s ease}
+#agent-win.min{height:auto}
+#agent-win.min .agent-chips,#agent-win.min .agent-body,#agent-win.min .agent-docs,#agent-win.min .agent-voice,#agent-win.min .agent-input{display:none}
+@keyframes agentIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:760px){#agent-win{right:8px;left:8px;width:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);height:min(76vh,36rem)}}
+
+#agent-drag{display:flex;align-items:center;gap:.5rem;padding:.6rem .7rem;cursor:move;user-select:none;
+  background:linear-gradient(135deg,#0b2a22,#07131b);border-bottom:1px solid rgba(52,211,153,.22)}
+#agent-drag .ttl{font-size:.82rem;font-weight:700;letter-spacing:.02em;color:#a7f3d0}
+#agent-drag .live{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;text-transform:uppercase;
+  letter-spacing:.1em;color:#5eead4;background:rgba(52,211,153,.12);border-radius:999px;padding:.15rem .45rem}
+#agent-drag .live i{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;animation:pulse 1.6s infinite}
+#agent-drag button{margin-left:0;width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);color:#cbd5e1;font-size:.85rem;line-height:1;cursor:pointer}
+#agent-drag #agent-min{margin-left:auto}
+#agent-drag button:hover{background:rgba(255,255,255,.16);color:#fff}
+
+.agent-chips{display:flex;gap:.35rem;overflow-x:auto;padding:.55rem .6rem;scrollbar-width:none;
+  border-bottom:1px solid rgba(255,255,255,.06)}
+.agent-chip{flex:none;font-size:.68rem;padding:.3rem .6rem;border-radius:999px;cursor:pointer;
+  color:#a7f3d0;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3)}
+.agent-chip:hover{background:rgba(52,211,153,.22);color:#ecfdf5}
+
+.agent-body{flex:1;overflow-y:auto;padding:.75rem .7rem;display:flex;flex-direction:column;gap:.55rem;font-size:.82rem}
+.agent-msg{max-width:88%;padding:.55rem .7rem;border-radius:14px;line-height:1.42;white-space:pre-wrap;word-break:break-word}
+.agent-msg.bot{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);color:#e2f7ee;border-bottom-left-radius:5px}
+.agent-msg.me{align-self:flex-end;background:linear-gradient(135deg,#0f766e,#065f46);color:#ecfdf5;border-bottom-right-radius:5px}
+.agent-product{align-self:flex-start;display:flex;gap:.55rem;align-items:center;max-width:92%;cursor:pointer;
+  background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.28);border-radius:12px;padding:.45rem}
+.agent-product img{width:42px;height:42px;object-fit:contain;background:#fff;border-radius:8px;flex:none}
+.agent-product b{display:block;font-size:.76rem;color:#cffafe}
+.agent-product span{font-size:.68rem;color:#7dd3fc}
+.agent-file-link{align-self:flex-start;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;
+  font-size:.74rem;color:#cffafe;background:rgba(34,211,238,.1);border:1px dashed rgba(34,211,238,.45);
+  border-radius:10px;padding:.4rem .55rem}
+.agent-file-link .sz{font-size:.65rem;color:#7dd3fc}
+
+.agent-docs{display:flex;gap:.35rem;padding:.45rem .55rem;border-top:1px solid rgba(255,255,255,.07);flex-wrap:wrap}
+.agent-doc-btn{font-size:.7rem;padding:.32rem .55rem;border-radius:9px;cursor:pointer;
+  color:#a7f3d0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);white-space:nowrap}
+.agent-doc-btn:hover{background:rgba(52,211,153,.2);color:#fff}
+.agent-doc-btn .caret{font-size:.6rem;opacity:.7}
+.agent-docs .dropdown{position:relative}
+.agent-docs .drop-menu{position:absolute;right:0;bottom:calc(100% + .35rem);top:auto;z-index:5;min-width:13rem;
+  background:#0b1c26;border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:.3rem;display:none;
+  box-shadow:0 18px 40px -14px rgba(0,0,0,.8)}
+.agent-docs .drop-menu.open{display:block}
+.agent-docs .drop-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#cbd5e1;
+  font-size:.74rem;padding:.42rem .5rem;border-radius:8px;cursor:pointer}
+.agent-docs .drop-menu button:hover{background:rgba(52,211,153,.16);color:#ecfdf5}
+
+.agent-voice{font-size:.66rem;color:#5eead4;padding:0 .7rem;height:0;overflow:hidden;transition:height .15s}
+.agent-voice.on{height:1.2rem;padding-top:.15rem}
+.agent-input{display:flex;gap:.35rem;padding:.55rem;border-top:1px solid rgba(255,255,255,.07);background:#061019}
+.agent-input input{flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;padding:.5rem .6rem;font-size:.8rem;color:#ecfdf5;outline:none}
+.agent-input input::placeholder{color:#64748b}
+.agent-input input:focus{border-color:rgba(52,211,153,.6);box-shadow:0 0 0 2px rgba(52,211,153,.18)}
+.agent-input button{border:0;border-radius:10px;cursor:pointer;font-size:.78rem;font-weight:600;padding:.5rem .7rem}
+#agent-mic{background:rgba(255,255,255,.08);color:#a7f3d0;border:1px solid rgba(255,255,255,.12)}
+#agent-mic.rec{background:#e11d48;color:#fff;animation:pulse .9s infinite}
+#agent-send{background:linear-gradient(135deg,#34d399,#22d3ee);color:#03110c}
+
+/* Neon product pop-up */
+#product-pop{position:fixed;inset:0;z-index:2147483647;display:none;align-items:center;justify-content:center;
+  background:rgba(3,10,16,.72);backdrop-filter:blur(4px);padding:1rem}
+#product-pop.open{display:flex}
+#product-pop .card{position:relative;width:min(94vw,24rem);max-height:88vh;overflow-y:auto;border-radius:18px;
+  background:#07131b;border:1px solid rgba(34,211,238,.4);color:#e2f7ee;
+  box-shadow:0 0 34px rgba(34,211,238,.35),0 30px 70px -24px rgba(0,0,0,.9)}
+#product-pop .card img.hero{width:100%;height:13rem;object-fit:contain;background:#fff}
+#product-pop .pad{padding:.9rem}
+#product-pop h3{font-size:1rem;font-weight:700;color:#a5f3fc}
+#product-pop .price{font-size:1.05rem;font-weight:800;color:#34d399}
+#product-pop .desc{font-size:.78rem;color:#cbd5e1;margin-top:.5rem;line-height:1.5}
+#product-pop ul{margin:.5rem 0 0 1rem;font-size:.74rem;color:#a7f3d0;list-style:disc}
+#product-pop .thumbs{display:flex;gap:.35rem;margin-top:.6rem;overflow-x:auto}
+#product-pop .thumbs img{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:8px;cursor:pointer;flex:none}
+#product-pop .close{position:absolute;right:.5rem;top:.5rem;z-index:2;width:30px;height:30px;border-radius:50%;border:0;
+  cursor:pointer;background:rgba(3,10,16,.7);color:#fff;font-size:.9rem}
 </style></head><body class="text-slate-800"><header class="nav text-white sticky top-0 z-30 shadow-lg"><div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 flex items-center gap-3"><div class="logo-clock" id="clock-bar" title="Clinic clock">
   <img class="lc-bg" src="/static/logo-clock.png" alt="">
   <div class="lc-tick"></div><div class="lc-tick b"></div><div class="lc-tick c"></div>
@@ -162,9 +259,17 @@ body{background:radial-gradient(1200px 600px at 100% -10%,#e6f7f1 0%,transparent
   </div>
   <div class="agent-body" id="agent-body"></div>
   <div class="agent-docs">
-    <label class="agent-doc-btn" id="agent-upload-label" title="Upload a photo of a handwritten receipt or note">
-      📎 Receipt<input id="agent-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,.heic" capture="environment" hidden>
-    </label>
+    <div class="dropdown">
+      <button class="agent-doc-btn" data-drop="upload">📎 Upload <span class="caret">▾</span></button>
+      <div class="drop-menu" data-menu="upload">
+        <button data-upload="camera">📷 Photograph a receipt</button>
+        <button data-upload="file">🖼 Choose a receipt image</button>
+        <button data-upload="pdf">📄 Upload a receipt PDF</button>
+      </div>
+    </div>
+    <input id="agent-file-camera" type="file" accept="image/*" capture="environment" hidden>
+    <input id="agent-file-image" type="file" accept=".png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,.heic,image/*" hidden>
+    <input id="agent-file-pdf" type="file" accept=".pdf,application/pdf" hidden>
     <div class="dropdown">
       <button class="agent-doc-btn" data-drop="report">⬇ Report <span class="caret">▾</span></button>
       <div class="drop-menu" data-menu="report" style="min-width:13rem">
@@ -311,13 +416,17 @@ load();
     body.scrollTop = body.scrollHeight;
   }
 
-  const fileInput = document.getElementById('agent-file');
-  if (fileInput) fileInput.addEventListener('change', async () => {
-    const f = fileInput.files && fileInput.files[0];
+  // ---- Upload menu: photograph a receipt, pick an image, or upload a receipt PDF ----
+  const UPLOAD_INPUTS = {
+    camera: document.getElementById('agent-file-camera'),
+    file:   document.getElementById('agent-file-image'),
+    pdf:    document.getElementById('agent-file-pdf'),
+  };
+
+  async function uploadFile(f){
     if (!f) return;
-    fileInput.value = '';
     bubble('📎 ' + f.name, 'me');
-    const t = bubble('Reading the handwriting…', 'bot');
+    const t = bubble('Reading the handwriting… this can take a minute.', 'bot');
     try {
       const fd = new FormData();
       fd.append('file', f);
@@ -325,13 +434,28 @@ load();
       const res = await fetch('/api/admin/documents/upload', {
         method: 'POST', headers: auth ? { 'Authorization': 'Basic ' + auth } : {}, body: fd
       });
-      if (!res.ok) throw new Error('upload failed (' + res.status + ')');
-      const d = await res.json();
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.detail || ('upload failed (' + res.status + ')'));
       t.textContent = d.can_read
-        ? 'I have read ' + d.filename + (d.pages ? ' (' + d.pages + ' pages)' : '') + '. Summary:\n\n' + d.summary
-        : 'I saved ' + d.filename + ' but could not find readable text in it.';
+        ? 'I read this receipt/note (' + d.filename + (d.pages ? ', ' + d.pages + ' pages' : '') + '):\n\n' + d.summary
+        : 'I saved ' + d.filename + ' but could not make out the handwriting. Try a brighter, straighter photo.';
       fileCard(d.filename, d.size, d.download_url, d.pages ? d.pages + ' pages' : null);
     } catch (e) { t.textContent = 'Upload failed: ' + e.message; }
+  }
+
+  Object.values(UPLOAD_INPUTS).forEach(inp => {
+    if (!inp) return;
+    inp.addEventListener('change', () => {
+      const f = inp.files && inp.files[0];
+      inp.value = '';
+      uploadFile(f);
+    });
+  });
+
+  document.querySelectorAll('[data-upload]').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open'));
+    const inp = UPLOAD_INPUTS[b.dataset.upload];
+    if (inp) inp.click();
   });
 
   // ---- Generate a PDF report and download it ----
@@ -349,13 +473,25 @@ load();
     makeReport(b.dataset.report, b.textContent);
   });
 
+  // Dropdown toggles inside the agent window
+  document.querySelectorAll('.agent-docs .drop-btn, .agent-docs [data-drop]').forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const menu = document.querySelector('.agent-docs .drop-menu[data-menu="' + btn.dataset.drop + '"]');
+      if (!menu) return;
+      const wasOpen = menu.classList.contains('open');
+      document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open'));
+      if (!wasOpen) menu.classList.add('open');
+    };
+  });
+
   // ---- List files uploaded or generated ----
   const docsBtn = document.getElementById('agent-docs-list');
   if (docsBtn) docsBtn.onclick = async () => {
     bubble('Show files', 'me');
     try {
       const d = await api('/api/admin/documents?limit=15');
-      if (!d.documents.length) { bubble('No files yet. Upload a scan or generate a report.', 'bot'); return; }
+      if (!d.documents.length) { bubble('No files yet. Tap Upload to add a receipt photo, or Report to generate one.', 'bot'); return; }
       bubble('Your recent files:', 'bot');
       d.documents.forEach(x => fileCard(x.filename, x.size, x.download_url, x.kind === 'report' ? 'report' : (x.pages ? x.pages + ' pages' : null)));
     } catch (e) { bubble('Could not load files: ' + e.message, 'bot'); }
@@ -459,6 +595,7 @@ load();
 
   function openWin(){
     win.classList.add('open'); win.classList.remove('min'); syncFab();
+    localStorage.setItem('ihc_agent_open', '1');
     if (!body.children.length) {
       body.innerHTML = '';
       restoreMemory().then(had => {
@@ -466,7 +603,7 @@ load();
       });
     }
   }
-  function closeWin(){ win.classList.remove('open'); syncFab(); }
+  function closeWin(){ win.classList.remove('open'); syncFab(); localStorage.setItem('ihc_agent_open', '0'); }
   function syncFab(){ fab.classList.toggle('win-open', win.classList.contains('open')); }
   fab.onclick = () => { win.classList.contains('open') ? closeWin() : openWin(); };
   const topBtn = document.getElementById('agent-open-top');
@@ -492,6 +629,11 @@ load();
   });
   hdr.addEventListener('pointerup', () => { drag = null; });
 
+  // Any click outside a dropdown closes it
+  win.addEventListener('click', e => {
+    if (!e.target.closest('.dropdown')) document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open'));
+  });
+
   // Live link: state changes arrive over SSE and wake the agent's badge
   const src = new EventSource('/api/events');
   src.addEventListener('ready', () => { live.textContent = 'live'; });
@@ -503,6 +645,11 @@ load();
     }
   });
   src.onerror = () => { live.textContent = 'offline'; };
+
+  // Reopen if it was left open, and show it once on a first visit
+  const wasOpen = localStorage.getItem('ihc_agent_open');
+  if (wasOpen === '1' || wasOpen === null) openWin();
+  else syncFab();
 })();
 </script>
 
