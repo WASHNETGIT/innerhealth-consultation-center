@@ -686,23 +686,9 @@ def _notify(client: Client, service: BookingService, when: datetime, token: str)
     origin = os.getenv("PUBLIC_BASE_URL", "http://localhost:8000").rstrip("/")
     link = f"{origin}/manage/{token}"
     message = f"Your {service.name} appointment is booked for {when:%A, %d %B %Y at %H:%M}. Manage it: {link}"
-    if os.getenv("SMTP_HOST") and client.email:
-        try:
-            import smtplib
-            from email.message import EmailMessage
-            mail = EmailMessage()
-            mail["Subject"] = "Inner Health Appointment Confirmation"
-            mail["From"] = os.getenv("SMTP_FROM") or os.getenv("CLINIC_EMAIL", "innerhealthconsult@gmail.com")
-            mail["To"] = client.email
-            mail.set_content(message)
-            with smtplib.SMTP(os.getenv("SMTP_HOST"), int(os.getenv("SMTP_PORT", "587")), timeout=8) as smtp:
-                if os.getenv("SMTP_USER"):
-                    smtp.starttls()
-                    smtp.login(os.getenv("SMTP_USER"), os.getenv("SMTP_PASSWORD", ""))
-                smtp.send_message(mail)
-        except Exception as exc:
-            print(f"Email notification failed: {exc}")
-    
+    if client.email:
+        _send_email(client.email, "Inner Health appointment confirmation", message)
+
     hook = os.getenv("WHATSAPP_WEBHOOK_URL")
     if hook and (client.phone_whatsapp or client.phone):
         phone_to = client.phone_whatsapp or client.phone
@@ -2615,6 +2601,108 @@ def wake():
     """Tiny, unauthenticated endpoint the phone app hits first to start a sleeping
     instance while the user is still walking to the app. Answers instantly."""
     return Response(status_code=204, headers={"Cache-Control": "no-store"})
+
+
+CLINIC_EMAIL = os.getenv("CLINIC_EMAIL", "innerhealthconsult@gmail.com")
+GMAIL_SEND_URL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
+
+
+def _gmail_access_token() -> Optional[str]:
+    """Access token for the clinic's Gmail, if this app runs with a Google service account
+    or an OAuth refresh token configured. Returns None when neither is set."""
+    creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+    refresh = os.getenv("GOOGLE_REFRESH_TOKEN", "").strip()
+    client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
+    try:
+        if refresh and client_id and client_secret:
+            data = urllib.parse.urlencode({
+                "client_id": client_id, "client_secret": client_secret,
+                "refresh_token": refresh, "grant_type": "refresh_token"}).encode()
+            req = urllib.request.Request("https://oauth2.googleapis.com/token", data=data,
+                                         headers={"Content-Type": "application/x-www-form-urlencoded"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                return json.loads(resp.read()).get("access_token")
+        if creds_path and os.path.exists(creds_path):
+            from google.oauth2 import service_account  # type: ignore
+            from google.auth.transport.requests import Request  # type: ignore
+            creds = service_account.Credentials.from_service_account_file(
+                creds_path, scopes=["https://www.googleapis.com/auth/gmail.send"],
+                subject=os.getenv("GMAIL_SEND_AS", CLINIC_EMAIL))
+            creds.refresh(Request())
+            return creds.token
+    except Exception as exc:  # noqa: BLE001
+        print(f"Gmail token failed: {exc}")
+    return None
+
+
+def _send_email(to_addr: str, subject: str, body: str, html: bool = False) -> Dict[str, Any]:
+    """Send one email as the clinic. Tries Gmail, then SMTP, and reports which worked."""
+    if not to_addr:
+        return {"sent": False, "via": None, "reason": "no email address"}
+    from email.message import EmailMessage
+    import base64
+
+    mail = EmailMessage()
+    mail["Subject"] = subject
+    mail["From"] = f"Inner Health Consultation Center <{CLINIC_EMAIL}>"
+    mail["To"] = to_addr
+    if html:
+        mail.set_content("This message needs an HTML capable reader.")
+        mail.add_alternative(body, subtype="html")
+    else:
+        mail.set_content(body)
+
+    token = _gmail_access_token()
+    if token:
+        try:
+            raw = base64.urlsafe_b64encode(mail.as_bytes()).decode()
+            req = urllib.request.Request(GMAIL_SEND_URL, data=json.dumps({"raw": raw}).encode(),
+                                         headers={"Authorization": f"Bearer {token}",
+                                                  "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                if resp.status in (200, 202):
+                    return {"sent": True, "via": "gmail"}
+        except Exception as exc:  # noqa: BLE001
+            print(f"Gmail send failed, trying SMTP: {exc}")
+
+    if os.getenv("SMTP_HOST"):
+        try:
+            import smtplib
+            port = int(os.getenv("SMTP_PORT", "587"))
+            host = os.getenv("SMTP_HOST")
+            with smtplib.SMTP(host, port, timeout=12) as smtp:
+                smtp.starttls()
+                if os.getenv("SMTP_USER"):
+                    smtp.login(os.getenv("SMTP_USER"), os.getenv("SMTP_PASSWORD", ""))
+                smtp.send_message(mail)
+            return {"sent": True, "via": "smtp"}
+        except Exception as exc:  # noqa: BLE001
+            print(f"SMTP send failed: {exc}")
+            return {"sent": False, "via": None, "reason": str(exc)}
+
+    return {"sent": False, "via": None,
+            "reason": "no mail transport configured (set GOOGLE_REFRESH_TOKEN or SMTP_HOST)"}
+
+
+@app.get("/api/admin/email/status", dependencies=[Depends(require_admin)])
+def admin_email_status():
+    """Whether this server can actually send mail, and by which route."""
+    token = _gmail_access_token()
+    return {"clinic_email": CLINIC_EMAIL,
+            "gmail": bool(token),
+            "smtp": bool(os.getenv("SMTP_HOST")),
+            "ready": bool(token) or bool(os.getenv("SMTP_HOST"))}
+
+
+@app.post("/api/admin/email/test", dependencies=[Depends(require_admin)])
+def admin_email_test(payload: Dict[str, Any]):
+    """Send a test message so the owner can see it arrive."""
+    to_addr = str(payload.get("to") or CLINIC_EMAIL)
+    result = _send_email(to_addr, "Inner Health - email test",
+                         "This is a test from the Inner Health admin dashboard. "
+                         "If you are reading this, booking confirmations and reminders will send.")
+    return {"to": to_addr, **result}
 
 
 @app.get("/api/admin/follow-ups", dependencies=[Depends(require_admin)])
