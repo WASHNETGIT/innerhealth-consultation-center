@@ -22,7 +22,7 @@ from typing import Optional, List, Dict, Any
 from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, HTTPException, Request, Form, Depends, Header, Body, UploadFile, File
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, Response, StreamingResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -205,6 +205,14 @@ class CommandLog(Base):
     data = Column(Text, nullable=True)
     success = Column(Boolean, default=True)
     created_at = Column(DateTime, default=app_now)
+
+
+class AppSetting(Base):
+    """Small key/value store for things that must survive a redeploy (tokens, switches)."""
+    __tablename__ = "app_settings"
+    key = Column(String(80), primary_key=True)
+    value = Column(Text, nullable=True)
+    updated_at = Column(DateTime, default=app_now, onupdate=app_now)
 
 
 class AgentDocument(Base):
@@ -2608,10 +2616,16 @@ GMAIL_SEND_URL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
 
 
 def _gmail_access_token() -> Optional[str]:
-    """Access token for the clinic's Gmail, if this app runs with a Google service account
-    or an OAuth refresh token configured. Returns None when neither is set."""
+    """Access token for the clinic's Gmail. Prefers the token saved when the owner tapped
+    Connect, then falls back to an environment refresh token or a service account."""
     creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
     refresh = os.getenv("GOOGLE_REFRESH_TOKEN", "").strip()
+    if not refresh:
+        _db = SessionLocal()
+        try:
+            refresh = _setting_get(_db, "google_refresh_token").strip()
+        finally:
+            _db.close()
     client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
     client_secret = os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
     try:
@@ -2689,10 +2703,17 @@ def _send_email(to_addr: str, subject: str, body: str, html: bool = False) -> Di
 def admin_email_status():
     """Whether this server can actually send mail, and by which route."""
     token = _gmail_access_token()
+    db = SessionLocal()
+    try:
+        stored = bool(_setting_get(db, "google_refresh_token").strip())
+    finally:
+        db.close()
     return {"clinic_email": CLINIC_EMAIL,
             "gmail": bool(token),
+            "gmail_connected": stored,
             "smtp": bool(os.getenv("SMTP_HOST")),
-            "ready": bool(token) or bool(os.getenv("SMTP_HOST"))}
+            "ready": bool(token) or bool(os.getenv("SMTP_HOST")),
+            "connect_url": "/api/google/start"}
 
 
 @app.post("/api/admin/email/test", dependencies=[Depends(require_admin)])
@@ -2703,6 +2724,121 @@ def admin_email_test(payload: Dict[str, Any]):
                          "This is a test from the Inner Health admin dashboard. "
                          "If you are reading this, booking confirmations and reminders will send.")
     return {"to": to_addr, **result}
+
+
+# ------------------------------------------------------- Google connect (one tap on a phone)
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GMAIL_SEND_SCOPE = "https://www.googleapis.com/auth/gmail.send"
+
+
+def _google_redirect_uri() -> str:
+    base = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
+    return base + "/api/google/callback"
+
+
+@app.get("/api/google/start")
+def google_start():
+    """Where the owner lands after Google. Opens the consent screen straight away."""
+    client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+    if not client_id:
+        return HTMLResponse(
+            "<h2>Not ready yet</h2><p>The clinic's Google client ID has not been added to the "
+            "server yet. Ask whoever is building the site to set GOOGLE_CLIENT_ID, then open "
+            "this link again.</p>", status_code=503)
+    params = {
+        "client_id": client_id,
+        "redirect_uri": _google_redirect_uri(),
+        "response_type": "code",
+        "scope": GMAIL_SEND_SCOPE,
+        "access_type": "offline",
+        "prompt": "consent",
+        "login_hint": CLINIC_EMAIL,
+    }
+    return RedirectResponse(GOOGLE_AUTH_URL + "?" + urllib.parse.urlencode(params), status_code=302)
+
+
+@app.get("/api/google/callback", include_in_schema=False)
+def google_callback(code: str = "", error: str = "", state: str = ""):
+    """Google sends the owner back here with a one-time code. It is swapped for a refresh
+    token and stored, so nobody ever has to copy a code by hand."""
+    def page(title: str, body: str, ok: bool) -> HTMLResponse:
+        colour = "#0d805a" if ok else "#b91c1c"
+        return HTMLResponse(f"""<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title></head>
+<body style="font-family:system-ui,sans-serif;margin:0;background:#f6f9fb">
+<div style="max-width:34rem;margin:12vh auto;background:#fff;border:1px solid #e2e8f0;
+border-radius:16px;padding:1.6rem;box-shadow:0 12px 30px -18px rgba(11,18,32,.3)">
+<h1 style="font-size:1.15rem;margin:0 0 .6rem;color:{colour}">{title}</h1>
+<div style="color:#334155;font-size:.92rem;line-height:1.55">{body}</div></div></body></html>""")
+
+    if error:
+        return page("Permission was not granted",
+                    "Google reported: <b>" + esc_html(error) + "</b>. You can close this page and "
+                    "open the link again if you would like to try.", False)
+    if not code:
+        return page("No code came back",
+                    "Google did not send an authorisation code. Open the link again from the start.", False)
+
+    client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
+    if not client_id or not client_secret:
+        return page("Server is not configured",
+                    "The client ID or secret is missing on the server, so the code cannot be "
+                    "exchanged. Send this page's URL to whoever is building the site.", False)
+
+    data = urllib.parse.urlencode({
+        "code": code, "client_id": client_id, "client_secret": client_secret,
+        "redirect_uri": _google_redirect_uri(), "grant_type": "authorization_code"}).encode()
+    try:
+        req = urllib.request.Request(GOOGLE_TOKEN_URL, data=data,
+                                     headers={"Content-Type": "application/x-www-form-urlencoded"})
+        with urllib.request.urlopen(req, timeout=25) as resp:
+            payload = json.loads(resp.read())
+    except Exception as exc:  # noqa: BLE001
+        return page("Google refused the exchange",
+                    "This usually means the link was already used, or it sat open too long. "
+                    "Open the link again and it will work. Details: <code>" + esc_html(str(exc)[:200]) + "</code>", False)
+
+    refresh = payload.get("refresh_token")
+    if not refresh:
+        return page("No lasting token came back",
+                    "Google returned an access token but no refresh token. Open the link again - "
+                    "it always asks for consent fresh, which is what makes this work.", False)
+
+    # Store it in the app's own settings table so a redeploy cannot lose it
+    db = SessionLocal()
+    try:
+        _setting_set(db, "google_refresh_token", refresh)
+        _setting_set(db, "google_connected_email", CLINIC_EMAIL)
+        db.commit()
+    finally:
+        db.close()
+    emit("google.connected")
+    return page("Email is connected",
+                "Inner Health can now send email as <b>" + esc_html(CLINIC_EMAIL) + "</b>. "
+                "Booking confirmations and reminders will send by themselves from now on. "
+                "You can close this page.", True)
+
+
+def _setting_set(db: Session, key: str, value: str) -> None:
+    """Tiny key/value store for things that must survive a redeploy."""
+    try:
+        row = db.query(AppSetting).filter(AppSetting.key == key).first()
+        if row:
+            row.value = value
+        else:
+            db.add(AppSetting(key=key, value=value))
+    except Exception as exc:  # noqa: BLE001
+        print(f"setting save failed: {exc}")
+
+
+def _setting_get(db: Session, key: str) -> str:
+    try:
+        row = db.query(AppSetting).filter(AppSetting.key == key).first()
+        return row.value if row else ""
+    except Exception:  # noqa: BLE001
+        return ""
 
 
 @app.get("/api/admin/follow-ups", dependencies=[Depends(require_admin)])
