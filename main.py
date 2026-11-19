@@ -14,6 +14,7 @@ import secrets
 import hashlib
 import hmac
 import base64
+import time
 import urllib.request
 import urllib.parse
 from datetime import datetime, timedelta, date, time
@@ -510,11 +511,38 @@ def _warm_whisper() -> None:
         logging.getLogger("uvicorn.error").warning("whisper not available: %s", exc)
 
 
+def _keep_warm():
+    """Ping our own public URL so the free instance does not fall asleep.
+
+    Render's free plan spins down after about 15 minutes without traffic, and the next
+    visitor waits 30 to 50 seconds. A ping every 10 minutes keeps it awake, so the
+    dashboard opens immediately on the phone. Pings stop when this process stops,
+    so it costs nothing when the app is already running somewhere else.
+    """
+    base = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
+    if not base or os.getenv("KEEP_WARM", "1") == "0":
+        return
+    url = base + "/api/health"
+    # Skip when this is the local install: it would just keep waking the cloud copy
+    if "127.0.0.1" in base or "localhost" in base:
+        return
+    time.sleep(60)  # let the app finish starting before the first ping
+    while True:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "inner-health-keepwarm"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                resp.read()
+        except Exception:
+            pass
+        time.sleep(600)  # every 10 minutes, comfortably inside Render's idle window
+
+
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
     _seed_defaults()
     threading.Thread(target=_warm_whisper, daemon=True).start()
+    threading.Thread(target=_keep_warm, daemon=True).start()
 
 def _seed_defaults():
     db = SessionLocal()
@@ -2580,6 +2608,13 @@ def asset_links():
         "target": {"namespace": "android_app", "package_name": pkg,
                    "sha256_cert_fingerprints": [fp]},
     }], media_type="application/json")
+
+
+@app.api_route("/wake", methods=["GET", "HEAD"], include_in_schema=False)
+def wake():
+    """Tiny, unauthenticated endpoint the phone app hits first to start a sleeping
+    instance while the user is still walking to the app. Answers instantly."""
+    return Response(status_code=204, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/api/admin/follow-ups", dependencies=[Depends(require_admin)])

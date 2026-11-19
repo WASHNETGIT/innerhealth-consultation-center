@@ -43,3 +43,5 @@ services:
         value: za.co.innerhealth.admin
       - key: ANDROID_SHA256_FINGERPRINT
         sync: false
+      - key: KEEP_WARM
+        value: "1"
