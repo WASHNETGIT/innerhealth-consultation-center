@@ -15,6 +15,7 @@ import hashlib
 import hmac
 import base64
 import time
+import time as _time
 import urllib.request
 import urllib.parse
 from datetime import datetime, timedelta, date, time
@@ -534,7 +535,7 @@ def _keep_warm():
     # Skip when this is the local install: it would just keep waking the cloud copy
     if "127.0.0.1" in base or "localhost" in base:
         return
-    time.sleep(60)  # let the app finish starting before the first ping
+    _time.sleep(60)  # let the app finish starting before the first ping
     while True:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "inner-health-keepwarm"})
@@ -542,7 +543,7 @@ def _keep_warm():
                 resp.read()
         except Exception:
             pass
-        time.sleep(600)  # every 10 minutes, comfortably inside Render's idle window
+        _time.sleep(600)  # every 10 minutes, comfortably inside Render's idle window
 
 
 @app.on_event("startup")
@@ -2756,6 +2757,50 @@ def google_start():
         "login_hint": CLINIC_EMAIL,
     }
     return RedirectResponse(GOOGLE_AUTH_URL + "?" + urllib.parse.urlencode(params), status_code=302)
+
+
+@app.get("/api/google/qr.png")
+def google_qr():
+    """A QR code of the connect link, so the owner can scan it instead of typing a URL."""
+    base = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
+    target = base + "/api/google/start"
+    try:
+        import io
+        import qrcode
+        from qrcode.image.pil import PilImage  # noqa: F401
+        qr = qrcode.QRCode(box_size=10, border=3,
+                           error_correction=qrcode.constants.ERROR_CORRECT_M)
+        qr.add_data(target)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="#0b2a22", back_color="white")
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        return Response(content=buf.getvalue(), media_type="image/png",
+                        headers={"Cache-Control": "no-store"})
+    except Exception as exc:  # noqa: BLE001
+        return Response(content=f"could not build QR: {exc}".encode(), status_code=500,
+                        media_type="text/plain")
+
+
+@app.get("/connect", include_in_schema=False)
+def connect_page():
+    """A single page showing a big QR code and a tap-through button."""
+    base = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
+    link = base + "/api/google/start"
+    return HTMLResponse(f"""<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Connect Inner Health email</title></head>
+<body style="font-family:system-ui,sans-serif;margin:0;background:#f6f9fb;text-align:center">
+<div style="max-width:32rem;margin:6vh auto;background:#fff;border:1px solid #e2e8f0;
+border-radius:20px;padding:1.6rem;box-shadow:0 12px 30px -18px rgba(11,18,32,.3)">
+<h1 style="font-size:1.15rem;margin:0 0 .4rem;color:#0b2a22">Connect the clinic's email</h1>
+<p style="color:#475569;font-size:.9rem;margin:0 0 1.2rem;line-height:1.5">
+Point the phone camera at this code, then tap the link it shows.</p>
+<img src="/api/google/qr.png" alt="QR code" style="width:min(70vw,17rem);height:auto;display:block;margin:0 auto 1.2rem">
+<a href="{esc_html(link)}" style="display:inline-block;background:#0d805a;color:#fff;text-decoration:none;
+padding:.75rem 1.4rem;border-radius:12px;font-weight:600;font-size:.92rem">Or tap here to connect</a>
+<p style="color:#94a3b8;font-size:.78rem;margin:1.2rem 0 0;line-height:1.5">
+Sign in as innerhealthconsult@gmail.com and tap Allow. Only sending email is granted.</p>
+</div></body></html>""")
 
 
 @app.get("/api/google/callback", include_in_schema=False)

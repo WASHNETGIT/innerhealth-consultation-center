@@ -19,3 +19,4 @@ av==12.3.0
 # PDF generation for reports the admin agent downloads
 reportlab==5.1.0
 pypdf==7.1.1
+qrcode==8.2
