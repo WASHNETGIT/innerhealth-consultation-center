@@ -2402,6 +2402,186 @@ def _whatsapp_link(phone: Optional[str], message: str) -> str:
     return f"https://wa.me/{digits}?text={urllib.parse.quote(message)}"
 
 
+def _wa_draft_rules(ctx: Dict[str, Any]) -> str:
+    """A solid message written from the facts, used when no model is available."""
+    first = (ctx.get("name") or "there").split()[0]
+    kind = ctx.get("kind") or "reminder"
+    clinic = "Inner Health Consultation Center"
+    when = ctx.get("when") or ""
+    ref = ctx.get("ref") or ""
+    amount = ctx.get("amount")
+    if kind == "deposit":
+        return (f"Hi {first}, this is {clinic}. Your full-body scan on {when} is not confirmed yet. "
+                f"The R{int(amount or 150)} deposit secures the time. Reference {ref}. "
+                f"Bank: FNB, Ntombikayise N Mkhaliphi, 62804835835, branch 250655. Reply here if you need help.")
+    if kind == "balance":
+        return (f"Hi {first}, a reminder of your scan on {when}. The balance of R{int(amount or 300)} "
+                f"is due at reception. Reference {ref}. {clinic}, 202 Robert Sobukwe Street, Esselen Towers, Sunnyside.")
+    if kind == "winback":
+        return (f"Hi {first}, it has been a while since your last scan with {clinic}. "
+                f"If you would like to come in again, reply here and we will find you a time. "
+                f"A scan is R450 with a R150 deposit.")
+    if kind == "thanks":
+        return (f"Hi {first}, thank you for coming in today for your scan. If anything was not clear, "
+                f"reply here and we will help. {clinic}.")
+    return (f"Hi {first}, looking forward to seeing you {when} for your full-body scan at "
+            f"202 Robert Sobukwe Street, Esselen Towers, Sunnyside. Reference {ref}. {clinic}.")
+
+
+@app.post("/api/admin/whatsapp/draft", dependencies=[Depends(require_admin)])
+def admin_whatsapp_draft(payload: Dict[str, Any], db: Session = Depends(get_db)):
+    """Draft a WhatsApp message for one client. The agent writes it; staff send it.
+
+    Nothing is sent from here. The reply carries a wa.me link the staff member taps,
+    so the message leaves from the clinic's own WhatsApp number and stays in its history.
+    """
+    name = str(payload.get("name") or "").strip()
+    phone = str(payload.get("phone") or "").strip()
+    kind = str(payload.get("kind") or "reminder").strip().lower()
+    ref = payload.get("ref")
+    when = str(payload.get("when") or "")
+    amount = payload.get("amount")
+    extra = str(payload.get("note") or "").strip()
+
+    # If a booking reference was given, take the facts from the database, not the client
+    if ref:
+        b = db.query(PublicBooking).filter(PublicBooking.booking_ref == ref).first()
+        if b:
+            name = b.client.name
+            phone = b.client.phone_whatsapp or b.client.phone or phone
+            when = f"{b.booking_date:%A %d %B} at {b.start_time:%H:%M}"
+            amount = b.balance_due if not b.balance_paid else b.service.deposit
+            if not kind or kind == "auto":
+                kind = "deposit" if b.status == "pending_deposit" else (
+                    "balance" if not b.balance_paid else "reminder")
+
+    ctx = {"name": name, "kind": kind, "when": when, "ref": ref, "amount": amount}
+    fallback = _wa_draft_rules(ctx)
+
+    drafted, mode = fallback, "rules"
+    question = (f"Write one WhatsApp message to {name.split()[0] if name else 'the client'} about: "
+                f"{kind}. Facts you may use: appointment {when or 'not given'}; reference {ref or 'none'}; "
+                f"amount R{amount if amount not in (None, '') else 'not given'}; "
+                f"clinic Inner Health Consultation Center at 202 Robert Sobukwe Street, Esselen Towers, "
+                f"Sunnyside, Pretoria; WhatsApp 2785771853. "
+                f"Rules: under 60 words, warm and plain, no emoji unless the note asks, "
+                f"never invent a date, amount or reference, no medical advice. "
+                + (f"Staff note to include: {extra}. " if extra else "")
+                + "Reply with the message text only, no preamble and no quotation marks.")
+    try:
+        for base, model in _ollama_backends():
+            body = json.dumps({"model": model,
+                               "messages": [{"role": "system",
+                                             "content": "You write short, clear WhatsApp messages for a health clinic. "
+                                                        "You never invent facts."},
+                                            {"role": "user", "content": question}],
+                               "stream": False, "keep_alive": "10m",
+                               "options": {"temperature": 0.3, "num_predict": 160}}).encode()
+            req = urllib.request.Request(base + "/api/chat", data=body,
+                                         headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=45) as resp:
+                out = _clean_reply(json.loads(resp.read()).get("message", {}).get("content", ""))
+            if out and 20 <= len(out) <= 700 and not re.search(r"(?i)(can't answer|data missing|as an ai)", out):
+                drafted, mode = out.strip('"').strip(), "model"
+                break
+    except Exception:
+        pass
+
+    return {"message": drafted, "mode": mode, "kind": kind, "name": name, "phone": phone,
+            "wa": _whatsapp_link(phone, drafted) if phone else ""}
+
+
+@app.get("/api/admin/whatsapp/notify", dependencies=[Depends(require_admin)])
+def admin_whatsapp_notify_get():
+    """Where the clinic owner's own notifications go, and how to set it up."""
+    number = os.getenv("OWNER_WHATSAPP", "").strip()
+    return {"number": number, "configured": bool(number),
+            "hint": "Set OWNER_WHATSAPP in .env to the owner's number in international format, "
+                    "for example 27821234567, then restart the service."}
+
+
+@app.post("/api/admin/whatsapp/notify", dependencies=[Depends(require_admin)])
+def admin_whatsapp_notify(payload: Dict[str, Any], db: Session = Depends(get_db)):
+    """Build the owner's own notification: a new booking, a deposit paid, a balance collected.
+
+    Returns a wa.me link addressed to the owner's number so the notification is one tap away.
+    """
+    event = str(payload.get("event") or "new_booking")
+    ref = payload.get("ref")
+    owner = os.getenv("OWNER_WHATSAPP", "").strip()
+    clinic = "Inner Health Consultation Center"
+    lines = []
+    if ref:
+        b = db.query(PublicBooking).filter(PublicBooking.booking_ref == ref).first()
+        if b:
+            who = b.client.name
+            phone = b.client.phone_whatsapp or b.client.phone or "no number"
+            if event == "deposit_paid":
+                lines = [f"Deposit paid: R{int(b.deposit_paid)} from {who}.",
+                         f"{b.service.name} on {b.booking_date:%a %d %b} at {b.start_time:%H:%M}.",
+                         f"Ref {b.booking_ref}. Balance still due R{int(b.balance_due)}."]
+            elif event == "balance_paid":
+                lines = [f"Paid in full: {who}, R{int(b.total_fee)}.",
+                         f"{b.service.name} on {b.booking_date:%a %d %b} at {b.start_time:%H:%M}.",
+                         f"Ref {b.booking_ref}. Nothing outstanding."]
+            elif event == "cancelled":
+                lines = [f"Cancelled: {who}, {b.booking_date:%a %d %b} at {b.start_time:%H:%M}.",
+                         f"Ref {b.booking_ref}. The slot is free again.", f"Client: {phone}."]
+            else:
+                lines = [f"New booking: {who}.",
+                         f"{b.service.name} on {b.booking_date:%a %d %b} at {b.start_time:%H:%M}.",
+                         f"Ref {b.booking_ref}. Deposit R{int(b.service.deposit)} "
+                         f"{'paid' if b.deposit_paid else 'still outstanding'}.",
+                         f"Client: {phone}."]
+    if not lines:
+        lines = [f"{clinic}: {event.replace('_', ' ')}."]
+    text = "\n".join(lines)
+    return {"message": text, "number": owner, "configured": bool(owner),
+            "wa": _whatsapp_link(owner, text) if owner else ""}
+
+
+# ---------------------------------------------------------------- installable app
+@app.get("/manifest.webmanifest", include_in_schema=False)
+def web_manifest():
+    """Web app manifest so the admin dashboard installs as an app on her phone."""
+    return JSONResponse({
+        "name": "Inner Health Admin",
+        "short_name": "IH Admin",
+        "description": "Inner Health Consultation Center - bookings, diary, clients and the AI agent.",
+        "start_url": "/admin/bookings",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#07131b",
+        "theme_color": "#101a2d",
+        "icons": [
+            {"src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+            {"src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+            {"src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+        ],
+        "shortcuts": [
+            {"name": "Diary", "url": "/admin/bookings#diary"},
+            {"name": "Ask the agent", "url": "/admin/bookings#agent"},
+        ],
+    })
+
+
+@app.get("/.well-known/assetlinks.json", include_in_schema=False)
+def asset_links():
+    """Digital Asset Links. Required before an Android package can open the dashboard
+    full screen instead of inside a browser tab. The fingerprint is set once the
+    package is built, in ANDROID_SHA256_FINGERPRINT."""
+    fp = os.getenv("ANDROID_SHA256_FINGERPRINT", "").strip()
+    pkg = os.getenv("ANDROID_PACKAGE_NAME", "za.co.innerhealth.admin").strip()
+    if not fp:
+        return JSONResponse([], media_type="application/json")
+    return JSONResponse([{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {"namespace": "android_app", "package_name": pkg,
+                   "sha256_cert_fingerprints": [fp]},
+    }], media_type="application/json")
+
+
 @app.get("/api/admin/follow-ups", dependencies=[Depends(require_admin)])
 def admin_follow_ups(db: Session = Depends(get_db)):
     """Everyone who needs a nudge today, with a ready WhatsApp message each."""

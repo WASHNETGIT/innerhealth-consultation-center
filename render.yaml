@@ -37,3 +37,9 @@ services:
         value: "Inner Health Consultation Center <innerhealthconsult@gmail.com>"
       - key: WHATSAPP_NUMBER
         value: "2785771853"
+      - key: OWNER_WHATSAPP
+        sync: false
+      - key: ANDROID_PACKAGE_NAME
+        value: za.co.innerhealth.admin
+      - key: ANDROID_SHA256_FINGERPRINT
+        sync: false
