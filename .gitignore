@@ -6,3 +6,4 @@ __pycache__/
 business_hub.db
 .dockerignore
 EOF
+uploads/

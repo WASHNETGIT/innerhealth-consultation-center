@@ -15,3 +15,7 @@ psycopg[binary]==3.2.3
 # falls back to a helpful message when no engine is installed)
 faster-whisper==1.2.1
 av==12.3.0
+
+# PDF generation for reports the admin agent downloads
+reportlab==5.1.0
+pypdf==7.1.1
