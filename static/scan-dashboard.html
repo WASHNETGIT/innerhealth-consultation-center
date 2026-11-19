@@ -56,10 +56,24 @@ body{background:radial-gradient(1200px 600px at 100% -10%,#e6f7f1 0%,transparent
 }
 
 /* ---- Clock: own row on mobile, never overlapping nav ---- */
-#clock-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 4.2rem);
-  z-index:25;pointer-events:none}
-#clock-bar .neon-digital-display{box-shadow:0 0 8px rgba(16,185,129,.28),inset 0 0 8px rgba(0,0,0,.85)}
-@media(min-width:761px){#clock-bar{top:auto;bottom:1rem;left:1rem;transform:none}}
+#clock-bar{position:fixed;right:18px;bottom:96px;z-index:900;pointer-events:none}
+#clock-bar .analog-clock{position:relative;width:112px;height:112px;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#fefdf8,#f1efe6 70%,#e6e3d6);
+  border:2px solid #11331b;
+  box-shadow:0 10px 26px rgba(17,51,27,.28),0 0 0 5px rgba(255,255,255,.75),inset 0 0 18px rgba(17,51,27,.10)}
+#clock-bar .analog-clock img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;
+  object-fit:cover;opacity:.92;mix-blend-mode:multiply}
+#clock-bar .hand{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:6px;
+  background:linear-gradient(180deg,#1f4d29,#11331b);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+#clock-bar .hour{width:6px;height:30%;margin-left:-3px}
+#clock-bar .minute{width:4px;height:41%;margin-left:-2px;background:linear-gradient(180deg,#3a8e1e,#1f4d29)}
+#clock-bar .second{width:2px;height:45%;margin-left:-1px;background:#c2410c}
+#clock-bar .pin{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;
+  background:#3a8e1e;border:2px solid #11331b;box-shadow:0 0 6px rgba(58,142,30,.7)}
+@media(max-width:760px){
+  #clock-bar{right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}
+  #clock-bar .analog-clock{width:86px;height:86px}
+}
 @media(max-width:760px){
   #agent-fab{right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:58px;height:58px;font-size:24px}
   #agent-win{right:8px;left:8px;width:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);max-height:70vh}
@@ -203,7 +217,15 @@ button, .btn-action { transition: all 0.15s ease-in-out; }
 </style></head><body class="text-slate-800"><header class="nav text-white sticky top-0 z-30 shadow-lg"><div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 flex items-center gap-3"><img src="/static/logo.jpg" class="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover bg-white" alt="Inner Health logo"><div class="min-w-0"><div class="font-semibold tracking-wide text-sm sm:text-base">INNER HEALTH <span class="text-emerald-300">SCAN CENTER</span></div><div class="text-slate-400 text-xs header-label">Full-body scan command center</div></div><div class="ml-auto flex items-center gap-2">
   <nav class="flex gap-2"><button id="refresh-top" class="hdr-btn" title="Refresh">↻</button></nav></div></header>
 <dialog id="password-dialog" class="rounded-2xl p-0 w-[min(92vw,28rem)] shadow-2xl"><form id="password-form" class="p-6 space-y-4"><div><h2 class="text-xl font-semibold">Change admin password</h2><p class="text-sm text-slate-500 mt-1">Use at least 12 characters. Your new password takes effect immediately.</p></div><label class="block text-sm">New password<input id="new-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><label class="block text-sm">Confirm new password<input id="confirm-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><p id="password-error" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" id="password-close" class="border rounded-lg px-4 py-2">Cancel</button><button class="bg-emerald-800 text-white rounded-lg px-4 py-2">Save password</button></div></form></dialog>
-<div id="clock-bar"><div class="neon-digital-display"><div id="digital-clock-time" class="neon-time">00:00:00</div><div id="digital-clock-date" class="neon-date">---, -- --- ----</div></div></div>
+<div id="clock-bar" title="Clinic clock">
+  <div class="analog-clock">
+    <img src="/static/logo-clock.png" alt="">
+    <div class="hand hour" id="clock-hour"></div>
+    <div class="hand minute" id="clock-minute"></div>
+    <div class="hand second" id="clock-second"></div>
+    <div class="pin"></div>
+  </div>
+</div>
 <main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-5">
 <main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
 <section class="rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-3"><div class="flex flex-col sm:flex-row sm:items-center gap-3"><div class="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-emerald-800"><span class="led led-green"></span> Live floor</div><div id="ticker" class="flex-1 text-sm text-slate-700">Connecting to live bookings…</div><span id="ai-agent-status" class="text-xs text-slate-500 whitespace-nowrap">M4 AI · waiting</span><button id="legend-toggle" class="text-xs text-slate-500 underline self-start sm:self-auto">LED legend</button></div><div id="legend" class="hidden border-t mt-3 pt-3 grid grid-cols-2 lg:grid-cols-5 gap-2 text-xs"><span><i class="led led-green mr-2"></i>Confirmed · deposit paid</span><span><i class="led led-orange mr-2"></i>Incoming · within 2 hours</span><span><i class="led led-blue mr-2"></i>In scan</span><span><i class="led led-grey mr-2"></i>Completed</span><span><i class="led led-red mr-2"></i>Deposit / attention alert</span></div></section>
@@ -278,8 +300,8 @@ button, .btn-action { transition: all 0.15s ease-in-out; }
   </div>
   <div class="agent-body" id="agent-body"></div>
   <div class="agent-docs">
-    <label class="agent-doc-btn" id="agent-upload-label" title="Upload a PDF, scan or text file">
-      📎 Upload<input id="agent-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,.txt,.md,.csv,.json" hidden>
+    <label class="agent-doc-btn" id="agent-upload-label" title="Upload a photo of a handwritten receipt or note">
+      📎 Receipt<input id="agent-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,.heic" capture="environment" hidden>
     </label>
     <div class="dropdown">
       <button class="agent-doc-btn" data-drop="report">⬇ Report <span class="caret">▾</span></button>
@@ -289,6 +311,7 @@ button, .btn-action { transition: all 0.15s ease-in-out; }
         <button data-report="clients">Client list &amp; retention</button>
         <button data-report="bookings">Booking register</button>
         <button data-report="deposits">Outstanding deposits</button>
+        <button data-report="receipts">Receipts &amp; notes register</button>
       </div>
     </div>
     <button class="agent-doc-btn" id="agent-docs-list" title="Files you uploaded or generated">🗂 Files</button>
@@ -326,22 +349,26 @@ load();
 </script>
 <script>
 (function() {
-  function update() {
+  const hourEl = document.getElementById('clock-hour');
+  const minEl  = document.getElementById('clock-minute');
+  const secEl  = document.getElementById('clock-second');
+  const bar    = document.getElementById('clock-bar');
+  function tick() {
     const now = new Date();
-    const t = document.getElementById('digital-clock-time');
-    const d = document.getElementById('digital-clock-date');
-    if (t) {
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      t.textContent = `${h}:${m}:${s}`;
-    }
-    if (d) {
-      d.textContent = now.toLocaleDateString('en-ZA', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+    const s = now.getSeconds(), m = now.getMinutes(), h = now.getHours() % 12;
+    const secDeg = s * 6;
+    const minDeg = m * 6 + s * 0.1;
+    const hourDeg = h * 30 + m * 0.5;
+    if (secEl)  secEl.style.transform  = 'rotate(' + secDeg + 'deg)';
+    if (minEl)  minEl.style.transform  = 'rotate(' + minDeg + 'deg)';
+    if (hourEl) hourEl.style.transform = 'rotate(' + hourDeg + 'deg)';
+    if (bar) {
+      bar.title = now.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' }) + ' · ' +
+                  now.toLocaleDateString('en-ZA', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     }
   }
-  update();
-  setInterval(update, 1000);
+  tick();
+  setInterval(tick, 1000);
 })();
 </script>
 
@@ -433,7 +460,7 @@ load();
     if (!f) return;
     fileInput.value = '';
     bubble('📎 ' + f.name, 'me');
-    const t = bubble('Reading the document…', 'bot');
+    const t = bubble('Reading the handwriting…', 'bot');
     try {
       const fd = new FormData();
       fd.append('file', f);

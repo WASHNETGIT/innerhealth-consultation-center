@@ -1734,7 +1734,7 @@ DOC_TEXT_LIMIT = 40000
 
 
 def _doc_extract(path: str, filename: str) -> tuple:
-    """Return (text, page_count) for a PDF, image, or plain text file."""
+    """Read a handwritten receipt or note. Returns (text, page_count)."""
     low = (filename or "").lower()
     text, pages = "", None
     try:
@@ -1745,23 +1745,56 @@ def _doc_extract(path: str, filename: str) -> tuple:
             chunks = []
             for pg in reader.pages:
                 try:
-                    chunks.append(pg.extract_text() or "")
+                    page_text = pg.extract_text() or ""
                 except Exception:
-                    continue
+                    page_text = ""
+                if page_text.strip():
+                    chunks.append(page_text)
             text = "\n".join(chunks)
-        elif low.endswith((".txt", ".md", ".csv", ".json", ".log")):
-            text = open(path, "r", encoding="utf-8", errors="ignore").read()
-        elif low.endswith((".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff")):
-            # Use the local vision model to read a scan or photo accurately
-            text = _vision_read(path)
-    except Exception as exc:  # noqa: BLE001
+            # A scanned receipt is a photo inside a PDF: no text layer, so read the page image
+            if not text.strip() and pages:
+                text = _pdf_pages_as_images(reader)
+        elif low.endswith((".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", ".heic")):
+            text = _read_handwriting(path)
+    except Exception:  # noqa: BLE001
         text = ""
     text = re.sub(r"[ \t]+", " ", (text or "")).strip()
     return text[:DOC_TEXT_LIMIT], pages
 
 
-def _vision_read(image_path: str) -> str:
-    """Describe/read an image with whatever vision model is installed in Ollama."""
+def _pdf_pages_as_images(reader, limit: int = 3) -> str:
+    """Read a scanned (image-only) PDF by rendering its first pages and reading them."""
+    try:
+        import fitz  # PyMuPDF, optional
+    except Exception:
+        return ""
+    texts = []
+    try:
+        import tempfile
+        doc = fitz.open(reader.stream.name if hasattr(reader, "stream") else "")
+        for i, page in enumerate(doc):
+            if i >= limit:
+                break
+            pix = page.get_pixmap(dpi=200)
+            tmp = os.path.join(tempfile.mkdtemp(prefix="ihc-page-"), f"page{i}.png")
+            pix.save(tmp)
+            texts.append(_read_handwriting(tmp))
+            try:
+                os.remove(tmp)
+            except Exception:
+                pass
+        doc.close()
+    except Exception:
+        return ""
+    return "\n".join(t for t in texts if t)
+
+
+def _read_handwriting(image_path: str) -> str:
+    """Transcribe a handwritten receipt or note with the local vision model.
+
+    A generic caption is useless here, so the model is told to read the paper
+    like a bookkeeper would: every rand amount, date, name and line item.
+    """
     import base64
     models = [m.strip() for m in os.getenv("OLLAMA_VISION_MODEL", "llava:latest").split(",") if m.strip()]
     try:
@@ -1769,9 +1802,13 @@ def _vision_read(image_path: str) -> str:
             b64 = base64.b64encode(fh.read()).decode()
     except Exception:
         return ""
-    prompt = ("Read this document or scan image and transcribe every number, label and line of text "
-              "you can see, exactly as written. Then add one short line titled SUMMARY describing what "
-              "the document is. Do not invent anything that is not visible.")
+    prompt = (
+        "This is a photo of a handwritten receipt or handwritten note from a clinic. "
+        "Transcribe it line by line exactly as written, including messy handwriting. "
+        "Then output these labelled lines when they are present: "
+        "DATE: ..., PAYER: ..., AMOUNT: R..., METHOD: cash/card/eft, ITEMS: ..., NOTES: .... "
+        "If a value is not written, write 'not written'. Never invent a number, name or date."
+    )
     for model in models:
         body = json.dumps({
             "model": model,
@@ -1786,7 +1823,7 @@ def _vision_read(image_path: str) -> str:
                 with urllib.request.urlopen(req, timeout=120) as resp:
                     data = json.loads(resp.read())
                 out = _clean_reply(data.get("message", {}).get("content", ""))
-                if len(out) > 20:
+                if len(out) > 10:
                     return out
             except Exception:
                 continue
@@ -1803,9 +1840,9 @@ async def upload_document(file: UploadFile = File(...), session_id: str = Form("
     if len(raw) > 30 * 1024 * 1024:
         raise HTTPException(413, "File too large (max 30 MB)")
     ext = os.path.splitext(file.filename or "")[1].lower() or ".bin"
-    if ext not in (".pdf", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff",
-                   ".txt", ".md", ".csv", ".json", ".log"):
-        raise HTTPException(415, f"Unsupported file type {ext}. Use PDF, image or text.")
+    if ext not in (".pdf", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", ".heic"):
+        raise HTTPException(415, "Upload a photo or scan of a handwritten receipt or note "
+                                 "(JPG, PNG, HEIC, TIFF) or a PDF of one.")
 
     doc_id = uuid.uuid4().hex[:16]
     safe_name = re.sub(r"[^A-Za-z0-9._-]", "_", os.path.basename(file.filename or "upload" + ext))
@@ -1890,16 +1927,22 @@ def delete_document(doc_id: str):
 
 # ---- PDF generation -------------------------------------------------------
 
+# Admin operational reports only. Client scan results are never printed here.
+def esc_html(text: str) -> str:
+    return (str(text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+
 REPORT_KINDS = {
     "daily": "Daily clinic report",
     "monthly": "Monthly performance report",
     "clients": "Client list and retention",
     "bookings": "Booking register",
     "deposits": "Outstanding deposits and balances",
+    "receipts": "Receipts and notes register",
 }
 
 
-def _pdf_report(kind: str, snapshot: Dict[str, Any], title: str = "") -> tuple:
+def _pdf_report(kind: str, snapshot: Dict[str, Any], title: str = "", db_docs=None) -> tuple:
     """Build a clean, branded A4 PDF and return (path, filename, title)."""
     from reportlab.lib import colors
     from reportlab.lib.pagesizes import A4
@@ -2024,6 +2067,33 @@ def _pdf_report(kind: str, snapshot: Dict[str, Any], title: str = "") -> tuple:
         story.append(Paragraph("All bookings", h2))
         story.append(Paragraph(f"{bk['total']} bookings recorded in total.", body))
 
+    if kind == "receipts":
+        story.append(Paragraph("Uploaded receipts and notes", h2))
+        docs = (db_docs or [])
+        if docs:
+            data = [["Uploaded", "File", "Read", "Pages"]] + [
+                [(d.created_at.strftime("%d %b %Y %H:%M") if d.created_at else ""),
+                 (d.title or d.filename or "")[:52],
+                 "yes" if (d.extracted_text or "").strip() else "no",
+                 str(d.page_count or "")]
+                for d in docs[:40]]
+            t = Table(data, colWidths=[34 * mm, 84 * mm, 20 * mm, 20 * mm], repeatRows=1)
+            t.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), brand), ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"), ("FONTSIZE", (0, 0), (-1, -1), 8.5),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, soft]),
+                ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#e2e8f0")),
+            ]))
+            story.append(t)
+            story.append(Spacer(1, 8))
+            for d in docs[:6]:
+                if (d.extracted_text or "").strip():
+                    story.append(Paragraph(f"<b>{(d.title or d.filename or '')[:60]}</b>", body))
+                    story.append(Paragraph(esc_html(d.extracted_text[:900]).replace("\n", "<br/>"), body))
+                    story.append(Spacer(1, 6))
+        else:
+            story.append(Paragraph("No receipts or notes uploaded yet.", body))
+
     story.append(Spacer(1, 14))
     story.append(Paragraph(
         "Generated automatically by the Inner Health admin agent from the live database. "
@@ -2042,7 +2112,9 @@ def create_report(payload: dict = Body(default={})):
     db = SessionLocal()
     try:
         snapshot = _admin_snapshot(db)
-        path, filename, heading = _pdf_report(kind, snapshot, str(payload.get("title") or ""))
+        docs = (db.query(AgentDocument)
+                        .order_by(AgentDocument.id.desc()).limit(40).all())
+        path, filename, heading = _pdf_report(kind, snapshot, str(payload.get("title") or ""), docs)
         doc_id = uuid.uuid4().hex[:16]
         final = os.path.join(DOCS_DIR, f"{doc_id}-{filename}")
         os.replace(path, final)
