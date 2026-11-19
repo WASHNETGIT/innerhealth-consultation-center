@@ -2656,27 +2656,38 @@ def local_ai_update(booking_id: int, payload: dict, db: Session = Depends(get_db
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request}, headers=NO_CACHE)
+
+# HTML pages must never be served from a phone's cache: always revalidate.
+NO_CACHE = {
+    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "Expires": "0",
+}
+
 
 @app.get("/book", response_class=HTMLResponse)
 def booking_page():
-    return FileResponse(os.path.join(STATIC_DIR, "book.html"))
+    return FileResponse(os.path.join(STATIC_DIR, "book.html"), headers=NO_CACHE)
 
 @app.get("/manage/{token}", response_class=HTMLResponse)
 def manage_page(token: str):
-    return FileResponse(os.path.join(STATIC_DIR, "manage.html"))
+    return FileResponse(os.path.join(STATIC_DIR, "manage.html"), headers=NO_CACHE)
 
 @app.get("/admin/bookings", response_class=HTMLResponse)
 def admin_booking_page():
-    return FileResponse(os.path.join(STATIC_DIR, "scan-dashboard.html"))
+    return FileResponse(os.path.join(STATIC_DIR, "scan-dashboard.html"), headers=NO_CACHE)
 
 # ---------------------------------------------------------------------------
 # Health Check
 # ---------------------------------------------------------------------------
 
+APP_BUILD = os.getenv("APP_BUILD", "2026-11-19-tabs")
+
+
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "Business Hub"}
+    return {"status": "ok", "service": "Business Hub", "build": APP_BUILD}
 
 if __name__ == "__main__":
     import uvicorn
