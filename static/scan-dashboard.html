@@ -210,6 +210,7 @@ body{background:radial-gradient(1200px 600px at 100% -10%,#e6f7f1 0%,transparent
       <button class="drop-btn" data-drop="money">Money <span class="caret">▾</span></button>
       <div class="drop-menu" data-menu="money">
         <button data-money="revenue">Collected revenue</button>
+        <button data-open-agent="1">✦ Ask AI</button>
         <button data-money="deposits">Deposits secured</button>
         <button data-money="balances">Balances due</button>
       </div>
@@ -217,6 +218,7 @@ body{background:radial-gradient(1200px 600px at 100% -10%,#e6f7f1 0%,transparent
     <div class="dropdown">
       <button class="drop-btn" data-drop="more">More <span class="caret">▾</span></button>
       <div class="drop-menu" data-menu="more">
+        <button data-open-agent="1">✦ Ask AI</button>
         <button id="password-open">Change password</button>
         <button id="refresh">Refresh now</button>
       </div>
@@ -606,10 +608,29 @@ load();
   function closeWin(){ win.classList.remove('open'); syncFab(); localStorage.setItem('ihc_agent_open', '0'); }
   function syncFab(){ fab.classList.toggle('win-open', win.classList.contains('open')); }
   fab.onclick = () => { win.classList.contains('open') ? closeWin() : openWin(); };
-  const topBtn = document.getElementById('agent-open-top');
-  if (topBtn) topBtn.onclick = () => openWin();
+
+  // Every "Ask AI" button opens (and focuses) the agent. One handler for all of them,
+  // so a new button only needs the class or the data attribute.
+  function openFromButton(){
+    document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open'));
+    if (!win.classList.contains('open')) openWin();
+    win.classList.remove('min');
+    setTimeout(() => { try { input.focus({ preventScroll: true }); } catch (_) { input.focus(); } }, 60);
+    win.animate(
+      [{ boxShadow: '0 0 0 0 rgba(52,211,153,0)' },
+       { boxShadow: '0 0 0 6px rgba(52,211,153,.45)' },
+       { boxShadow: '0 0 0 0 rgba(52,211,153,0)' }],
+      { duration: 700, easing: 'ease-out' });
+  }
+  document.querySelectorAll('#agent-open-top, [data-open-agent], .ai-cta').forEach(btn => {
+    btn.onclick = e => { e.preventDefault(); e.stopPropagation(); openFromButton(); };
+  });
+  window.openAgent = openFromButton;
   document.getElementById('agent-close').onclick = closeWin;
-  document.getElementById('agent-min').onclick = () => win.classList.toggle('min');
+  document.getElementById('agent-min').onclick = () => {
+    win.classList.toggle('min');
+    if (!win.classList.contains('min')) setTimeout(() => { try { input.focus({ preventScroll: true }); } catch (_) {} }, 60);
+  };
 
   // Drag by the header
   const hdr = document.getElementById('agent-drag');
@@ -671,6 +692,7 @@ load();
   // Dropdowns
   document.querySelectorAll('.drop-btn').forEach(btn => btn.onclick = e => {
     e.stopPropagation();
+    if (btn.classList.contains('ai-cta') || btn.id === 'agent-open-top') return;
     const menu = document.querySelector('.drop-menu[data-menu="' + btn.dataset.drop + '"]');
     const wasOpen = menu.classList.contains('open');
     document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open'));
