@@ -6,19 +6,69 @@
 
 
 
+
+/* ================= Modern dashboard shell ================= */
+:root{--ink:#0b1220;--ink-2:#111c2e;--line:#e2e8f0;--brand:#0d805a;--brand-2:#10b981;--accent:#22d3ee}
+body{background:radial-gradient(1200px 600px at 100% -10%,#e6f7f1 0%,transparent 55%),radial-gradient(900px 500px at -10% 0%,#eaf2ff 0%,transparent 50%),#f6f9fb}
+.hdr-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:10px;
+  padding:.5rem .7rem;font-size:.9rem;cursor:pointer;transition:.15s}
+.hdr-btn:hover{background:rgba(255,255,255,.18)}
+/* Tabs */
+.tabs-wrap{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
+  background:rgba(255,255,255,.86);backdrop-filter:blur(10px);border:1px solid var(--line);
+  border-radius:16px;padding:.45rem;box-shadow:0 6px 22px rgba(11,18,32,.06)}
+.tabbar{display:flex;gap:.25rem;overflow-x:auto;flex:1;scrollbar-width:none}
+.tabbar::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;border:0;background:transparent;color:#475569;font-size:.82rem;font-weight:600;
+  padding:.55rem .95rem;border-radius:11px;cursor:pointer;transition:.16s}
+.tab:hover{background:#eef2f7;color:#0f172a}
+.tab.active{background:linear-gradient(160deg,var(--brand-2),var(--brand));color:#fff;
+  box-shadow:0 6px 16px rgba(13,128,90,.28)}
+.tab-tools{display:flex;gap:.35rem;align-items:center}
+.dropdown{position:relative}
+.drop-btn{background:#fff;border:1px solid var(--line);color:#0f172a;border-radius:11px;padding:.5rem .75rem;
+  font-size:.78rem;font-weight:600;cursor:pointer;display:flex;gap:.35rem;align-items:center;transition:.15s}
+.drop-btn:hover{border-color:#cbd5e1;box-shadow:0 2px 8px rgba(11,18,32,.07)}
+.drop-btn .caret{font-size:.7rem;color:#94a3b8}
+.ai-cta{background:linear-gradient(160deg,#22d3ee,#0e7490);border-color:#22d3ee;color:#04212b;
+  box-shadow:0 6px 18px rgba(34,211,238,.45),0 0 0 1px rgba(34,211,238,.5) inset;font-weight:800}
+.ai-cta:hover{filter:brightness(1.08);box-shadow:0 8px 24px rgba(34,211,238,.6)}
+@media(max-width:760px){.ai-cta{font-size:.72rem;padding:.45rem .6rem}}
+.drop-menu{position:absolute;right:0;top:calc(100% + .35rem);min-width:11rem;background:#fff;border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 16px 40px rgba(11,18,32,.16);padding:.3rem;display:none;z-index:40}
+.drop-menu.open{display:block}
+.drop-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;padding:.5rem .6rem;
+  border-radius:9px;font-size:.8rem;color:#334155;cursor:pointer}
+.drop-menu button:hover{background:#f1f5f9;color:#0f172a}
+/* Panels */
+.panel{display:none;animation:fade .2s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* Cards get a softer, more modern lift */
+.metric, .panel .bg-white{border-color:var(--line)!important;border-radius:16px!important;
+  box-shadow:0 2px 4px rgba(11,18,32,.03),0 12px 30px -18px rgba(11,18,32,.18)!important}
+.metric{height:100%}
+@media(max-width:760px){
+  .tabs-wrap{border-radius:14px;padding:.35rem}
+  .tab{font-size:.76rem;padding:.5rem .7rem}
+  .drop-btn{font-size:.72rem;padding:.45rem .6rem}
+  .tab-tools{margin-left:auto}
+}
+
 /* ---- Clock: own row on mobile, never overlapping nav ---- */
 #clock-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 4.2rem);
   z-index:25;pointer-events:none}
 #clock-bar .neon-digital-display{box-shadow:0 0 8px rgba(16,185,129,.28),inset 0 0 8px rgba(0,0,0,.85)}
 @media(min-width:761px){#clock-bar{top:auto;bottom:1rem;left:1rem;transform:none}}
 @media(max-width:760px){
-  #agent-fab{right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:60px;height:60px;font-size:26px}
+  #agent-fab{right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:58px;height:58px;font-size:24px}
   #agent-win{right:8px;left:8px;width:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);max-height:70vh}
   main{padding-bottom:6.5rem}
 }
 
 /* ---- Floating AI agent window (neon) ---- */
-#agent-fab{position:fixed;right:20px;bottom:20px;z-index:9999;width:66px;height:66px;border-radius:50%;
+#agent-fab{position:fixed;right:18px;bottom:18px;z-index:2147483647;width:64px;height:64px;border-radius:50%;
+  will-change:transform;
   background:radial-gradient(circle at 30% 25%,#22d3ee,#0ea5e9 45%,#0369a1);color:#fff;font-size:28px;
   border:3px solid #a5f3fc;box-shadow:0 0 16px #22d3ee,0 0 40px #0ea5e9cc,0 6px 18px rgba(2,6,23,.45),inset 0 0 14px #ffffff66;
   display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s ease;
@@ -30,6 +80,7 @@
   padding:.3rem .55rem;border-radius:8px;box-shadow:0 0 12px #22d3ee99;pointer-events:none}
 @media(max-width:760px){#agent-fab .fab-label{display:none}}
 #agent-fab:hover{transform:scale(1.07)}
+#agent-fab.win-open{opacity:0;pointer-events:none;transform:scale(.8)}
 #agent-fab .agent-dot{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;
   background:#34d399;box-shadow:0 0 10px #34d399;border:2px solid #0b1220}
 #agent-win{position:fixed;right:20px;bottom:90px;z-index:61;width:min(94vw,25rem);max-height:min(78vh,34rem);
@@ -139,16 +190,64 @@ button, .btn-action { transition: all 0.15s ease-in-out; }
 }
 
 </style></head><body class="text-slate-800"><header class="nav text-white sticky top-0 z-30 shadow-lg"><div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 flex items-center gap-3"><img src="/static/logo.jpg" class="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover bg-white" alt="Inner Health logo"><div class="min-w-0"><div class="font-semibold tracking-wide text-sm sm:text-base">INNER HEALTH <span class="text-emerald-300">SCAN CENTER</span></div><div class="text-slate-400 text-xs header-label">Full-body scan command center</div></div><div class="ml-auto flex items-center gap-2">
-  <nav class="flex gap-2"><button id="password-open" class="bg-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm">Change password</button><button id="refresh" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">↻</button></nav></div></header>
+  <nav class="flex gap-2"><button id="refresh-top" class="hdr-btn" title="Refresh">↻</button></nav></div></header>
 <dialog id="password-dialog" class="rounded-2xl p-0 w-[min(92vw,28rem)] shadow-2xl"><form id="password-form" class="p-6 space-y-4"><div><h2 class="text-xl font-semibold">Change admin password</h2><p class="text-sm text-slate-500 mt-1">Use at least 12 characters. Your new password takes effect immediately.</p></div><label class="block text-sm">New password<input id="new-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><label class="block text-sm">Confirm new password<input id="confirm-password" type="password" minlength="12" autocomplete="new-password" required class="mt-1 w-full border rounded-lg p-3"></label><p id="password-error" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" id="password-close" class="border rounded-lg px-4 py-2">Cancel</button><button class="bg-emerald-800 text-white rounded-lg px-4 py-2">Save password</button></div></form></dialog>
 <div id="clock-bar"><div class="neon-digital-display"><div id="digital-clock-time" class="neon-time">00:00:00</div><div id="digital-clock-date" class="neon-date">---, -- --- ----</div></div></div>
 <main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-5">
+<main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-4">
 <section class="rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-3"><div class="flex flex-col sm:flex-row sm:items-center gap-3"><div class="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-emerald-800"><span class="led led-green"></span> Live floor</div><div id="ticker" class="flex-1 text-sm text-slate-700">Connecting to live bookings…</div><span id="ai-agent-status" class="text-xs text-slate-500 whitespace-nowrap">M4 AI · waiting</span><button id="legend-toggle" class="text-xs text-slate-500 underline self-start sm:self-auto">LED legend</button></div><div id="legend" class="hidden border-t mt-3 pt-3 grid grid-cols-2 lg:grid-cols-5 gap-2 text-xs"><span><i class="led led-green mr-2"></i>Confirmed · deposit paid</span><span><i class="led led-orange mr-2"></i>Incoming · within 2 hours</span><span><i class="led led-blue mr-2"></i>In scan</span><span><i class="led led-grey mr-2"></i>Completed</span><span><i class="led led-red mr-2"></i>Deposit / attention alert</span></div></section>
+
+<div class="tabs-wrap" id="tabs-wrap">
+  <div class="tabbar" role="tablist">
+    <button class="tab active" data-tab="overview" role="tab">◎ Overview</button>
+    <button class="tab" data-tab="diary" role="tab">🗓 Diary</button>
+    <button class="tab" data-tab="clients" role="tab">👤 Clients</button>
+    <button class="tab" data-tab="insights" role="tab">📈 Insights</button>
+  </div>
+  <div class="tab-tools">
+    <button class="drop-btn ai-cta" id="agent-open-top">✦ Ask AI</button>
+    <div class="dropdown">
+      <button class="drop-btn" data-drop="range">Range <span class="caret">▾</span></button>
+      <div class="drop-menu" data-menu="range">
+        <button data-range="today">Today</button>
+        <button data-range="week">This week</button>
+        <button data-range="month">This month</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="drop-btn" data-drop="money">Money <span class="caret">▾</span></button>
+      <div class="drop-menu" data-menu="money">
+        <button data-money="revenue">Collected revenue</button>
+        <button data-money="deposits">Deposits secured</button>
+        <button data-money="balances">Balances due</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="drop-btn" data-drop="more">More <span class="caret">▾</span></button>
+      <div class="drop-menu" data-menu="more">
+        <button id="password-open">Change password</button>
+        <button id="refresh">Refresh now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel active" data-panel="overview">
 <section class="grid mobile-grid md:grid-cols-2 xl:grid-cols-4 gap-3"><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="flex justify-between text-xs uppercase tracking-wide text-slate-500"><span>Collected revenue</span><select id="revenue-period" class="bg-transparent text-emerald-800 font-semibold"><option value="today">Today</option><option value="month">This month</option></select></div><div id="revenue-kpi" class="text-3xl font-semibold mt-4">R0</div><div class="text-xs text-slate-400 mt-1">Deposits + settled balances + sales</div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Deposits secured</div><div id="deposit-kpi" class="text-3xl font-semibold mt-4 text-emerald-700">R0</div><div class="text-xs text-slate-400 mt-1">Balance due <b id="balance-kpi" class="text-amber-700">R0</b></div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Scan volume</div><div class="mt-3 flex gap-5"><div><b id="completed-kpi" class="text-2xl">0</b><div class="text-xs text-slate-400">Completed today</div></div><div><b id="upcoming-kpi" class="text-2xl text-sky-700">0</b><div class="text-xs text-slate-400">Upcoming</div></div></div><div class="text-xs text-slate-500 mt-2">Avg revenue/client <b id="avg-kpi">R0</b></div></article><article class="metric bg-white rounded-xl border p-4 shadow-sm"><div class="text-xs uppercase tracking-wide text-slate-500">Quick actions</div><div class="flex flex-col gap-2 mt-3"><button id="new-sale" class="mobile-action bg-emerald-800 hover:bg-emerald-700 text-white rounded-lg py-2 text-sm">＋ Log quick sale</button></div></article></section>
-<section class="grid charts xl:grid-cols-[1.5fr_1fr] gap-4"><article class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-wrap justify-between items-center gap-2"><div><h2 class="font-semibold">Booking & revenue trends</h2><p class="text-xs text-slate-400">Rolling 12 months</p></div><div id="peak-badges" class="flex flex-wrap gap-2 text-xs"></div></div><div class="h-64 mt-4"><canvas id="trend-chart"></canvas></div></article><article class="bg-white border rounded-xl p-4 shadow-sm"><h2 class="font-semibold">Collected revenue breakdown</h2><p class="text-xs text-slate-400">Deposits · on-site balances · add-on sales</p><div class="h-56 mt-4"><canvas id="revenue-chart"></canvas></div><div id="revenue-legend" class="flex flex-wrap justify-center gap-3 text-xs mt-2"></div></article></section>
-<section class="grid xl:grid-cols-[1fr_2fr] gap-4"><article class="bg-white border rounded-xl p-4 shadow-sm"><h2 class="font-semibold">Peak hours & days</h2><p class="text-xs text-slate-400">Booking volume heatmap</p><div id="heatmap" class="mt-4 space-y-3"></div></article><article class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row justify-between gap-3"><div><h2 class="font-semibold">Smart scan schedule</h2><p class="text-xs text-slate-400">One tap to check in, collect, and track AI reports.</p></div><div class="flex gap-2"><input id="schedule-date" type="date" class="border rounded-lg px-2 py-2 text-sm"><input id="client-search" placeholder="Find client / phone / ref" class="border rounded-lg px-3 py-2 text-sm w-full sm:w-56"></div></div><div id="filters" class="flex gap-2 overflow-x-auto py-3"><button data-filter="all" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">All Today</button><button data-filter="incoming" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🟠 Incoming</button><button data-filter="confirmed" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🟢 Confirmed</button><button data-filter="in_scan" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🔵 In Scan</button><button data-filter="past" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">⚪ Past</button><button data-filter="alerts" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🔴 Alerts</button></div><div class="desktop-table overflow-x-auto"><table class="w-full text-sm"><thead class="text-left text-slate-400 border-b"><tr><th class="py-2">Status</th><th>Time / Ref</th><th>Client</th><th>Payment</th><th>Local AI queue</th><th>Actions</th></tr></thead><tbody id="schedule-rows"></tbody></table></div><div id="mobile-schedule" class="mobile-card space-y-3"></div><div id="empty" class="hidden text-sm text-slate-400 py-8 text-center">No bookings for this day and filter.</div></article></section>
-<section class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><h2 class="font-semibold">Client loyalty & retention</h2><p class="text-xs text-slate-400">Spend, visits and at-risk follow-ups</p></div><input id="directory-search" placeholder="Search name, WhatsApp or booking ref" class="border rounded-lg px-3 py-2 text-sm w-full sm:w-80"></div><div id="client-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4"></div></section>
 <section class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><h2 class="font-semibold">Quick Ask — Admin Agent</h2><p class="text-xs text-slate-400">Query revenue, deposits, clients, diary or follow-ups</p></div></div><div class="mt-3 space-y-3"><div class="flex gap-2 flex-wrap"><button id="ask-money" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Revenue today</button><button id="ask-deposits" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Deposits pending</button><button id="ask-diary" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Diary today</button><button id="ask-clients" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Lapsed clients</button><button id="ask-report" class="ask-chip rounded-full border px-3 py-1.5 text-xs">Month report</button></div><div class="flex gap-2"><input id="ask-input" type="text" placeholder="Ask anything… e.g. Who owes a deposit? Next 3 days? Top clients?" class="flex-1 border rounded-lg px-3 py-2 text-sm"><button id="ask-submit" class="bg-emerald-800 hover:bg-emerald-700 text-white rounded-lg px-4 py-2 text-sm">Ask</button></div><div id="ask-answer" class="bg-slate-50 border rounded-lg p-4 min-h-[80px] text-sm text-slate-700 whitespace-pre-wrap"></div></section>
+</div>
+
+<div class="panel" data-panel="diary">
+<section class="grid xl:grid-cols-[1fr_2fr] gap-4"><article class="bg-white border rounded-xl p-4 shadow-sm"><h2 class="font-semibold">Peak hours & days</h2><p class="text-xs text-slate-400">Booking volume heatmap</p><div id="heatmap" class="mt-4 space-y-3"></div></article><article class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row justify-between gap-3"><div><h2 class="font-semibold">Smart scan schedule</h2><p class="text-xs text-slate-400">One tap to check in, collect, and track AI reports.</p></div><div class="flex gap-2"><input id="schedule-date" type="date" class="border rounded-lg px-2 py-2 text-sm"><input id="client-search" placeholder="Find client / phone / ref" class="border rounded-lg px-3 py-2 text-sm w-full sm:w-56"></div></div><div id="filters" class="flex gap-2 overflow-x-auto py-3"><button data-filter="all" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">All Today</button><button data-filter="incoming" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🟠 Incoming</button><button data-filter="confirmed" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🟢 Confirmed</button><button data-filter="in_scan" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🔵 In Scan</button><button data-filter="past" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">⚪ Past</button><button data-filter="alerts" class="filter-btn shrink-0 rounded-full border px-3 py-1.5 text-xs">🔴 Alerts</button></div><div class="desktop-table overflow-x-auto"><table class="w-full text-sm"><thead class="text-left text-slate-400 border-b"><tr><th class="py-2">Status</th><th>Time / Ref</th><th>Client</th><th>Payment</th><th>Local AI queue</th><th>Actions</th></tr></thead><tbody id="schedule-rows"></tbody></table></div><div id="mobile-schedule" class="mobile-card space-y-3"></div><div id="empty" class="hidden text-sm text-slate-400 py-8 text-center">No bookings for this day and filter.</div></article></section>
+</div>
+
+<div class="panel" data-panel="clients">
+<section class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"><div><h2 class="font-semibold">Client loyalty & retention</h2><p class="text-xs text-slate-400">Spend, visits and at-risk follow-ups</p></div><input id="directory-search" placeholder="Search name, WhatsApp or booking ref" class="border rounded-lg px-3 py-2 text-sm w-full sm:w-80"></div><div id="client-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4"></div></section>
+</div>
+
+<div class="panel" data-panel="insights">
+<section class="grid charts xl:grid-cols-[1.5fr_1fr] gap-4"><article class="bg-white border rounded-xl p-4 shadow-sm"><div class="flex flex-wrap justify-between items-center gap-2"><div><h2 class="font-semibold">Booking & revenue trends</h2><p class="text-xs text-slate-400">Rolling 12 months</p></div><div id="peak-badges" class="flex flex-wrap gap-2 text-xs"></div></div><div class="h-64 mt-4"><canvas id="trend-chart"></canvas></div></article><article class="bg-white border rounded-xl p-4 shadow-sm"><h2 class="font-semibold">Collected revenue breakdown</h2><p class="text-xs text-slate-400">Deposits · on-site balances · add-on sales</p><div class="h-56 mt-4"><canvas id="revenue-chart"></canvas></div><div id="revenue-legend" class="flex flex-wrap justify-center gap-3 text-xs mt-2"></div></article></section>
+</div>
 </main>
 
 <button id="agent-fab" title="Ask the Inner Health agent" aria-label="Open the Inner Health agent"><span class="agent-dot"></span><span class="fab-label">Ask AI</span>✦</button>
@@ -191,7 +290,7 @@ function filteredRows(){return (data?.schedule||[]).filter(b=>{let q=$('#client-
 function renderSchedule(){let rows=filteredRows();$('#empty').classList.toggle('hidden',rows.length>0);const statusOpts=['pending_deposit','confirmed','arriving_soon','in_scan','completed','cancelled','no_show'];$('#schedule-rows').innerHTML=rows.map(b=>`<tr class="border-b align-top"><td class="py-3"><i class="led ${led(b)}"></i><div class="text-[11px] mt-1">${statusLabel(b)}</div></td><td class="py-3 whitespace-nowrap"><b>${b.start}–${b.end}</b><div class="text-xs text-slate-400">#${esc(b.reference)}</div></td><td class="py-3"><button data-client="${b.client_id}" class="font-medium text-left hover:text-emerald-700">${esc(b.client)}</button><div class="text-xs text-slate-400">${b.spend>=3000?'VIP':b.visits>=3?'Regular (3+ visits)':b.visits===0?'New client':'Returning'} · ${b.visits} visits</div></td><td class="py-3">${b.balance_paid?`<span class="text-emerald-700">Paid in full · ${money(b.total_fee)}</span>`:b.deposit_paid?`<span class="text-amber-700">Deposit paid ${money(b.deposit_paid)}<br>${money(b.balance_due)} due</span>`:`<span class="text-rose-700">Deposit pending · ${money(b.deposit_required)} due</span>`}${b.deposit_paid<b.total_fee&&b.status==='pending_deposit'?`<button data-deposit="${b.id}" class="block mt-1 text-xs underline">Confirm R150 deposit</button>`:''}${b.deposit_paid>0&&!b.balance_paid?`<button data-collect="${b.id}" class="block mt-1 rounded bg-emerald-700 text-white text-xs px-2 py-1">Collect ${money(b.balance_due)}</button>`:''}</td><td class="py-3"><select data-ai="${b.id}" class="border rounded px-2 py-1 text-xs max-w-36"><option value="not_started">Not started</option><option value="queued_in_cloud">Cloud queued</option><option value="processing_local_ai">Processing on local AI</option><option value="report_ready">Report ready</option></select></td><td class="py-3"><select data-status="${b.id}" class="border rounded px-2 py-1 text-xs"><option value="pending_deposit">Deposit pending</option><option value="confirmed">Confirmed</option><option value="arriving_soon">Arriving soon</option><option value="in_scan">In scan</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option><option value="no_show">No-show</option></select><button data-queue-scan="${b.id}" class="block mt-1 text-xs text-sky-700 underline">Queue scan data</button>${b.ai_scan_report?`<button data-report="${b.id}" class="block mt-1 text-xs text-indigo-700 underline">View AI report</button>`:''}<button data-resched="${b.id}" class="block mt-1 text-xs text-slate-600 underline">Reschedule</button><a class="block mt-2 text-xs text-emerald-800 underline" target="_blank" href="https://wa.me/${(b.phone||'').replace(/[^0-9]/g,'')}?text=${encodeURIComponent(`Hi ${esc(b.client)}, ${b.balance_paid?`receipt: R${b.total_fee} paid for scan ${esc(b.reference)}.`:`reminder for scan ${esc(b.reference)} at ${b.start}. Balance due: R${b.balance_due}.`}`)}">WhatsApp reminder</a></td></tr>`).join('');$('#mobile-schedule').innerHTML=rows.map(b=>`<article class="rounded-xl border p-3 bg-slate-50"><div class="flex items-start gap-3"><i class="led ${led(b)} mt-1"></i><div class="min-w-0 flex-1"><div class="flex justify-between gap-2"><b>${b.start}–${b.end}</b><span class="text-xs text-slate-500">#${esc(b.reference)}</span></div><button data-client="${b.client_id}" class="font-medium text-left mt-1">${esc(b.client)}</button><div class="text-xs text-slate-500">${statusLabel(b)} · ${b.spend>=3000?'VIP':b.visits>=3?'Regular':b.visits===0?'New client':`${b.visits} visits`}</div><div class="mt-2 text-sm ${b.balance_paid?'text-emerald-700':'text-amber-700'}">${b.balance_paid?`Paid in full · ${money(b.total_fee)}`:b.deposit_paid?`Deposit ${money(b.deposit_paid)} · ${money(b.balance_due)} due`:`Deposit pending · ${money(b.deposit_required)} due`}</div><div class="grid grid-cols-2 gap-2 mt-3"><select data-status="${b.id}" class="border rounded-lg p-2 text-xs mobile-action">${[['pending_deposit','Deposit pending'],['confirmed','Confirmed'],['arriving_soon','Arriving soon'],['in_scan','In scan'],['completed','Completed'],['cancelled','Cancelled'],['no_show','No-show']].map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select><select data-ai="${b.id}" class="border rounded-lg p-2 text-xs mobile-action"><option value="not_started">Not started</option><option value="queued_in_cloud">Cloud queued</option><option value="processing_local_ai">Processing local AI</option><option value="report_ready">Report ready</option></select>${b.deposit_paid>0&&!b.balance_paid?`<button data-collect="${b.id}" class="bg-emerald-700 text-white rounded-lg p-2 text-xs mobile-action">Collect ${money(b.balance_due)}</button>`:b.status==='pending_deposit'?`<button data-deposit="${b.id}" class="bg-amber-100 text-amber-900 rounded-lg p-2 text-xs mobile-action">Confirm R150 deposit</button>`:''}<button data-queue-scan="${b.id}" class="bg-sky-50 rounded-lg p-2 text-xs mobile-action">Queue scan</button>${b.ai_scan_report?`<button data-report="${b.id}" class="bg-indigo-50 rounded-lg p-2 text-xs mobile-action">View report</button>`:''}<button data-resched="${b.id}" class="bg-slate-100 rounded-lg p-2 text-xs mobile-action">Reschedule</button><a class="bg-emerald-50 text-emerald-900 text-center rounded-lg p-2 text-xs mobile-action" target="_blank" href="https://wa.me/${(b.phone||'').replace(/[^0-9]/g,'')}?text=${encodeURIComponent(`Hi ${esc(b.client)}, ${b.balance_paid?`your R${b.total_fee} scan payment is complete (${esc(b.reference)}).`:`your scan is at ${b.start}. Balance due R${b.balance_due}.`}`)}">WhatsApp</a></div></div></div></article>`).join('');rows.forEach(b=>{document.querySelectorAll(`[data-status="${b.id}"]`).forEach(x=>x.value=b.status);document.querySelectorAll(`[data-ai="${b.id}"]`).forEach(x=>x.value=b.ai_scan_status)});bindActions()}
 function bindActions(){document.querySelectorAll('[data-status]').forEach(x=>x.onchange=async()=>{try{await api(`/api/admin/bookings/${x.dataset.status}`,{method:'PATCH',body:JSON.stringify({status:x.value})});await load()}catch(e){toast(e.message)}});document.querySelectorAll('[data-ai]').forEach(x=>x.onchange=async()=>{try{await api(`/api/admin/bookings/${x.dataset.ai}`,{method:'PATCH',body:JSON.stringify({ai_scan_status:x.value})});toast('AI scan queue updated')}catch(e){toast(e.message)}});document.querySelectorAll('[data-deposit]').forEach(x=>x.onclick=async()=>{try{await api(`/api/admin/bookings/${x.dataset.deposit}/deposit`,{method:'PATCH'});toast('Deposit confirmed');load()}catch(e){toast(e.message)}});document.querySelectorAll('[data-collect]').forEach(x=>x.onclick=async()=>{let method=prompt('Balance payment method: cash, card or eft','cash');if(!method)return;try{await api(`/api/admin/bookings/${x.dataset.collect}/collect-balance`,{method:'POST',body:JSON.stringify({payment_method:method.toLowerCase()})});toast('Balance collected');load()}catch(e){toast(e.message)}});document.querySelectorAll('[data-client]').forEach(x=>x.onclick=()=>openClient(x.dataset.client));document.querySelectorAll('[data-queue-scan]').forEach(x=>x.onclick=async()=>{let b=data.schedule.find(y=>y.id==x.dataset.queueScan);let input=prompt('Paste scan measurements or structured scan data',b.scan_input||'');if(!input)return;try{await api(`/api/admin/bookings/${b.id}/scan`,{method:'POST',body:JSON.stringify({scan_input:input})});toast('Scan queued for local M4 AI');load()}catch(e){toast(e.message)}});document.querySelectorAll('[data-report]').forEach(x=>x.onclick=()=>{let b=data.schedule.find(y=>y.id==x.dataset.report);alert(b.ai_scan_report)});document.querySelectorAll('[data-resched]').forEach(x=>x.onclick=async()=>{let b=data.schedule.find(y=>y.id==x.dataset.resched);let day=prompt('New date (YYYY-MM-DD)',b.date);if(!day)return;let start=prompt('New start time (24 hour HH:MM)',b.start);if(!start)return;try{await api(`/api/admin/bookings/${b.id}/schedule`,{method:'PATCH',body:JSON.stringify({date:day,start_time:start})});toast('Booking rescheduled; client notified');load()}catch(e){toast(e.message)}})}
 function renderClients(){let q=$('#directory-search').value.toLowerCase();let cs=(data?.clients||[]).filter(c=>!q||`${esc(c.name)} ${c.phone} ${c.email} ${(c.booking_refs||[]).join(' ')}`.toLowerCase().includes(q));$('#client-list').innerHTML=cs.slice(0,24).map(c=>`<button data-client="${c.id}" class="text-left border rounded-xl p-3 hover:border-emerald-500"><div class="flex justify-between gap-2"><b>${esc(c.name)}</b><span class="text-[10px] rounded-full bg-slate-100 px-2 py-1">${c.loyalty}</span></div><div class="text-xs text-slate-500 mt-2">${c.visits} visits · ${money(c.spend)} lifetime</div><div class="text-xs text-slate-500">${esc(c.phone||'')}</div>${c.at_risk?'<div class="text-xs text-rose-700 mt-2">At risk · no scan in 60+ days</div>':''}</button>`).join('')||'<p class="text-sm text-slate-400">No matching clients.</p>';document.querySelectorAll('#client-list [data-client]').forEach(x=>x.onclick=()=>openClient(x.dataset.client))}
-async function openClient(id){let c=(data?.clients||[]).find(c=>c.id==id);if(!c)return;let d=await api('/api/clients/'+id);$('#drawer-body').innerHTML=`<div class="rounded-xl bg-emerald-950 text-white p-4"><h3 class="text-xl font-semibold">${esc(c.name)}</h3><p class="text-emerald-100 text-sm mt-1">${c.phone||'No WhatsApp'} · ${esc(c.email||'')}</p><p class="text-emerald-200 text-xs mt-1">${esc(c.date_of_birth||'DOB not provided')} · ${esc(c.gender||'Gender not provided')}</p><div class="grid grid-cols-3 mt-4 text-center"><div><b>${c.visits}</b><div class="text-xs text-emerald-200">Visits</div></div><div><b>${money(c.spend)}</b><div class="text-xs text-emerald-200">Lifetime</div></div><div><b>${c.last_visit||'—'}</b><div class="text-xs text-emerald-200">Last scan</div></div></div></div><h4 class="font-semibold mt-5">Pre-scan health notes</h4><p class="text-sm text-slate-600 whitespace-pre-wrap mt-2">${esc(c.medical_notes||d.medical_notes||'No notes recorded.')}</p><h4 class="font-semibold mt-5">Scan history</h4><div class="mt-2 space-y-2">${(d.bookings||[]).map(b=>`<div class="border rounded-lg p-3 text-sm flex justify-between"><span>${b.date} · ${b.service} · ${esc(b.reference)}</span><span class="capitalize">${esc(b.status.replaceAll('_',' '))}</span></div>`).join('')||'<p class="text-sm text-slate-400">No booking history.</p>'}</div>${c.at_risk?`<a target="_blank" href="https://wa.me/${(c.phone||'').replace(/[^0-9]/g,'')}?text=${encodeURIComponent('Hi '+c.name+', we would love to welcome you back for a follow-up full-body scan. Book here: '+location.origin+'/book')}" class="block mt-5 text-center bg-emerald-800 text-white rounded-lg p-3">Send follow-up invite on WhatsApp</a>`:''}`;$('#drawer').classList.remove('hidden')}
+async function openClient(id){let c=(data?.clients||[]).find(c=>c.id==id);if(!c)return;let d=await api('/api/clients/'+id);$('#drawer-body').innerHTML=`<div class="rounded-xl bg-emerald-950 text-white p-4"><h3 class="text-xl font-semibold">${esc(c.name)}</h3><p class="text-emerald-100 text-sm mt-1">${c.phone||'No WhatsApp'} · ${esc(c.email||'')}</p><p class="text-emerald-200 text-xs mt-1">${esc(c.date_of_birth||'DOB not provided')} · ${esc(c.gender||'Gender not provided')}</p><div class="grid grid-cols-3 mt-4 text-center"><div><b>${c.visits}</b><div class="text-xs text-emerald-200">Visits</div></div><div><b>${money(c.spend)}</b><div class="text-xs text-emerald-200">Lifetime</div></div><div><b>${c.last_visit||'—'}</b><div class="text-xs text-emerald-200">Last scan</div></div></div></div><h4 class="font-semibold mt-5">Pre-scan health notes</h4><p class="text-sm text-slate-600 whitespace-pre-wrap mt-2">${esc(c.medical_notes||d.medical_notes||'No notes recorded.')}</p><h4 class="font-semibold mt-5">Scan history</h4><div class="mt-2 space-y-2">${(d.bookings||[]).map(b=>`<div class="border rounded-lg p-3 text-sm flex justify-between"><span>${b.date} · ${b.service} · ${esc(b.reference)}</span><span class="capitalize">${esc(b.status.replaceAll('_',' '))}</span></div>`).join('')||'<p class="text-sm text-slate-400">No booking history.</p>'}</div>${c.at_risk?`<a target="_blank" href="https://wa.me/${(c.phone||'').replace(/[^0-9]/g,'')}?text=${encodeURIComponent('Hi '+c.name+', we would love to welcome you back for a follow-up full-body scan. Reply here to book')}" class="block mt-5 text-center bg-emerald-800 text-white rounded-lg p-3">Send follow-up invite on WhatsApp</a>`:''}`;$('#drawer').classList.remove('hidden')}
 function charts(){if(trendChart)trendChart.destroy();if(revenueChart)revenueChart.destroy();let a=data.analytics||[];trendChart=new Chart($('#trend-chart'),{type:'bar',data:{labels:a.map(x=>x.month),datasets:[{label:'Bookings',data:a.map(x=>x.bookings),backgroundColor:'#10b981',borderRadius:5,yAxisID:'y'},{label:'Revenue (R)',data:a.map(x=>x.revenue),type:'line',borderColor:'#334155',backgroundColor:'#334155',tension:.35,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,position:'left',title:{display:true,text:'Bookings'}},y1:{beginAtZero:true,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'ZAR'}}}}});let totals=[data.monthly_deposits,data.monthly_balances,data.addons_month];revenueChart=new Chart($('#revenue-chart'),{type:'doughnut',data:{labels:['Deposits','Balances','Add-on sales'],datasets:[{data:totals,backgroundColor:['#10b981','#f59e0b','#0ea5e9'],borderWidth:0}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.raw)}`}}},cutout:'68%'}});$('#revenue-legend').innerHTML=['Deposits','Balances','Add-on sales'].map((x,i)=>`<span><i class="inline-block w-2 h-2 rounded-full mr-1" style="background:${['#10b981','#f59e0b','#0ea5e9'][i]}"></i>${x}: ${money(totals[i])}</span>`).join('');let peak=data.peak_month,pr=data.peak_revenue_month;$('#peak-badges').innerHTML=`${peak?`<span class="bg-amber-50 text-amber-900 rounded-full px-3 py-1">♛ Peak bookings: ${peak.month} · ${peak.bookings}</span>`:''}${pr?`<span class="bg-yellow-50 text-yellow-900 rounded-full px-3 py-1">★ Peak revenue: ${pr.month} · ${money(pr.revenue)}</span>`:''}`;$('#heatmap').innerHTML=`<div><div class="text-xs font-medium mb-2">Busiest days</div><div class="grid grid-cols-7 gap-1">${data.peak_days.map(x=>`<div class="text-center rounded-lg p-2" style="background:rgba(16,185,129,${Math.min(.9,.12+x.count/Math.max(1,...data.peak_days.map(y=>y.count))*.75)})"><div class="text-[10px]">${x.day}</div><b class="text-xs">${x.count}</b></div>`).join('')}</div></div><div><div class="text-xs font-medium mb-2">Popular start times</div><div class="grid grid-cols-4 gap-1">${data.peak_hours.map(x=>`<div class="text-center rounded-lg p-2" style="background:rgba(14,165,233,${Math.min(.85,.1+x.count/Math.max(1,...data.peak_hours.map(y=>y.count))*.7)})"><div class="text-[10px]">${x.hour}</div><b class="text-xs">${x.count}</b></div>`).join('')}</div></div>`}
 function render(){let ai=$('#ai-agent-status');ai.innerHTML=`<i class="led ${data.ai_agent_online?'led-green':'led-grey'} mr-1"></i>M4 AI · ${data.ai_agent_online?data.ai_agent_model+' online':'offline'}`;let period=$('#revenue-period').value;$('#revenue-kpi').textContent=money(period==='today'?data.today_revenue:data.month_revenue);$('#deposit-kpi').textContent=money(period==='today'?data.today_deposits:data.monthly_deposits);$('#balance-kpi').textContent=money(period==='today'?data.today_pending_balances:data.monthly_pending_balances);$('#completed-kpi').textContent=data.completed_scans;$('#upcoming-kpi').textContent=data.upcoming_confirmed;$('#avg-kpi').textContent=money(data.avg_revenue_per_client);let n=data.next_incoming;$('#ticker').innerHTML=`${n?`<span class="mr-4">🟠 <b>Next incoming:</b> ${esc(n.name)} in ${n.minutes} min · Balance ${money(n.balance_due)}</span>`:'<span class="mr-4 text-slate-400">No more arrivals scheduled today</span>'}<span class="mr-4">🟢 Confirmed today: ${data.confirmed_today} · ${money(data.today_deposits)}</span><span class="text-rose-700">🔴 Attention needed: ${data.attention_count}</span>`;renderSchedule();renderClients();charts()}
 async function load(){try{let day=$('#schedule-date').value;data=await api('/api/admin/scan-dashboard?'+new URLSearchParams({...(day?{day}:{})}));if(!$('#schedule-date').value)$('#schedule-date').value=data.date;render()}catch(e){toast(e.message)}}
@@ -388,7 +487,7 @@ load();
   }
 
   function openWin(){
-    win.classList.add('open'); win.classList.remove('min');
+    win.classList.add('open'); win.classList.remove('min'); syncFab();
     if (!body.children.length) {
       body.innerHTML = '';
       restoreMemory().then(had => {
@@ -396,8 +495,11 @@ load();
       });
     }
   }
-  function closeWin(){ win.classList.remove('open'); }
-  fab.onclick = () => win.classList.contains('open') ? closeWin() : openWin();
+  function closeWin(){ win.classList.remove('open'); syncFab(); }
+  function syncFab(){ fab.classList.toggle('win-open', win.classList.contains('open')); }
+  fab.onclick = () => { win.classList.contains('open') ? closeWin() : openWin(); };
+  const topBtn = document.getElementById('agent-open-top');
+  if (topBtn) topBtn.onclick = () => openWin();
   document.getElementById('agent-close').onclick = closeWin;
   document.getElementById('agent-min').onclick = () => win.classList.toggle('min');
 
@@ -430,6 +532,49 @@ load();
     }
   });
   src.onerror = () => { live.textContent = 'offline'; };
+})();
+</script>
+
+<script>
+/* ---- Tabs, dropdowns, instant voice ---- */
+(function(){
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  function showTab(name){
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => p.classList.toggle('active', p.dataset.panel === name));
+    localStorage.setItem('ihc_tab', name);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  tabs.forEach(t => t.onclick = () => showTab(t.dataset.tab));
+  const saved = localStorage.getItem('ihc_tab');
+  if (saved && document.querySelector('.tab[data-tab="' + saved + '"]')) showTab(saved);
+
+  // Dropdowns
+  document.querySelectorAll('.drop-btn').forEach(btn => btn.onclick = e => {
+    e.stopPropagation();
+    const menu = document.querySelector('.drop-menu[data-menu="' + btn.dataset.drop + '"]');
+    const wasOpen = menu.classList.contains('open');
+    document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open'));
+    if (!wasOpen) menu.classList.add('open');
+  });
+  document.addEventListener('click', () => document.querySelectorAll('.drop-menu').forEach(m => m.classList.remove('open')));
+
+  document.querySelectorAll('[data-range]').forEach(b => b.onclick = () => {
+    const sel = document.getElementById('revenue-period');
+    if (sel) { sel.value = b.dataset.range === 'month' ? 'month' : 'today'; sel.dispatchEvent(new Event('change')); }
+    toast('Range: ' + b.textContent);
+  });
+  document.querySelectorAll('[data-money]').forEach(b => b.onclick = () => {
+    const which = b.dataset.money;
+    const view = which === 'deposits' ? '#deposit-kpi' : (which === 'balances' ? '#balance-kpi' : '#revenue-kpi');
+    showTab('overview');
+    const el = document.querySelector(view);
+    if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:520}); }
+  });
+
+  const top = document.getElementById('refresh-top');
+  if (top) top.onclick = () => document.getElementById('refresh').click();
 })();
 </script>
 </body></html>

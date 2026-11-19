@@ -4,6 +4,7 @@ Inner Health Consultation Center — Scan Center & Booking Management
 
 import os
 import re
+import logging
 import shutil
 import subprocess
 import tempfile
@@ -472,10 +473,29 @@ def get_db():
     finally:
         db.close()
 
+_WHISPER_MODEL = None
+
+
+def _warm_whisper() -> None:
+    """Load the speech model in the background so the first voice note is fast."""
+    global _WHISPER_MODEL
+    try:
+        from faster_whisper import WhisperModel  # type: ignore
+        _WHISPER_MODEL = WhisperModel(
+            os.getenv("WHISPER_MODEL", "base"),
+            device="cpu", compute_type="int8",
+            cpu_threads=max(2, os.cpu_count() or 2),
+        )
+        logging.getLogger("uvicorn.error").info("whisper model warmed up")
+    except Exception as exc:  # noqa: BLE001
+        logging.getLogger("uvicorn.error").warning("whisper not available: %s", exc)
+
+
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
     _seed_defaults()
+    threading.Thread(target=_warm_whisper, daemon=True).start()
 
 def _seed_defaults():
     db = SessionLocal()
@@ -1723,6 +1743,8 @@ async def admin_transcribe(audio: UploadFile = File(...)):
             t = t.replace(junk, "")
         return re.sub(r"\s+", " ", t).strip()
 
+    # Keep one model loaded between requests: loading it per call cost ~40s.
+    global _WHISPER_MODEL
     text = ""
     engine = ""
 
@@ -1772,9 +1794,17 @@ async def admin_transcribe(audio: UploadFile = File(...)):
         # 3) faster_whisper python package
         if not text:
             try:
-                from faster_whisper import WhisperModel  # type: ignore
-                model = WhisperModel(os.getenv("WHISPER_MODEL", "base"), device="cpu", compute_type="int8")
-                segments, _info = model.transcribe(src, beam_size=1, vad_filter=True)
+                if _WHISPER_MODEL is None:
+                    from faster_whisper import WhisperModel  # type: ignore
+                    _WHISPER_MODEL = WhisperModel(
+                        os.getenv("WHISPER_MODEL", "base"),
+                        device="cpu", compute_type="int8",
+                        cpu_threads=max(2, os.cpu_count() or 2),
+                    )
+                segments, _info = _WHISPER_MODEL.transcribe(
+                    src, beam_size=1, vad_filter=True, language="en",
+                    condition_on_previous_text=False,
+                )
                 candidate = _clean(" ".join(seg.text for seg in segments))
                 if candidate:
                     text, engine = candidate, "faster-whisper"
