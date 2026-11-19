@@ -1597,6 +1597,20 @@ def _admin_snapshot(db: Session) -> Dict[str, Any]:
     }
 
 
+def _figures(text: str) -> list:
+    """Every number and rand amount in a sentence, normalised so R1 350 == R1350."""
+    found = re.findall(r"\d[\d\s,.]*", (text or "").replace("\u00a0", " "))
+    return [re.sub(r"[\s,]", "", m).rstrip(".") for m in found]
+
+
+def _same_figures(candidate: str, truth: str) -> bool:
+    """True only when the rewrite carries exactly the figures of the source."""
+    a, b = _figures(candidate), _figures(truth)
+    if len(a) != len(b):
+        return False
+    return sorted(a) == sorted(b)
+
+
 def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
     """Deterministic first pass. The model only rephrases this; numbers stay exact."""
     money = snapshot["money"]
@@ -1614,6 +1628,10 @@ def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
         return f"From the store range: {listing}."
 
     if kind == "money" or any(w in q for w in ("revenue", "money", "takings", "earn", "income", "sales", "rand", "how much did we", "turnover")):
+        if not (money['revenue_today'] or money['revenue_this_week'] or money['revenue_this_month']):
+            return ("Nothing has been taken yet: no deposits, balances or walk-in sales are recorded "
+                    f"for today, this week or this month. {cl['total']} clients and "
+                    f"{bk['total']} bookings are on file.")
         return (f"Today {_money(money['revenue_today'])}, this week {_money(money['revenue_this_week'])}, "
                 f"this month {_money(money['revenue_this_month'])}. "
                 f"Deposits still pending: {money['deposits_pending_count']} worth "
@@ -1622,6 +1640,8 @@ def _admin_answer(snapshot: Dict[str, Any], question: str, kind: str) -> str:
                 f"{_money(money['balances_outstanding_value'])}.")
 
     if kind == "clients" or any(w in q for w in ("client", "lapsed", "come back", "win back", "dormant", "vip")):
+        if not cl['total']:
+            return "There are no clients on file yet, so nobody has lapsed."
         top = ", ".join(f"{c['name']} ({_money(c['spend'])})" for c in cl["top_by_spend"][:3]) or "none yet"
         return (f"{cl['total']} clients in total. {cl['lapsed_60_days']} have not been in for 60 days or more. "
                 f"Top spenders: {top}.")
@@ -2360,7 +2380,13 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
             f"{p['name']} ({p['spec']}) R{p['price']}" for p in product_hits) + "."
     mode = "rules"
 
+    # Rephrasing is optional polish. It is skipped unless a model is explicitly
+    # nominated for it, because the drafts are already correct and a small model
+    # only risks corrupting them.
+    polish_model = os.getenv("ADMIN_POLISH_MODEL", "").strip()
     try:
+        if not polish_model:
+            raise RuntimeError("rephrasing disabled")
         system = (
             "You are the internal admin assistant for Inner Health Consultation Center, Pretoria. "
             "You answer the owner only. You are given FACTS and a DRAFT answer computed from the live database. "
@@ -2373,7 +2399,7 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
                 + "\n\nDRAFT ANSWER:\n" + answer
                 + "\n\nQUESTION: " + (question or "Give the daily summary"))
         body = json.dumps({
-            "model": ADMIN_MODEL,
+            "model": polish_model,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
             "stream": False,
             "keep_alive": "10m",
@@ -2396,7 +2422,11 @@ def admin_ask(payload: dict, db: Session = Depends(get_db)):
                     "cannot provide", "can't provide", "medical advice",
                     "anything else i can help", "not able to provide",
                     "consult a doctor", "speak to a doctor", "based on the facts"))
-                if len(polished) > 20 and not refusal:
+                # Every local model tested (ihc-admin-1b, ihc-llama32-3b, llama3.2,
+                # qwen3:4b) either refused the question or invented figures, so the
+                # rephrasing is only accepted when it reproduces the draft's figures
+                # exactly. Otherwise the database's own wording stands.
+                if len(polished) > 20 and not refusal and _same_figures(polished, answer):
                     answer = polished
                     mode = "model"
                 break
