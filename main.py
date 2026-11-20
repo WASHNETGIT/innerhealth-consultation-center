@@ -694,18 +694,112 @@ def _bank_transfer_details(booking_ref: str, amount: float) -> Dict[str, str]:
         "instructions": "Use your reference when transferring funds. Send proof of payment via WhatsApp."
     }
 
-def _notify(client: Client, service: BookingService, when: datetime, token: str):
+def _notify(client: Client, service: BookingService, when: datetime, token: str, booking: Optional[PublicBooking] = None):
     origin = os.getenv("PUBLIC_BASE_URL", "http://localhost:8000").rstrip("/")
     link = f"{origin}/manage/{token}"
-    message = f"Your {service.name} appointment is booked for {when:%A, %d %B %Y at %H:%M}. Manage it: {link}"
+    when_str = when.strftime("%A, %d %B %Y at %H:%M")
+    ref = booking.booking_ref if booking and booking.booking_ref else "Ref Pending"
+    deposit = float(service.deposit or 150.0)
+    total_fee = float(service.price or 450.0)
+    balance = max(0.0, total_fee - deposit)
+
+    bank_name = os.getenv("BANK_NAME", "First National Bank (FNB)")
+    acc_name = os.getenv("BANK_ACCOUNT_NAME", "NTOMBIKAYISE N MKHALIPHI")
+    acc_num = os.getenv("BANK_ACCOUNT_NUMBER", "62804835835")
+    branch_code = os.getenv("BANK_BRANCH_CODE", "250655")
+    acc_type = os.getenv("BANK_ACCOUNT_TYPE", "Cheque / Current Account")
+    office_addr = os.getenv("CLINIC_ADDRESS", "202 Robert Sobukwe Street, Esselen Towers, Sunnyside, Pretoria, 0002")
+    phone_contact = os.getenv("WHATSAPP_NUMBER", "2785771853")
+
+    # Plain text email & message body
+    plain_msg = (
+        f"Dear {client.name},\n\n"
+        f"Thank you for booking with Inner Health Consultation Center.\n\n"
+        f"INVOICE & APPOINTMENT DETAILS:\n"
+        f"-----------------------------------------\n"
+        f"Reference: {ref}\n"
+        f"Service: {service.name}\n"
+        f"Date & Time: {when_str}\n"
+        f"Consultation Fee: R{total_fee:.2f}\n"
+        f"Deposit Required: R{deposit:.2f}\n"
+        f"Balance on Arrival: R{balance:.2f}\n\n"
+        f"BANK TRANSFER (EFT) DETAILS:\n"
+        f"-----------------------------------------\n"
+        f"Account Holder: {acc_name}\n"
+        f"Bank: {bank_name}\n"
+        f"Account Number: {acc_num}\n"
+        f"Branch Code: {branch_code}\n"
+        f"Account Type: {acc_type}\n"
+        f"Payment Reference: {ref}\n\n"
+        f"Please transfer the R{deposit:.2f} deposit within 24 hours to secure your slot.\n"
+        f"Send proof of payment via WhatsApp to +{phone_contact}.\n\n"
+        f"Manage your booking online: {link}\n\n"
+        f"Office Location: {office_addr}\n"
+        f"Inner Health Consultation Center"
+    )
+
+    # Rich HTML invoice email (styled like the residence invoice)
+    html_msg = f"""<!doctype html>
+<html lang="en">
+<body style="margin:0;padding:20px;background:#f6faf7;color:#1e293b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6">
+  <div style="max-width:580px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)">
+    <div style="background:#059669;color:#ffffff;padding:24px 28px">
+      <h1 style="margin:0;font-size:20px;font-weight:700">Inner Health Consultation Center</h1>
+      <p style="margin:4px 0 0;font-size:14px;color:#d1fae5">Deposit Invoice &amp; Appointment Reservation</p>
+    </div>
+    <div style="padding:28px">
+      <p style="margin:0 0 16px;font-size:15px">Dear <strong>{client.name}</strong>,</p>
+      <p style="margin:0 0 20px;font-size:14px;color:#475569">
+        Your scan appointment has been reserved. Please make the EFT deposit of <strong>R{deposit:.2f}</strong> to confirm your slot.
+      </p>
+
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Appointment Details</div>
+        <div style="font-size:15px;color:#0f172a;margin-bottom:4px"><strong>Reference:</strong> <span style="font-family:monospace;color:#059669;font-weight:700">{ref}</span></div>
+        <div style="font-size:14px;color:#334155;margin-bottom:4px"><strong>Service:</strong> {service.name}</div>
+        <div style="font-size:14px;color:#334155;margin-bottom:4px"><strong>Date &amp; Time:</strong> {when_str}</div>
+        <div style="font-size:14px;color:#334155"><strong>Consultation Fee:</strong> R{total_fee:.2f} (R{deposit:.2f} deposit + R{balance:.2f} on arrival)</div>
+      </div>
+
+      <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:18px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:#047857;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Bank Transfer (EFT) Details</div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse;color:#1e293b">
+          <tr><td style="padding:4px 0;color:#64748b">Account Holder:</td><td style="padding:4px 0;font-weight:700">{acc_name}</td></tr>
+          <tr><td style="padding:4px 0;color:#64748b">Bank:</td><td style="padding:4px 0;font-weight:700">{bank_name}</td></tr>
+          <tr><td style="padding:4px 0;color:#64748b">Account Number:</td><td style="padding:4px 0;font-weight:700;font-family:monospace">{acc_num}</td></tr>
+          <tr><td style="padding:4px 0;color:#64748b">Branch Code:</td><td style="padding:4px 0;font-weight:700">{branch_code}</td></tr>
+          <tr><td style="padding:4px 0;color:#64748b">Account Type:</td><td style="padding:4px 0;font-weight:700">{acc_type}</td></tr>
+          <tr><td style="padding:4px 0;color:#047857"><strong>Payment Reference:</strong></td><td style="padding:4px 0;font-weight:800;color:#047857;font-family:monospace">{ref}</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:24px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:4px;font-size:13px;color:#92400e">
+        Please make the deposit payment within 24 hours. Send your proof of payment via WhatsApp to <strong>+{phone_contact}</strong> or upload it on your management link.
+      </div>
+
+      <div style="text-align:center;margin:28px 0">
+        <a href="{link}" style="background:#059669;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;display:inline-block">View &amp; Manage My Booking</a>
+      </div>
+
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0">
+      <div style="font-size:12px;color:#64748b;line-height:1.5">
+        <strong>Office Location:</strong> {office_addr}<br>
+        Mon–Fri 09:00–17:00 · Sat 09:00–15:00 · Sun Closed<br>
+        WhatsApp: +{phone_contact}
+      </div>
+    </div>
+  </div>
+</body>
+</html>"""
+
     if client.email:
-        _send_email(client.email, "Inner Health appointment confirmation", message)
+        _send_email(client.email, f"Inner Health Invoice & Booking: {ref}", html_msg, html=True)
 
     hook = os.getenv("WHATSAPP_WEBHOOK_URL")
     if hook and (client.phone_whatsapp or client.phone):
         phone_to = client.phone_whatsapp or client.phone
         try:
-            req = urllib.request.Request(hook, data=json.dumps({"to": phone_to, "message": message}).encode(),
+            req = urllib.request.Request(hook, data=json.dumps({"to": phone_to, "message": plain_msg}).encode(),
                                          headers={"Content-Type": "application/json"})
             urllib.request.urlopen(req, timeout=8).read()
         except Exception as exc:
@@ -3235,7 +3329,7 @@ def create_public_booking(payload: dict, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(409, "That time was just booked. Please choose another slot.")
     
-    _notify(client, service, datetime.combine(day, start), token)
+    _notify(client, service, datetime.combine(day, start), token, booking)
     payment_url = _deposit_checkout_url(booking, token)
     return {
         "id": booking.id, "reference": booking.booking_ref, "token": token, "status": booking.status,
@@ -3265,7 +3359,7 @@ def payment_deposit_confirm(payload: dict, x_payment_secret: str = Header(defaul
     db.commit()
     emit("booking.deposit_paid", booking_id=b.id)
     token = _manage_token(b.id)
-    _notify(b.client, b.service, datetime.combine(b.booking_date, b.start_time), token)
+    _notify(b.client, b.service, datetime.combine(b.booking_date, b.start_time), token, b)
     return {"ok": True, "reference": b.booking_ref, "status": b.status}
 
 @app.get("/api/public/manage/{token}")
